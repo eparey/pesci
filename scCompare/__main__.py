@@ -36,29 +36,42 @@ PARSER.add_argument('--no_paralogs', action='store_true', help="only use 1-to-1 
 
 ARGS = vars(PARSER.parse_args())
 
-#Create output dir
+# Create output dir
 ARGS['output_dir'] = ARGS['output_dir'].strip('/') + '/' 
 os.makedirs(ARGS['output_dir']+ 'random', exist_ok=True)
 
-# print('# Matrix 1 #')
+print('# Matrix 1 #')
 norm_mat1 = ARGS['output_dir'] + Path(ARGS['matrix1']).stem + '_expr_clusters_norm.tsv'
-# # norm_mat1 = 'out_scCompare/' + Path(ARGS['matrix1']).stem + '_expr_clusters_norm.tsv'
 # norm_mat1 = '../placozoa-cell-type-evolution-code/results_crosssps/tmp1.csv'
 # nm.normalize_main(ARGS['matrix1'], ARGS['clusters1'], norm_mat1, filter_out_start=ARGS['filter_out'])
 
-# print('# Matrix 2 #')
-norm_mat2 = ARGS['output_dir'] + Path(ARGS['matrix2']).stem + '_expr_clusters_norm.tsv'
+print('# Matrix 2 #')
+
+# for comp in [("Tadh","Hhon"), ("Tadh","HoiH23"), ("TrH2","Hhon"), ("TrH2","HoiH23"), ("Hhon","HoiH23")] :
+#     print(comp)
+#     sp1 = comp[0]
+#     sp2 = comp[1]
+#     norm_mat1 = f'/home/elise/projects/sc_cross_species/placozoa-cell-type-evolution-code/results_crosssps/results_alignment_icc/mcs.fp.{sp1}.tsv'
+#     norm_mat2 = f'/home/elise/projects/sc_cross_species/placozoa-cell-type-evolution-code/results_crosssps/results_alignment_icc/mcs.fp.{sp2}.tsv'
+
+#     genefam = '/home/elise/projects/sc_cross_species/data/placozoa/orthologous_pairs_ok.txt'
+#     outdir = f'/home/elise/projects/sc_cross_species/scCompare-cli/output_mcs_{sp1}-{sp2}/'
+#     os.makedirs(outdir, exist_ok=True)
+#     sp.select_paralogs_main(norm_mat1, norm_mat2, genefam, outdir, max_combin=200, ncores=20)
+
 # # norm_mat2 = 'out_scCompare/' + Path(ARGS['matrix2']).stem + '_expr_clusters_norm.tsv'
 # norm_mat2 = '../placozoa-cell-type-evolution-code/results_crosssps/tmp2.csv'
+
+norm_mat2 = ARGS['output_dir'] + Path(ARGS['matrix2']).stem + '_expr_clusters_norm.tsv'
 # nm.normalize_main(ARGS['matrix2'], ARGS['clusters2'], norm_mat2, filter_out_start=ARGS['filter_out'])
 
 # print('# Expression conservation of 1-1 orthologs + paralogs selection #')
-sp.select_paralogs_main(norm_mat1, norm_mat2, ARGS['gene_families'], ARGS['output_dir'], max_combin=200,
-                        ncores=ARGS['cores'], noparalogs=ARGS['no_paralogs'])
-
-# print('# 100 randomization #')
 # sp.select_paralogs_main(norm_mat1, norm_mat2, ARGS['gene_families'], ARGS['output_dir'], max_combin=200,
-#                         ncores=ARGS['cores'], randomize=True, noparalogs=ARGS['no_paralogs'])
+#                         ncores=ARGS['cores'], noparalogs=ARGS['no_paralogs'])
+
+# # print('# 100 randomization #')
+# # sp.select_paralogs_main(norm_mat1, norm_mat2, ARGS['gene_families'], ARGS['output_dir'], max_combin=200,
+# #                         ncores=ARGS['cores'], randomize=True, noparalogs=ARGS['no_paralogs'])
 
 print('# Correlation between clusters of species 1 and clusters of species 2 #')
 cp.compare_main(norm_mat1, norm_mat2, ARGS['output_dir'], ARGS['cores'], ARGS['label_species1'], ARGS['label_species2']) #, random=random_homologs_dir reoptimize_ec=ARGS['reoptimize'] #remove the reoptimize arg

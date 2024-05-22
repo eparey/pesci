@@ -19,6 +19,8 @@ import matplotlib.pyplot as plt
 
 import pingouin as pg
 
+import qnorm
+
 from . import select_paralogs as sp
 
 
@@ -120,7 +122,9 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
         cell_types2 = [cell_types2[i] for i in row_idx_final]
         plt.close('all')
 
-    np.savetxt(outprefix+f'correlation_scores_matrix{suffix}.txt', result)
+    df = pd.DataFrame(data=result[0:,0:], index=[sp2+'|'+i for i in cell_types2], columns=[sp1+'|'+i for i in cell_types1])
+    df.to_csv(outprefix+f'correlation_scores_matrix{suffix}.csv', sep='\t')
+    # np.savetxt(outprefix+f'correlation_scores_matrix{suffix}.txt', result)
 
     plt.figure(figsize=(10, 10))
     sns.heatmap(result, cmap='pink_r', annot=False, vmin=0, vmax=1, xticklabels=cell_types1, yticklabels=cell_types2, cbar_kws={'label': 'weighted correlation'})
@@ -134,6 +138,18 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
 def weighted_correlation_celltypes_pairs(cell_types1, cell_types2, mat1, mat2, ec, reoptimize_ec=False, mark=False):
     #compute weighted correlations between cell types of sp1 and cell types of sp2
     result = np.zeros((len(cell_types2), len(cell_types1)))
+
+    # qnormed_mats = qnorm.quantile_normalize(np.concatenate((mat1, mat2), axis=1))
+    # print(qnormed_mats)
+    # print(qnormed_mats.shape)
+
+    # idx_mat1 = [i for i in range(len(cell_types1))]
+
+    # idx_mat2 = [i+len(cell_types1) for i in range(len(cell_types2))]
+
+    # mat1 = qnormed_mats[:,idx_mat1]
+    # mat2 = qnormed_mats[:,idx_mat2]
+    # print(mat1.shape)
 
     if reoptimize_ec:
         ec = sp.compute_expression_conservation(mat1, mat2)

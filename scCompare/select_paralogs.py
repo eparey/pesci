@@ -90,18 +90,20 @@ def update_ec_until_convergence(mat1, mat2, ec, n, MAX_ITER=100):
     i = 0
     diff = np.Inf
     while i < MAX_ITER and diff > 0.05:
-        # idx = np.where(ec > 0)[0]
+        idx = np.where(ec > 0)[0]
         # print(len(ec))
         # print(len(idx))
 
-        # # #This is in the najie et al code, I would not update corr matrix, but lets see if it explains differences in score
+        # #This is in the najie et al code, I would not update corr matrix, but lets see if it explains differences in scores
         # mat_new1 = np.zeros((len(mat1[:,0]), len(mat1[0,:])))
         # mat_new1[idx[:,np.newaxis], idx[np.newaxis,:]] =  mat1[idx[:,np.newaxis], idx[np.newaxis,:]]
 
         # mat_new2 = np.zeros((len(mat2[:,0]), len(mat2[0,:])))
         # mat_new2[idx[:,np.newaxis], idx[np.newaxis,:]] =  mat2[idx[:,np.newaxis], idx[np.newaxis,:]]
 
+        # ec_new = update_ec_optimized_einsum(mat_new1, mat_new2, ec, n)
         ec_new = update_ec_optimized_einsum(mat1, mat2, ec, n)
+
         diff = np.sum((ec - ec_new)**2)
         ec = ec_new
         i += 1
@@ -259,14 +261,16 @@ def worker_best_paralog(paralogs, a, b, mat1, mat2, mat1_genes, mat2_genes, max_
             else:
                 #add all 'a' paralogs to matrix a (with duplicates to accomodate all possible pairings)
                 paralogs_a = [mat1_genes[i[0]] for i in combin]
+
+                idx_random = np.random.choice(a.shape[0], 1000, replace=False)
                 
-                small_a = a[np.random.choice(a.shape[0], 1000, replace=False), :] #subset a to reduce time (1000 random orthologs)
+                small_a = a[idx_random, :] #subset a to reduce time (1000 random orthologs), or we only do once for all selected paralogs??
                 a_w_paralogs_tmp = np.concatenate((small_a, mat1[paralogs_a,:]), axis=0) 
 
                 #add all 'b' paralogs to matrix b (with duplicates to accomodate all possible pairings)
                 paralogs_b = [mat2_genes[i[1]] for i in combin]
 
-                small_b = b[np.random.choice(b.shape[0], 1000, replace=False), :] #subset b to reduce time (1000 random orthologs)
+                small_b = b[idx_random, :] #subset b to reduce time (1000 random orthologs)
                 b_w_paralogs_tmp = np.concatenate((small_b, mat2[paralogs_b,:]), axis=0) 
              
                 #compute expresseion conservation with all possible 1-1 groupings of paralogs
