@@ -5,14 +5,28 @@ import tqdm
 
 import pyarrow
 
-pyarrow.set_io_thread_count(20)#FIXME this is not working as I want it to (+remove hard-coded)
+import datatable as dt
 
-def load_gene_cell_expr(expr_mat, remove_zeros=True):
+
+
+def load_gene_cell_expr(expr_mat, cores=1, remove_zeros=True):
 	"""
 	Load gene-cell expression matrix (cells are columns, rows genes).
 	"""
+
+	dt.options.nthreads = cores
+
 	print('--- Loading gene expression per cell ---')
-	expr = pd.read_csv(expr_mat, sep="\t", engine='pyarrow', header=0, index_col=0)
+
+	with open(expr_mat, 'r') as infile:
+		for line in infile:
+			column_ind = line.strip().split('\t')[0].strip('"')
+			break
+
+	expr = dt.fread(file=expr_mat, sep='\t')
+	# expr = pd.read_csv(expr_mat, sep="\t", engine='pyarrow', header=0, index_col=0)
+	expr = expr.to_pandas()
+	expr.set_index(column_ind, inplace=True)
 
 	#Filter out non-expressed genes
 	# expr = expr.loc[~(expr==0).all(axis=1)]
@@ -32,6 +46,7 @@ def load_cell_clust(cells_to_clusters, filter_out_start=None):
 	clust = clust['cluster_name'].to_dict()
 	val = sorted(set(clust.values()))
 	return clust, val
+
 
 
 def geometric_mean(vector):
@@ -79,8 +94,8 @@ def save_outputs(data, genes, clusters, output):
 	df.to_csv(output, sep='\t')
 
 
-def normalize_main(expr_mat, cells_to_clusters, output, filter_out_start=None):
-	matrix = load_gene_cell_expr(expr_mat)
+def normalize_main(expr_mat, cells_to_clusters, output, cores=1, filter_out_start=None):
+	matrix = load_gene_cell_expr(expr_mat, cores=cores)
 	clusters, cluster_names = load_cell_clust(cells_to_clusters, filter_out_start=filter_out_start)
 	norm_matrix = normalize_geom_mean(matrix, clusters, cluster_names)
 	save_outputs(norm_matrix, matrix.index, cluster_names, output)
