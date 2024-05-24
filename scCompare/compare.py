@@ -17,9 +17,9 @@ from scipy.optimize import linear_sum_assignment
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-import pingouin as pg
+# import pingouin as pg
 
-import qnorm
+# import qnorm
 
 from . import select_paralogs as sp
 
@@ -127,7 +127,7 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
     # np.savetxt(outprefix+f'correlation_scores_matrix{suffix}.txt', result)
 
     plt.figure(figsize=(10, 10))
-    sns.heatmap(result, cmap='pink_r', annot=False, vmin=0, vmax=1, xticklabels=cell_types1, yticklabels=cell_types2, cbar_kws={'label': 'weighted correlation'})
+    sns.heatmap(result, cmap='BuPu', annot=False, vmin=0, vmax=1, xticklabels=cell_types1, yticklabels=cell_types2, cbar_kws={'label': 'weighted correlation'})
     plt.ylabel(sp2)
     plt.xlabel(sp1)
     # plt.tight_layout()
@@ -189,28 +189,28 @@ def worker_random_corr(mat1_ok, mat2_ok, cell_types1, cell_types2, i, outprefix,
         raise
 
 
-def significant_matches(result, cell_types1, cell_types2, outprefix, all_random_scores, sp1='', sp2=''):
-    tests = []
-    pvals = []
-    max_score = 0
-    for i in range(len(cell_types2)):
-        for j in range(len(cell_types1)):
-            max_score_current = max(all_random_scores)
-            if max_score_current > max_score:
-                max_score = max_score_current
+# def significant_matches(result, cell_types1, cell_types2, outprefix, all_random_scores, sp1='', sp2=''):
+#     tests = []
+#     pvals = []
+#     max_score = 0
+#     for i in range(len(cell_types2)):
+#         for j in range(len(cell_types1)):
+#             max_score_current = max(all_random_scores)
+#             if max_score_current > max_score:
+#                 max_score = max_score_current
 
-            score = result[i, j]
-            test = (cell_types1[j]+'_'+sp1, cell_types2[i]+'_'+sp2)
-            pval = len([s for s in all_random_scores[:,j] if s > score]) / len(all_random_scores)
-            # if pval == 0:
-            #     pval = 1 / len(all_random_scores)
-            tests.append(test)
-            pvals.append(pval)
-    rej, padj = pg.multicomp(pvals, alpha=0.05, method='fdr_by')
-    for i, p in enumerate(padj):
-        if rej[i]:
-            print(tests[i], p)
-    print(max_score)
+#             score = result[i, j]
+#             test = (cell_types1[j]+'_'+sp1, cell_types2[i]+'_'+sp2)
+#             pval = len([s for s in all_random_scores[:,j] if s > score]) / len(all_random_scores)
+#             # if pval == 0:
+#             #     pval = 1 / len(all_random_scores)
+#             tests.append(test)
+#             pvals.append(pval)
+#     rej, padj = pg.multicomp(pvals, alpha=0.05, method='fdr_by')
+#     for i, p in enumerate(padj):
+#         if rej[i]:
+#             print(tests[i], p)
+#     print(max_score)
 
 def plot_expression_conservation(ec, n_ortho, outprefix, suffix=''):
 
@@ -236,19 +236,19 @@ def compare_main(matrix_a, matrix_b, outprefix, ncores, sp1='', sp2='', n=100, r
     para, paralogs_ec = parse_ec_para(para_ec, format='single')
 
     print(len(ortho))
-    print(len({i.split('+')[0] for i in ortho}))
-    print(len({i.split('+')[1] for i in ortho}))
+    # print(len({i.split('+')[0] for i in ortho}))
+    # print(len({i.split('+')[1] for i in ortho}))
 
     print(len(para))
-    print(len({i.split('+')[0] for i in para}))
-    print(len({i.split('+')[1] for i in para}))
+    # print(len({i.split('+')[0] for i in para}))
+    # print(len({i.split('+')[1] for i in para}))
 
-    print([item for item, count in collections.Counter([i.split('+')[0] for i in para]).items() if count > 1])
-    print([item for item, count in collections.Counter([i.split('+')[1] for i in para]).items() if count > 1])
+    # print([item for item, count in collections.Counter([i.split('+')[0] for i in para]).items() if count > 1])
+    # print([item for item, count in collections.Counter([i.split('+')[1] for i in para]).items() if count > 1])
 
-    print(len(ortho+para))
-    print(len({i.split('+')[0] for i in ortho+para}))
-    print(len({i.split('+')[1] for i in ortho+para}))
+    # print(len(ortho+para))
+    # print(len({i.split('+')[0] for i in ortho+para}))
+    # print(len({i.split('+')[1] for i in ortho+para}))
 
     ec = np.array(orthologs_ec + paralogs_ec)
     print(len(ec))
@@ -257,6 +257,15 @@ def compare_main(matrix_a, matrix_b, outprefix, ncores, sp1='', sp2='', n=100, r
     mat1_ok = filter_matrix(mat1, genes1, [i.split('+')[0] for i in ortho+para])
     mat2_ok = filter_matrix(mat2, genes2, [i.split('+')[1] for i in ortho+para])
 
+    df = pd.DataFrame(data=mat1_ok[0:,0:], index=[i.split('+')[0] for i in ortho+para], columns=[sp1+'|'+i for i in cell_types1])
+    df.to_csv(outprefix+f'matrix_{sp1}.csv', sep='\t')
+
+    df = pd.DataFrame(data=mat2_ok[0:,0:], index=[i.split('+')[0] for i in ortho+para], columns=[sp2+'|'+i for i in cell_types2])
+    df.to_csv(outprefix+f'matrix_{sp2}.csv', sep='\t')
+
+    df = pd.DataFrame(data=ec, index=[i.split('+')[0] for i in ortho+para], columns=['ec'])
+    df.to_csv(outprefix+f'ec_vector.csv', sep='\t')
+
     #compute weighted correlations between cell types of sp1 and cell types of sp2
     result, tops, ec_final = weighted_correlation_celltypes_pairs(cell_types1, cell_types2, mat1_ok, mat2_ok, ec, mark=True, reoptimize_ec=reoptimize_ec)
 
@@ -264,11 +273,11 @@ def compare_main(matrix_a, matrix_b, outprefix, ncores, sp1='', sp2='', n=100, r
 
     plot_expression_conservation(ec_final, len(ortho), outprefix)
 
-    out_genes = outprefix+f'ortho_and_para.txt'
-    homologs = ortho+para
-    with open(out_genes, 'w') as out:
-        for pair in homologs:
-            out.write(pair+'\n')
+    # out_genes = outprefix+f'ortho_and_para.txt'
+    # homologs = ortho+para
+    # with open(out_genes, 'w') as out:
+    #     for pair in homologs:
+    #         out.write(pair+'\n')
 
     # out_genes = outprefix+f'top_genes.txt'
     # with open(out_genes, 'w') as out:
