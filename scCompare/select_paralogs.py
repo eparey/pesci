@@ -7,6 +7,8 @@ import multiprocessing
 import traceback
 import signal
 
+import coloredlogs, logging
+
 import random
 
 import tqdm
@@ -15,6 +17,9 @@ import numpy as np
 import pandas as pd
 
 import networkx as nx
+
+logger = logging.getLogger(__name__)
+coloredlogs.install()
 
 
 def wcov(v1, v2, w):
@@ -111,7 +116,7 @@ def update_ec_until_convergence(mat1, mat2, ec, n, MAX_ITER=100):
         # mat2 = mat_new2
 
     if i == MAX_ITER:
-        sys.stderr.write('Warning, convergence not reached, consider increasing MAX_ITER.')
+        print('Warning, convergence not reached, consider increasing MAX_ITER.')
 
     # print(len(ec))
 
@@ -186,13 +191,13 @@ def parse_broccoli2(input_file, genes_sp_a, genes_sp_b, randomize=False):
                 edges.append((g1, g2))
             elif g2 in genes_sp_a and g1 in genes_sp_b:
                 edges.append((g2, g1))
-    print(f"{len(edges)} edges")
+    # print(f"{len(edges)} edges")
     homologs_graph = nx.Graph()
     homologs_graph.add_edges_from(edges)
 
 
     components = nx.connected_components(homologs_graph)
-    print('Connected components extracted')
+    # print('Connected components extracted')
     orthologs, paralogs = [], []
     for component in components:
         genes = {i for i in component}
@@ -289,7 +294,7 @@ def worker_best_paralog(paralogs, a, b, mat1, mat2, mat1_genes, mat2_genes, max_
 def select_paralogs_main(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=2500, ncores=1, batch_size=5,
                          randomize=False, noparalogs=False):
 
-    print('--- Loading expression matrices ---')
+    logger.info('Loading expression matrices')
 
     mat1, mat1_genes, _ = parse_matrix(matrix_file_a)
 
@@ -297,7 +302,7 @@ def select_paralogs_main(matrix_file_a, matrix_file_b, families_file, outprefix,
 
 
     # Susbet the matrix to retain only 1-1 orthologs
-    print('--- Parsing gene families --- ')
+    logger.info('Parsing gene families')
     orthologs, paralogs = parse_broccoli2(families_file, set(mat1_genes), set(mat2_genes), randomize)
 
     #testing something here (to delete later)
@@ -315,13 +320,13 @@ def select_paralogs_main(matrix_file_a, matrix_file_b, families_file, outprefix,
     a = mat1[orthologs_a,:]
     b = mat2[orthologs_b,:]
     n = len(orthologs_b)
-    print(f'{n} one-to-one orthologs')
+    logger.info(f'Found {n} one-to-one orthologs')
 
     # Compute orthologs co-expression conservation
-    print('--- Computing 1-to-1 orthologs co-expression conservation ---')
+    logger.info('Computing co-expression conservation of one-to-one orthologs')
     expr_conservation_orthologs = compute_expression_conservation(a, b)
-    print(expr_conservation_orthologs)
-    print(len(expr_conservation_orthologs))
+    # print(expr_conservation_orthologs)
+    # print(len(expr_conservation_orthologs))
 
     out_ortho = outprefix + 'orthologs_correlation_scores.txt'
     with open(out_ortho, 'w') as out:
@@ -340,7 +345,7 @@ def select_paralogs_main(matrix_file_a, matrix_file_b, families_file, outprefix,
     
     # sys.exit()
 
-    print('--- Adding best paralogs ---')
+    logger.info('Selecting best homologs for remaining gene families')
     async_res = []
     if not noparalogs:
         try:
@@ -351,27 +356,27 @@ def select_paralogs_main(matrix_file_a, matrix_file_b, families_file, outprefix,
             pool.close()
             # pool.join()
             
-            for job in tqdm.tqdm(jobs, colour='#FF79C6'):
+            for job in tqdm.tqdm(jobs, colour='#606060'):
                 async_res += job.get()
 
 
         except KeyboardInterrupt:
-            print("Caught KeyboardInterrupt, terminating workers")
+            logger.info("Caught KeyboardInterrupt, terminating workers")
             pool.terminate()
             pool.join()
             sys.exit(1)
 
     out_para = outprefix + 'paralogs_correlation_scores.txt'
     out_skipped = outprefix + 'skipped_ogs.txt'
-    n = 0
+    h = 0
     k = 0
     with open(out_para, 'w') as out, open(out_skipped, 'w') as out2:
         for i in async_res:
             if not i.startswith('skipped'):
                 out.write(i)
-                n += 1
+                h += 1
             else:
                 out2.write(i)
                 k += 1
 
-    print(f'Computed scores for {n} paralog groups, {k} multigenic families skipped.')
+    logger.info(f'Added {n} homologs, {k} multigenic families skipped. Total = {h+n} marker genes.')
