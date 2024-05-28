@@ -54,7 +54,7 @@ if __name__ == '__main__':
     sp2 = ARGS["label_species2"]
 
     MAT1 = ARGS['matrix1']
-    logger.info(f'Cell-expression matrix 1: {MAT1}')
+    logger.info(f'Gene-cell expression matrix 1: {MAT1}')
     norm_mat1 = ARGS['output_dir'] + Path(MAT1).stem + '_expr_clusters_norm.tsv'
 
     if os.path.exists(norm_mat1) and os.path.getsize(norm_mat1) > 0:
@@ -63,7 +63,7 @@ if __name__ == '__main__':
         nm.normalize_main(ARGS['matrix1'], ARGS['clusters1'], norm_mat1, cores=ARGS['cores'], filter_out_start=ARGS['filter_out'])
 
     MAT2 = ARGS['matrix2']
-    logger.info(f'Cell-expression matrix 2: {MAT2}')
+    logger.info(f'Gene-cell expression matrix 2: {MAT2}')
     norm_mat2 = ARGS['output_dir'] + Path(MAT2).stem + '_expr_clusters_norm.tsv'
 
     if os.path.exists(norm_mat2) and os.path.getsize(norm_mat2) > 0:
@@ -71,11 +71,10 @@ if __name__ == '__main__':
     else:
         nm.normalize_main(ARGS['matrix2'], ARGS['clusters2'], norm_mat2, filter_out_start=ARGS['filter_out'])
 
-    logger.info('Computing expression conservation of one-to-one orthologs and selection of best other homologs')
     sp.select_paralogs_main(norm_mat1, norm_mat2, ARGS['gene_families'], ARGS['output_dir']+sp1+'-'+sp2+'_', max_combin=200,
                             ncores=ARGS['cores'], noparalogs=ARGS['no_paralogs'])
 
-    logger.info(f'Computing correlation between clusters of {sp1} and clusters of {sp2}')
+    logger.info(f'Computing gene expression correlation between clusters of {sp1} and clusters of {sp2}')
     cp.compare_main(norm_mat1, norm_mat2, ARGS['output_dir']+sp1+'-'+sp2+'_', ARGS['cores'], ARGS['label_species1'], ARGS['label_species2']) #, random=random_homologs_dir reoptimize_ec=ARGS['reoptimize'] #remove the reoptimize arg
     OUTDIR = ARGS['output_dir']
     logger.info(f'Done! Results in {OUTDIR}')

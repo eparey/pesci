@@ -7,6 +7,10 @@ import pyarrow
 
 import datatable as dt
 
+import coloredlogs, logging
+
+logger = logging.getLogger(__name__)
+coloredlogs.install()
 
 
 def load_gene_cell_expr(expr_mat, cores=1, remove_zeros=True):
@@ -15,8 +19,6 @@ def load_gene_cell_expr(expr_mat, cores=1, remove_zeros=True):
 	"""
 
 	dt.options.nthreads = cores
-
-	print('--- Loading gene expression per cell ---')
 
 	with open(expr_mat, 'r') as infile:
 		for line in infile:
@@ -55,12 +57,14 @@ def geometric_mean(vector):
 
 def normalize_geom_mean(expr, clust, val):
 
-	print('--- Computing normalized gene expression per cluster ---')
-
 	# For each cluster, compute gene expression as geometric mean over cells (do parallel?)
 	data = []
 	tot = 0
-	for v in tqdm.tqdm(val, colour='#FF79C6'):
+	pbar = tqdm.tqdm(val, colour='#595c79', bar_format='{percentage:3.0f}% |{bar:50}| Computing expression per cluster \x1B[1;32m{unit}')
+	pbar.unit = ""
+	pbar.refresh()
+	for j, v in enumerate(pbar):
+
 		cells = [i for i in clust if clust[i]==v]
 		lg = len(cells)
 		tot += lg
@@ -78,6 +82,9 @@ def normalize_geom_mean(expr, clust, val):
 			gene_expr_in_clust[i] = regmean
 		data.append(gene_expr_in_clust)
 
+		if j == len(pbar) - 1:
+			pbar.unit = "[done]"
+			pbar.refresh()
 
 	# Normalize gene expression by dividing by its median of expression across clusters
 	data = np.array(data).T
@@ -85,7 +92,7 @@ def normalize_geom_mean(expr, clust, val):
 	for i in range(len(medians)):
 		data[i,:] = (data[i,:] + 0.05) / (medians[i] + 0.05) #if we keep the code, remove the loop and do matrix operation
 	
-	print(f'Total: {tot} cells')
+	logger.info(f'{tot} cells, {len(data[:,0])} genes, {len(val)} clusters.')
 	return data
 
 

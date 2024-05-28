@@ -20,6 +20,10 @@ import matplotlib.pyplot as plt
 # import pingouin as pg
 
 # import qnorm
+import coloredlogs, logging
+
+logger = logging.getLogger(__name__)
+coloredlogs.install()
 
 from . import select_paralogs as sp
 
@@ -235,11 +239,11 @@ def compare_main(matrix_a, matrix_b, outprefix, ncores, sp1='', sp2='', n=100, r
     para_ec = outprefix + 'paralogs_correlation_scores.txt'
     para, paralogs_ec = parse_ec_para(para_ec, format='single')
 
-    print(len(ortho))
+    # print(len(ortho))
     # print(len({i.split('+')[0] for i in ortho}))
     # print(len({i.split('+')[1] for i in ortho}))
 
-    print(len(para))
+    # print(len(para))
     # print(len({i.split('+')[0] for i in para}))
     # print(len({i.split('+')[1] for i in para}))
 
@@ -251,7 +255,8 @@ def compare_main(matrix_a, matrix_b, outprefix, ncores, sp1='', sp2='', n=100, r
     # print(len({i.split('+')[1] for i in ortho+para}))
 
     ec = np.array(orthologs_ec + paralogs_ec)
-    print(len(ec))
+    assert len(ec) == (len(para) + len(ortho))
+    # logger.info(f'Loaded gene weigths ({len(ec)} genes)')
 
     #filter matrix to retain 1-1 orthologs and selected best paralogs
     mat1_ok = filter_matrix(mat1, genes1, [i.split('+')[0] for i in ortho+para])
@@ -268,6 +273,8 @@ def compare_main(matrix_a, matrix_b, outprefix, ncores, sp1='', sp2='', n=100, r
 
     #compute weighted correlations between cell types of sp1 and cell types of sp2
     result, tops, ec_final = weighted_correlation_celltypes_pairs(cell_types1, cell_types2, mat1_ok, mat2_ok, ec, mark=True, reoptimize_ec=reoptimize_ec)
+
+    logger.info(f'Saving outputs and plotting correlation matrix')
 
     plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1, sp2)
 
