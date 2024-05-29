@@ -35,6 +35,8 @@ if __name__ == '__main__':
 
     PARSER.add_argument('--filter_out', type=str, required=False, default="")
 
+    PARSER.add_argument('--force', action='store_true', help="this triggers a recomputation of the normalized per cluster gene expression")
+
     PARSER.add_argument('--random', action='store_true', help="this triggers a randomization of the gene homologies to evaluate the expected random background correlations")
 
     # PARSER.add_argument('--reoptimize', action='store_true', help="this triggers a re-optimization of ec scores on the whole set after paralogs selection")
@@ -44,7 +46,7 @@ if __name__ == '__main__':
     ARGS = vars(PARSER.parse_args())
 
     logger = logging.getLogger(__name__)
-    coloredlogs.install(level='INFO', logger=logger, fmt='%(asctime)s - [%(levelname)s]: %(message)s', field_styles={'levelname': {'color': ''}})
+    coloredlogs.install(level='INFO', logger=logger, fmt='%(asctime)s [%(levelname)s]: %(message)s', field_styles={'levelname': {'color': ''}})
 
     # Create output dir
     ARGS['output_dir'] = ARGS['output_dir'].strip('/') + '/' 
@@ -57,7 +59,7 @@ if __name__ == '__main__':
     logger.info(f'Gene-cell expression matrix 1: {MAT1}')
     norm_mat1 = ARGS['output_dir'] + Path(MAT1).stem + '_expr_clusters_norm.tsv'
 
-    if os.path.exists(norm_mat1) and os.path.getsize(norm_mat1) > 0:
+    if os.path.exists(norm_mat1) and os.path.getsize(norm_mat1) > 0 and not ARGS['force']:
         logger.warning(f'Normalized gene-cluster expression matrix {norm_mat1} already exists and will be used. Use --force to recompute.')
     else:
         nm.normalize_main(ARGS['matrix1'], ARGS['clusters1'], norm_mat1, cores=ARGS['cores'], filter_out_start=ARGS['filter_out'])
@@ -66,7 +68,7 @@ if __name__ == '__main__':
     logger.info(f'Gene-cell expression matrix 2: {MAT2}')
     norm_mat2 = ARGS['output_dir'] + Path(MAT2).stem + '_expr_clusters_norm.tsv'
 
-    if os.path.exists(norm_mat2) and os.path.getsize(norm_mat2) > 0:
+    if os.path.exists(norm_mat2) and os.path.getsize(norm_mat2) > 0 and not ARGS['force']:
         logger.warning(f'Normalized gene-cluster expression matrix {norm_mat2} already exists and will be used. Use --force to recompute.')
     else:
         nm.normalize_main(ARGS['matrix2'], ARGS['clusters2'], norm_mat2, filter_out_start=ARGS['filter_out'])

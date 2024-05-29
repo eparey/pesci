@@ -43,10 +43,11 @@ def load_cell_clust(cells_to_clusters, filter_out_start=None):
 	Load cell to clusters
 	"""
 	clust = pd.read_csv(cells_to_clusters, sep="\t", header=0, index_col=0)
+	clust.dropna(inplace=True)
 	if filter_out_start:
 		clust = clust[~clust['cluster_name'].astype(str).str.startswith(filter_out_start)]
 	clust = clust['cluster_name'].to_dict()
-	val = sorted(set(clust.values()))
+	val = sorted({str(i) for i in clust.values()})
 	return clust, val
 
 
@@ -64,7 +65,6 @@ def normalize_geom_mean(expr, clust, val):
 	pbar.unit = ""
 	pbar.refresh()
 	for j, v in enumerate(pbar):
-
 		cells = [i for i in clust if clust[i]==v]
 		lg = len(cells)
 		tot += lg

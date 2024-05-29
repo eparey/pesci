@@ -254,16 +254,7 @@ def worker_best_paralog(paralogs, a, b, mat1, mat2, mat1_genes, mat2_genes, max_
 
 			if len(combin) > max_combin:
 				res.append(f'skipped {og} - {len(og[0])} sp1 genes - {len(og[1])} sp2 genes - {len(combin)} combinations\n')
-				# para1 = og[0]
-				# if len(og[0]) > 50:
-				#     para1 = random.sample(para1, 50)
 
-				# para2 = og[1]
-				# if len(og[1]) > 50:
-				#     para2 = random.sample(para2, 50)
-
-				# #reduce to a max of 2500 combinations
-				# combin = [(i,j) for (i,j) in list(itertools.product(para1, para2)) if i in mat1_genes and j in mat2_genes]
 			else:
 				#add all 'a' paralogs to matrix a (with duplicates to accomodate all possible pairings)
 				paralogs_a = [mat1_genes[i[0]] for i in combin]
@@ -306,16 +297,6 @@ def select_paralogs_main(matrix_file_a, matrix_file_b, families_file, outprefix,
 	logger.info('Parsing gene families')
 	orthologs, paralogs = parse_broccoli2(families_file, set(mat1_genes), set(mat2_genes), randomize)
 
-	#testing something here (to delete later)
-	# orthologs = []
-	# with open('../placozoa-cell-type-evolution-code/results_crosssps/results_alignment_icc/csps_icc.Tadh-TrH2.markers_ec.csv', 'r') as infile:
-	#     for i, line in enumerate(infile):
-	#         if i == 0:
-	#             continue
-	#         line = line.split('\t')
-	#         if line[-1][0] == '1':
-	#             orthologs.append((line[0], line[1]))
-
 	orthologs_a = [mat1_genes[i[0]] for i in orthologs]
 	orthologs_b = [mat2_genes[i[1]] for i in orthologs]
 	a = mat1[orthologs_a,:]
@@ -323,11 +304,13 @@ def select_paralogs_main(matrix_file_a, matrix_file_b, families_file, outprefix,
 	n = len(orthologs_b)
 	logger.info(f'Found {n} one-to-one orthologs')
 
+	if n < 1000:
+		logger.error(f'Too few one-to-one orthologs, please check your orthology file.')
+		sys.exit(1)
+
 	# Compute orthologs co-expression conservation
 	logger.info('Computing expression conservation of one-to-one orthologs')
 	expr_conservation_orthologs = compute_expression_conservation(a, b)
-	# print(expr_conservation_orthologs)
-	# print(len(expr_conservation_orthologs))
 
 	out_ortho = outprefix + 'orthologs_correlation_scores.txt'
 	with open(out_ortho, 'w') as out:
