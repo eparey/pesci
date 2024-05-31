@@ -17,19 +17,19 @@ import matplotlib.pyplot as plt
 
 import coloredlogs
 
-from . import select_paralogs as sp
+from . import iterative_comparison_coexpression as icc
 
 logger = logging.getLogger(__name__)
 coloredlogs.install()
 
-def parse_ec_ortho(input_file):
+def load_ec_ortho(input_file):
+    scores, genes = [], []
     with open(input_file, 'r') as infile:
-        for i, line in enumerate(infile):
-            if i%2 == 0:
-                genes = line.strip().split()
-            else:
-                scores = line.strip().split()
-    return genes, [float(i) for i in scores]
+        for line in infile:
+                gene1, gene2, score = line.strip().split('\t')
+                genes.append(f'{gene1}+{gene2}')
+                scores.append(float(score))
+    return genes, scores
 
 
 def parse_ec_para(input_file):
@@ -53,7 +53,7 @@ def filter_matrix(matrix, genedict, genes_to_keep):
     return res
 
 
-def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='', suffix='',
+def plot_and_save_out(result, cell_types2, cell_types1, outprefix, sp1='', sp2='', suffix='',
                       reorder='None'):
 
     # #This does not work
@@ -116,34 +116,15 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
                       columns=[sp1+'|'+i for i in cell_types1])
     df.to_csv(outprefix+f'correlation_scores_matrix{suffix}.csv', sep='\t')
 
-    plt.figure(figsize=(10, 10))
+    plt.figure(figsize=(6, 6))
     sns.heatmap(result, cmap='BuPu', annot=False, vmin=0, vmax=1, xticklabels=cell_types1,
-                yticklabels=cell_types2, cbar_kws={'label': 'weighted correlation'})
-    plt.ylabel(sp2)
-    plt.xlabel(sp1)
+                yticklabels=cell_types2, cbar_kws={'label': 'weighted correlation', "shrink": 0.5},
+                square=True)
+    plt.ylabel(sp1)
+    plt.xlabel(sp2)
     # plt.tight_layout()
     plt.savefig(outprefix+f'correlation_scores_matrix{suffix}.svg', bbox_inches='tight')
     plt.close('all')
-
-
-def weighted_correlation_celltypes_pairs(cell_types1, cell_types2, mat1, mat2, ec, mark=False):
-    #compute weighted correlations between cell types of sp1 and cell types of sp2
-    result = np.zeros((len(cell_types2), len(cell_types1)))
-
-    markers = {}
-    for i in range(len(cell_types2)):
-        for j in range(len(cell_types1)):
-
-            if mark:
-                wcorr, top500 = sp.wcorr(mat2[:,i], mat1[:,j], ec, get_markers=mark)
-                markers[(i, j)] = top500
-            else:
-                wcorr = sp.wcorr(mat2[:,i], mat1[:,j], ec)
-            result[i,j] = max(wcorr, 0) #Loop here to remove in optimization
-    if mark:
-        return result, markers, ec
-
-    return result, ec
 
 
 def init_worker():
@@ -165,12 +146,12 @@ def plot_expression_conservation(ec, n_ortho, outprefix, suffix=''):
 
 def compare_main(matrix_a, matrix_b, outprefix, ncores, sp1='', sp2=''):
     #load expression matrices
-    mat1, genes1, cell_types1 = sp.parse_matrix(matrix_a)
-    mat2, genes2, cell_types2 = sp.parse_matrix(matrix_b)
+    mat1, genes1, cell_types1 = icc.parse_matrix(matrix_a)
+    mat2, genes2, cell_types2 = icc.parse_matrix(matrix_b)
 
     #load weight to compute correlations between cell types
-    ortho_ec = outprefix + 'orthologs_correlation_scores.txt'
-    ortho, orthologs_ec = parse_ec_ortho(ortho_ec)
+    ortho_ec = outprefix + 'one-to-one-orthologs_correlation_scores.csv'
+    ortho, orthologs_ec = load_ec_ortho(ortho_ec)
     para_ec = outprefix + 'paralogs_correlation_scores.txt'
     para, paralogs_ec = parse_ec_para(para_ec)
 
@@ -194,14 +175,13 @@ def compare_main(matrix_a, matrix_b, outprefix, ncores, sp1='', sp2=''):
     df.to_csv(outprefix+'ec_vector.csv', sep='\t')
 
     #compute weighted correlations between cell types of sp1 and cell types of sp2
-    result, tops, ec_final = weighted_correlation_celltypes_pairs(cell_types1, cell_types2,
-                                                                  mat1_ok, mat2_ok, ec, mark=True)
+    result = icc.column_wise_wcorr_einsum(mat1_ok, mat2_ok, ec)
 
     logger.info('Saving outputs and plotting correlation matrix')
 
     plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1, sp2)
 
-    plot_expression_conservation(ec_final, len(ortho), outprefix)
+    plot_expression_conservation(ec, len(ortho), outprefix)
 
     # out_genes = outprefix+f'ortho_and_para.txt'
     # homologs = ortho+para

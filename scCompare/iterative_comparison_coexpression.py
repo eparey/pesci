@@ -46,6 +46,11 @@ def init_ec(mat1, mat2, n):
 
 
 def init_ec_optimized_einsum(mat1, mat2, n):
+    """
+    Initialize the co-expression conservation score using pearson corrrelation of the two correlation matrices.
+    ec[i] is the pearson correlation coefficient between row i of mat1 and row i of mat2
+    Equivalent to init_ec(), but uses numpy einsum for efficiency.
+    """
 
     mat1_m = mat1 - np.einsum("ij->i", mat1, optimize='optimal') / np.double(n)
     mat2_m = mat2 - np.einsum("ij->i", mat2, optimize='optimal') / np.double(n)
@@ -61,6 +66,32 @@ def init_ec_optimized_einsum(mat1, mat2, n):
     return ec.clip(min=0)
 
 
+def column_wise_wcorr_einsum(mat1, mat2, w):
+    (n, k) = mat1.shape  # n genes k clust
+    (n, l) = mat2.shape  # n genes l clust
+
+    wmat1 = np.tile(w, (k, 1))
+    wmat2 = np.tile(w, (l, 1))
+
+    mat1_m = mat1 - np.einsum("kn,nk->k", wmat1, mat1, optimize='optimal') / sum(w)
+    mat2_m = mat2 - np.einsum("ln,nl->l", wmat2, mat2, optimize='optimal') / sum(w)
+
+    wmat1_m = np.einsum("nk,kn->nk", mat1_m, wmat1, optimize='optimal')
+    tmp12 = np.einsum("nk,nl->kl", wmat1_m, mat2_m, optimize='optimal')
+    wcov12 = tmp12 / sum(w)
+
+    cov1 = np.einsum("nk,nk->nk", mat1_m, mat1_m, optimize='optimal')
+    wcov1 = np.einsum("kn,nk->k", wmat1, cov1, optimize='optimal') / sum(w)
+
+    cov2 = np.einsum("nl,nl->nl", mat2_m, mat2_m, optimize='optimal')
+    wcov2 = np.einsum("ln,nl->l", wmat2, cov2, optimize='optimal') / sum(w)
+
+    prod = np.einsum("k,l->kl", wcov1, wcov2, optimize='optimal')
+
+    res = wcov12 / np.sqrt(prod)
+
+    return res.clip(min=0)
+
 def update_ec(mat1, mat2, prev_ec, n):
     ec = []
     for i in range(n):
@@ -68,14 +99,14 @@ def update_ec(mat1, mat2, prev_ec, n):
     return np.array(ec)
 
 
-def update_ec_optimized_einsum(mat1, mat2, prev_ec, n):
+def update_ec_optimized_einsum(mat1, mat2, prev_ec, n): #diagonal only
 
     wmat = np.tile(prev_ec, (n, 1))
     mat1_m = mat1 - np.einsum("ji,ij->j", wmat, mat1, optimize='optimal') / sum(prev_ec)
     mat2_m = mat2 - np.einsum("ji,ij->j", wmat, mat2, optimize='optimal') / sum(prev_ec)
 
-    cov = np.einsum("ij,ij->ij", mat1_m, mat2_m, optimize='optimal')
-    wcov12 = np.einsum("ji,ij->j", wmat, cov, optimize='optimal') / sum(prev_ec)
+    cov12 = np.einsum("ij,ij->ij", mat1_m, mat2_m, optimize='optimal')
+    wcov12 = np.einsum("ji,ij->j", wmat, cov12, optimize='optimal') / sum(prev_ec)
 
     cov1 = np.einsum("ij,ij->ij", mat1_m, mat1_m, optimize='optimal')
     wcov1 = np.einsum("ji,ij->j", wmat, cov1, optimize='optimal') / sum(prev_ec)
@@ -180,7 +211,7 @@ def init_worker():
     rng = np.random.default_rng()
 
 
-def worker_best_paralog(paralogs, a, b, mat1, mat2, mat1_genes, mat2_genes, max_combin):
+def worker_add_gene_pairs(paralogs, a, b, mat1, mat2, mat1_genes, mat2_genes, max_combin):
 
     try:
 
@@ -221,7 +252,7 @@ def worker_best_paralog(paralogs, a, b, mat1, mat2, mat1_genes, mat2_genes, max_
 
 
 
-def select_paralogs_main(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=2500,
+def icc_main(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=2500,
                          ncores=1, batch_size=5, noparalogs=False):
 
     logger.info('Loading gene-cluster expression matrices')
@@ -247,17 +278,10 @@ def select_paralogs_main(matrix_file_a, matrix_file_b, families_file, outprefix,
         sys.exit(1)
 
     # Compute orthologs co-expression conservation
-    logger.info('Computing expression conservation of one-to-one orthologs')
+    logger.info('Computing co-expression conservation for one-to-one orthologs')
     expr_conservation_orthologs = compute_expression_conservation(a, b)
 
-    out_ortho = outprefix + 'orthologs_correlation_scores.txt'
-    with open(out_ortho, 'w') as out:
-        names_a = [i[0] for i in orthologs]
-        names_b = [i[1] for i in orthologs]
-        out.write('\t'.join([names_a[i]+'+'+names_b[i] for i in range(n)])+'\n')
-        out.write('\t'.join([str(i) for i in expr_conservation_orthologs])+'\n')
-
-    out_ortho = outprefix + 'orthologs_correlation_scores.csv'
+    out_ortho = outprefix + 'one-to-one-orthologs_correlation_scores.csv'
     with open(out_ortho, 'w') as out:
         for i, pair in enumerate(orthologs):
             sp1 = pair[0]
@@ -265,14 +289,14 @@ def select_paralogs_main(matrix_file_a, matrix_file_b, families_file, outprefix,
             score = expr_conservation_orthologs[i]
             out.write('\t'.join([sp1, sp2, str(score)])+'\n')
 
-    logger.info('Selecting best homologs for remaining gene families')
+    logger.info('Selecting best pair for many-to-many / one-to-many / many-to-one orthologs')
     async_res = []
     if not noparalogs:
         try:
 
             pool = multiprocessing.Pool(ncores, init_worker) #, maxtasksperchild=200
             og_batches = [paralogs[i:i + batch_size] for i in range(0, len(paralogs), batch_size)]
-            jobs = [pool.apply_async(worker_best_paralog, args=(batch, a, b, mat1, mat2, mat1_genes, mat2_genes, max_combin)) for batch in og_batches]
+            jobs = [pool.apply_async(worker_add_gene_pairs, args=(batch, a, b, mat1, mat2, mat1_genes, mat2_genes, max_combin)) for batch in og_batches]
             pool.close()
             # pool.join()
             pbar = tqdm.tqdm(jobs, colour='#595c79', bar_format='{percentage:3.0f}% |{bar:50}| Homologs selection \x1B[1;32m{unit}')
@@ -306,3 +330,4 @@ def select_paralogs_main(matrix_file_a, matrix_file_b, families_file, outprefix,
                 k += 1
 
     logger.info(f'Added {h} homologs, {k} multigenic families skipped. Total retained genes for cross-species comparison: {h+n} genes.')
+
