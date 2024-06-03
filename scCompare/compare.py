@@ -116,7 +116,7 @@ def plot_and_save_out(result, cell_types2, cell_types1, outprefix, sp1='', sp2='
                       columns=[sp1+'|'+i for i in cell_types1])
     df.to_csv(outprefix+f'correlation_scores_matrix{suffix}.csv', sep='\t')
 
-    plt.figure(figsize=(6, 6))
+    plt.figure(figsize=(8, 8))
     sns.heatmap(result, cmap='BuPu', annot=False, vmin=0, vmax=1, xticklabels=cell_types1,
                 yticklabels=cell_types2, cbar_kws={'label': 'weighted correlation', "shrink": 0.5},
                 square=True)
