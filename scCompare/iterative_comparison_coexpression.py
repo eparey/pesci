@@ -21,8 +21,9 @@ coloredlogs.install()
 
 
 def wcov(v1, v2, w):
-    return np.sum(w * (v1 - np.average(v1, weights=w)) * (v2 - np.average(v2, weights=w))) / np.sum(w)
-    # return np.average((v1 - np.average(v1, weights=w)) * (v2 - np.average(v2, weights=w)), weights=w)
+    r = np.sum(w * (v1 - np.average(v1, weights=w)) * (v2 - np.average(v2, weights=w))) / np.sum(w)
+    return r
+#return np.average((v1 - np.average(v1, weights=w)) * (v2 - np.average(v2, weights=w)), weights=w)
 
 def wcorr(v1, v2, w, get_markers=False):
     res = wcov(v1, v2, w) / np.sqrt(wcov(v1, v1, w) * wcov(v2, v2, w))
@@ -47,7 +48,8 @@ def init_ec(mat1, mat2, n):
 
 def init_ec_optimized_einsum(mat1, mat2, n):
     """
-    Initialize the co-expression conservation score using pearson corrrelation of the two correlation matrices.
+    Initialize the co-expression conservation score using pearson corrrelation of the
+    two correlation matrices.
     ec[i] is the pearson correlation coefficient between row i of mat1 and row i of mat2
     Equivalent to init_ec(), but uses numpy einsum for efficiency.
     """
@@ -154,7 +156,7 @@ def compute_expression_conservation(matrix_sp_a, matrix_sp_b):
 
 def load_orthologs(input_file, genes_sp_a, genes_sp_b):
     edges = []
-    with open(input_file, 'r') as infile:
+    with open(input_file, 'r', encoding = "utf-8") as infile:
         for line in infile:
             g1, g2 = line.strip().split('\t')
             if g1 in genes_sp_a and g2 in genes_sp_b:
@@ -219,30 +221,34 @@ def worker_add_gene_pairs(paralogs, a, b, mat1, mat2, mat1_genes, mat2_genes, ma
         for og in paralogs:
 
             #list all possible pairings (create list of tuples)
-            combin = [(i,j) for (i,j) in list(itertools.product(og[0], og[1])) if i in mat1_genes and j in mat2_genes]
+            combin = [(i,j) for (i,j) in list(itertools.product(og[0], og[1])) if i in mat1_genes
+                                                                               and j in mat2_genes]
 
             if len(combin) > max_combin:
-                res.append(f'skipped {og} - {len(og[0])} sp1 genes - {len(og[1])} sp2 genes - {len(combin)} combinations\n')
+                res.append(f'skipped {og} - {len(og[0])} sp1 genes - {len(og[1])} sp2 genes - '
+                           f'{len(combin)} combinations\n')
 
             else:
-                #add all 'a' paralogs to matrix a (with duplicates to accomodate all possible pairings)
+                #add all 'a' to matrix a (with duplicates to accomodate all possible pairings)
                 paralogs_a = [mat1_genes[i[0]] for i in combin]
 
                 idx_random = np.random.choice(a.shape[0], 1000, replace=False)
 
-                small_a = a[idx_random, :] #subset a to reduce time (1000 random orthologs), or we only do once for all selected paralogs??
+                #TODO subset a to reduce time (1000 random orthologs), or we only do once
+                small_a = a[idx_random, :]
                 a_w_paralogs_tmp = np.concatenate((small_a, mat1[paralogs_a,:]), axis=0)
 
-                #add all 'b' paralogs to matrix b (with duplicates to accomodate all possible pairings)
+                #add all 'b' to matrix b (with duplicates to accomodate all possible pairings)
                 paralogs_b = [mat2_genes[i[1]] for i in combin]
 
                 small_b = b[idx_random, :] #subset b to reduce time (1000 random orthologs)
                 b_w_paralogs_tmp = np.concatenate((small_b, mat2[paralogs_b,:]), axis=0)
 
                 #compute expresseion conservation with all possible 1-1 groupings of paralogs
-                expr_conservation_w_paralogs_current = compute_expression_conservation(a_w_paralogs_tmp, b_w_paralogs_tmp)
-
-                tmp = '\t'.join(['+'.join(comb) for comb in combin])+ '\n' + '\t'.join([str(i) for i in expr_conservation_w_paralogs_current[1000:]])+'\n'
+                expr_cons_w_paralogs_current = compute_expression_conservation(a_w_paralogs_tmp,
+                                                                               b_w_paralogs_tmp)
+                scores = '\t'.join([str(i) for i in expr_cons_w_paralogs_current[1000:]])
+                tmp = '\t'.join(['+'.join(comb) for comb in combin])+ '\n' + scores +'\n'
                 res.append(tmp)
         return res
 
@@ -271,7 +277,7 @@ def icc_main(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=
     a = mat1[orthologs_a,:]
     b = mat2[orthologs_b,:]
     n = len(orthologs_b)
-    logger.info(f'Found {n} one-to-one orthologs')
+    logger.info('Found %s one-to-one orthologs', n)
 
     if n < 1000:
         logger.error('Too few one-to-one orthologs, please check your orthology file.')
@@ -282,7 +288,7 @@ def icc_main(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=
     expr_conservation_orthologs = compute_expression_conservation(a, b)
 
     out_ortho = outprefix + 'one-to-one-orthologs_correlation_scores.csv'
-    with open(out_ortho, 'w') as out:
+    with open(out_ortho, 'w', encoding = "utf-8") as out:
         for i, pair in enumerate(orthologs):
             sp1 = pair[0]
             sp2 = pair[1]
@@ -296,7 +302,10 @@ def icc_main(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=
 
             pool = multiprocessing.Pool(ncores, init_worker) #, maxtasksperchild=200
             og_batches = [paralogs[i:i + batch_size] for i in range(0, len(paralogs), batch_size)]
-            jobs = [pool.apply_async(worker_add_gene_pairs, args=(batch, a, b, mat1, mat2, mat1_genes, mat2_genes, max_combin)) for batch in og_batches]
+            jobs = [pool.apply_async(worker_add_gene_pairs, args=(batch, a, b, mat1, mat2,
+                                                                  mat1_genes, mat2_genes,
+                                                                  max_combin))
+                                                                  for batch in og_batches]
             pool.close()
             # pool.join()
             pbar = tqdm.tqdm(jobs, colour='#595c79', bar_format='{percentage:3.0f}% |{bar:50}| Homologs selection \x1B[1;32m{unit}')
@@ -320,7 +329,8 @@ def icc_main(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=
     out_skipped = outprefix + 'skipped_ogs.txt'
     h = 0
     k = 0
-    with open(out_para, 'w') as out, open(out_skipped, 'w') as out2:
+    with open(out_para, 'w', encoding='utf-8') as out,\
+         open(out_skipped, 'w', encoding='utf-8') as out2:
         for i in async_res:
             if not i.startswith('skipped'):
                 out.write(i)
@@ -329,5 +339,5 @@ def icc_main(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=
                 out2.write(i)
                 k += 1
 
-    logger.info(f'Added {h} homologs, {k} multigenic families skipped. Total retained genes for cross-species comparison: {h+n} genes.')
-
+    logger.info('Added %s homologs, %s multigenic families skipped. Total retained genes for '
+                'cross-species comparison: %s genes.', h, k, h+n)

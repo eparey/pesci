@@ -62,33 +62,38 @@ sp1 = args["label_species1"]
 sp2 = args["label_species2"]
 
 MAT1 = args['matrix1']
-logger.info(f'Gene-cell expression matrix 1: {MAT1}')
+logger.info('Gene-cell expression matrix 1: %s', MAT1)
 norm_mat1 = args['output_dir'] + Path(MAT1).stem + '_expr_clusters_norm.tsv'
 
 if os.path.exists(norm_mat1) and os.path.getsize(norm_mat1) > 0 and not args['force']:
-    logger.warning(f'Normalized gene-cluster expression matrix {norm_mat1} already exists\
-                     and will be used. Use --force to recompute.')
+    logger.warning('Normalized gene-cluster expression matrix %s already exists '
+                     'and will be used. Use --force to recompute.', norm_mat1)
 else:
     nm.normalize_main(args['matrix1'], args['clusters1'], norm_mat1, cores=args['cores'],
                       filter_out_start=args['filter_out'])
 
 MAT2 = args['matrix2']
-logger.info(f'Gene-cell expression matrix 2: {MAT2}')
+logger.info('Gene-cell expression matrix 2: %s', MAT2)
 norm_mat2 = args['output_dir'] + Path(MAT2).stem + '_expr_clusters_norm.tsv'
 
 if os.path.exists(norm_mat2) and os.path.getsize(norm_mat2) > 0 and not args['force']:
-    logger.warning(f'Normalized gene-cluster expression matrix {norm_mat2} already exists\
-                     and will be used. Use --force to recompute.')
+    logger.warning('Normalized gene-cluster expression matrix %s already exists'
+                     ' and will be used. Use --force to recompute.', norm_mat2)
 else:
     nm.normalize_main(args['matrix2'], args['clusters2'], norm_mat2,
                       filter_out_start=args['filter_out'])
+#todo check paralogs and improve format
+ec_scores = args['output_dir']+sp1+'-'+sp2+'_' + 'one-to-one-orthologs_correlation_scores.csv'
+if os.path.exists(ec_scores) and os.path.getsize(ec_scores) > 0 and not args['force']:
+    logger.warning('Orthologs expression conservation scores already computed %s'
+                     ' and will be used. Use --force to recompute.', ec_scores)
+else:
+    icc.icc_main(norm_mat1, norm_mat2, args['gene_families'],
+                 args['output_dir']+sp1+'-'+sp2+'_', max_combin=200, ncores=args['cores'],
+                 noparalogs=args['no_paralogs'])
 
-icc.icc_main(norm_mat1, norm_mat2, args['gene_families'],
-                        args['output_dir']+sp1+'-'+sp2+'_', max_combin=200, ncores=args['cores'],
-                        noparalogs=args['no_paralogs'])
-
-logger.info(f'Computing gene expression correlation between clusters of {sp1} and {sp2}')
-cp.compare_main(norm_mat1, norm_mat2, args['output_dir']+sp1+'-'+sp2+'_', args['cores'],
+logger.info('Computing gene expression correlation between clusters of %s and %s', sp1, sp2)
+cp.compare_main(norm_mat1, norm_mat2, args['output_dir']+sp1+'-'+sp2+'_',
                 args['label_species1'], args['label_species2'])
 OUTDIR = args['output_dir']
-logger.info(f'Done! Results in {OUTDIR}')
+logger.info('Done! Results in %s', OUTDIR)

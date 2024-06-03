@@ -1,11 +1,4 @@
-import sys
 import logging
-
-import multiprocessing
-import traceback
-import signal
-
-import tqdm
 
 import numpy as np
 import pandas as pd
@@ -24,18 +17,18 @@ coloredlogs.install()
 
 def load_ec_ortho(input_file):
     scores, genes = [], []
-    with open(input_file, 'r') as infile:
+    with open(input_file, 'r', encoding = "utf-8") as infile:
         for line in infile:
-                gene1, gene2, score = line.strip().split('\t')
-                genes.append(f'{gene1}+{gene2}')
-                scores.append(float(score))
+            gene1, gene2, score = line.strip().split('\t')
+            genes.append(f'{gene1}+{gene2}')
+            scores.append(float(score))
     return genes, scores
 
 
 def parse_ec_para(input_file):
     res_genes = []
     res_ec = []
-    with open(input_file, 'r') as infile:
+    with open(input_file, 'r', encoding = "utf-8") as infile:
         for i, line in enumerate(infile):
             if i%2 == 0:
                 genes = line.strip().split()
@@ -53,7 +46,7 @@ def filter_matrix(matrix, genedict, genes_to_keep):
     return res
 
 
-def plot_and_save_out(result, cell_types2, cell_types1, outprefix, sp1='', sp2='', suffix='',
+def plot_and_save_out(result, cell_types2, cell_types1, outprefix, sp1='', sp2='',
                       reorder='None'):
 
     # #This does not work
@@ -114,7 +107,7 @@ def plot_and_save_out(result, cell_types2, cell_types1, outprefix, sp1='', sp2='
 
     df = pd.DataFrame(data=result[0:,0:], index=[sp2+'|'+i for i in cell_types2],
                       columns=[sp1+'|'+i for i in cell_types1])
-    df.to_csv(outprefix+f'correlation_scores_matrix{suffix}.csv', sep='\t')
+    df.to_csv(f'{outprefix}correlation_scores_matrix.csv', sep='\t')
 
     plt.figure(figsize=(8, 8))
     sns.heatmap(result, cmap='BuPu', annot=False, vmin=0, vmax=1, xticklabels=cell_types1,
@@ -123,28 +116,58 @@ def plot_and_save_out(result, cell_types2, cell_types1, outprefix, sp1='', sp2='
     plt.ylabel(sp1)
     plt.xlabel(sp2)
     # plt.tight_layout()
-    plt.savefig(outprefix+f'correlation_scores_matrix{suffix}.svg', bbox_inches='tight')
+    plt.savefig(f'{outprefix}correlation_scores_matrix.svg', bbox_inches='tight')
     plt.close('all')
 
 
-def init_worker():
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
+# def plot_expression_conservation(ec, n_ortho, outprefix, suffix=''):
+
+#     orthologs_ec = [(i, 'orthologs') for i in ec[:n_ortho]]
+#     paralogs_ec = [(i, 'paralogs') for i in ec[n_ortho:]]
+#     data = paralogs_ec + orthologs_ec
+#     df = pd.DataFrame.from_records(data, columns=['Expression conservation score',
+#                                                   'homologs type'])
+#     sns.histplot(data=df, x="Expression conservation score", hue="homologs type",
+#                  bins=41, multiple="stack")
+#     plt.tight_layout()
+#     plt.savefig(outprefix+f'expression_correlation_scores{suffix}.svg')
+#     plt.close('all')
+
+#TODO: reduce number of args by using a class for expression matrices (in normalize, icc and here)
+def make_coexpressed_genes_table(result, mat1_ok, mat2_ok, genes1, genes2, ec, idx_ortho,
+                                 cell_types1, cell_types2, outprefix, sp1, sp2, fc=1.5, wcor=0.2):
+    records = []
+    for i, clus1 in enumerate(cell_types1):
+        for j, clus2 in enumerate(cell_types2):
+            if result[i, j] > wcor:
+                genes_clus1_sp1 = np.where(mat1_ok[:, i] > fc)[0]
+                genes_clus2_sp2 = np.where(mat2_ok[:, j] > fc)[0]
+                ortho_idx = set(genes_clus1_sp1).intersection(set(genes_clus2_sp2))
+
+                for k in ortho_idx:
+                    g1 = genes1[k]
+                    g2 = genes2[k]
+                    fc1 = mat1_ok[k, i]
+                    fc2 = mat2_ok[k, j]
+                    ec_tmp = ec[k]
+                    score = np.exp(np.log(fc1 + fc2)) * max(ec_tmp, 0.1)
+                    o1 = 'y'
+                    if k >= idx_ortho:
+                        o1 = 'n'
+                    records.append([sp1+'|'+clus1, sp2+'|'+clus2, g1, g2, mat1_ok[k, i],
+                                    mat2_ok[k, j], ec[k], score, o1])
+
+    df = pd.DataFrame.from_records(records, columns=[f'{sp1}_cell_cluster', f'{sp2}_cell_cluster',
+                                                     f'{sp1}_gene', f'{sp2}_gene',
+                                                     f'{sp1}_Expression (Fold-change)', 
+                                                     f'{sp2}_Expression (Fold-change)', 'EC_score',
+                                                     'final_score', 'One-to-one-ortholog (yes/no)'])
+    df.sort_values([f'{sp1}_cell_cluster', f'{sp2}_cell_cluster', 'final_score'], ascending=False,
+                    inplace=True)
+    df.to_csv(f'{outprefix}gene_coexpression_table.csv', sep='\t', index=False)
 
 
-def plot_expression_conservation(ec, n_ortho, outprefix, suffix=''):
-
-    orthologs_ec = [(i, 'orthologs') for i in ec[:n_ortho]]
-    paralogs_ec = [(i, 'paralogs') for i in ec[n_ortho:]]
-    data = paralogs_ec + orthologs_ec
-    df = pd.DataFrame.from_records(data, columns=['Expression conservation score', 'homologs type'])
-    sns.histplot(data=df, x="Expression conservation score", hue="homologs type",
-                 bins=41, multiple="stack")
-    plt.tight_layout()
-    plt.savefig(outprefix+f'expression_correlation_scores{suffix}.svg')
-    plt.close('all')
-
-
-def compare_main(matrix_a, matrix_b, outprefix, ncores, sp1='', sp2=''):
+def compare_main(matrix_a, matrix_b, outprefix, sp1='', sp2=''):
     #load expression matrices
     mat1, genes1, cell_types1 = icc.parse_matrix(matrix_a)
     mat2, genes2, cell_types2 = icc.parse_matrix(matrix_b)
@@ -160,28 +183,36 @@ def compare_main(matrix_a, matrix_b, outprefix, ncores, sp1='', sp2=''):
     # logger.info(f'Loaded gene weigths ({len(ec)} genes)')
 
     #filter matrix to retain 1-1 orthologs and selected best paralogs
-    mat1_ok = filter_matrix(mat1, genes1, [i.split('+')[0] for i in ortho+para])
-    mat2_ok = filter_matrix(mat2, genes2, [i.split('+')[1] for i in ortho+para])
+    genes1_ok = [i.split('+')[0] for i in ortho+para]
+    genes2_ok = [i.split('+')[1] for i in ortho+para]
+    mat1_ok = filter_matrix(mat1, genes1, genes1_ok)
+    mat2_ok = filter_matrix(mat2, genes2, genes2_ok)
 
     df = pd.DataFrame(data=mat1_ok[0:,0:], index=[i.split('+')[0] for i in ortho+para],
                       columns=[sp1+'|'+i for i in cell_types1])
-    df.to_csv(outprefix+f'matrix_{sp1}.csv', sep='\t')
+    df.to_csv(f'{outprefix}matrix_{sp1}.csv', sep='\t')
 
     df = pd.DataFrame(data=mat2_ok[0:,0:], index=[i.split('+')[0] for i in ortho+para],
                       columns=[sp2+'|'+i for i in cell_types2])
-    df.to_csv(outprefix+f'matrix_{sp2}.csv', sep='\t')
+    df.to_csv(f'{outprefix}matrix_{sp2}.csv', sep='\t')
 
     df = pd.DataFrame(data=ec, index=[i.split('+')[0] for i in ortho+para], columns=['ec'])
-    df.to_csv(outprefix+'ec_vector.csv', sep='\t')
+    df.to_csv(f'{outprefix}ec_vector.csv', sep='\t')
 
     #compute weighted correlations between cell types of sp1 and cell types of sp2
     result = icc.column_wise_wcorr_einsum(mat1_ok, mat2_ok, ec)
+
+    logger.info('Searching for co-expressed gene pairs')
+
+    make_coexpressed_genes_table(result, mat1_ok, mat2_ok, genes1_ok, genes2_ok, ec, len(ortho),
+                                 cell_types1, cell_types2, outprefix, sp1, sp2)
 
     logger.info('Saving outputs and plotting correlation matrix')
 
     plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1, sp2)
 
-    plot_expression_conservation(ec, len(ortho), outprefix)
+
+    # plot_expression_conservation(ec, len(ortho), outprefix)
 
     # out_genes = outprefix+f'ortho_and_para.txt'
     # homologs = ortho+para
