@@ -46,7 +46,7 @@ parser.add_argument('--filter_out', type=str, required=False, default="")
 parser.add_argument('--force', action='store_true',
                                help="recompute the per cluster normalized gene expression")
 
-parser.add_argument('--no_paralogs', action='store_true', help="only use 1-to-1 orthologs")
+parser.add_argument('--ono2one_only', action='store_true', help="only use 1-to-1 orthologs")
 
 args = vars(parser.parse_args())
 
@@ -56,14 +56,14 @@ coloredlogs.install(level='INFO', logger=logger, fmt='%(asctime)s [%(levelname)s
 
 # Create output dir
 args['output_dir'] = args['output_dir'].strip('/') + '/'
-os.makedirs(args['output_dir']+ 'random', exist_ok=True)
+os.makedirs(args['output_dir']+ 'files', exist_ok=True)
 
 sp1 = args["label_species1"]
 sp2 = args["label_species2"]
 
 MAT1 = args['matrix1']
 logger.info('Gene-cell expression matrix 1: %s', MAT1)
-norm_mat1 = args['output_dir'] + Path(MAT1).stem + '_expr_clusters_norm.tsv'
+norm_mat1 = args['output_dir'] + 'files/' + sp2 + '_' + Path(MAT1).stem + '_expr_clusters_norm.tsv'
 
 if os.path.exists(norm_mat1) and os.path.getsize(norm_mat1) > 0 and not args['force']:
     logger.warning('Normalized gene-cluster expression matrix %s already exists '
@@ -74,26 +74,26 @@ else:
 
 MAT2 = args['matrix2']
 logger.info('Gene-cell expression matrix 2: %s', MAT2)
-norm_mat2 = args['output_dir'] + Path(MAT2).stem + '_expr_clusters_norm.tsv'
+norm_mat2 = args['output_dir'] + 'files/' + sp2 + '_' + Path(MAT2).stem + '_expr_clusters_norm.tsv'
 
 if os.path.exists(norm_mat2) and os.path.getsize(norm_mat2) > 0 and not args['force']:
     logger.warning('Normalized gene-cluster expression matrix %s already exists'
-                     ' and will be used. Use --force to recompute.', norm_mat2)
+                   ' and will be used. Use --force to recompute.', norm_mat2)
 else:
     nm.normalize_main(args['matrix2'], args['clusters2'], norm_mat2,
                       filter_out_start=args['filter_out'])
+
 #todo check paralogs and improve format
-ec_scores = args['output_dir']+sp1+'-'+sp2+'_' + 'one-to-one-orthologs_correlation_scores.csv'
+ec_scores = args['output_dir']+'files/'+sp1+'-'+sp2+'_' + 'one-to-one-orthologs_correlation_scores.csv'
 if os.path.exists(ec_scores) and os.path.getsize(ec_scores) > 0 and not args['force']:
     logger.warning('Orthologs expression conservation scores already computed %s'
-                     ' and will be used. Use --force to recompute.', ec_scores)
+                   ' and will be used. Use --force to recompute.', ec_scores)
 else:
     icc.icc_main(norm_mat1, norm_mat2, args['gene_families'],
-                 args['output_dir']+sp1+'-'+sp2+'_', max_combin=200, ncores=args['cores'],
-                 noparalogs=args['no_paralogs'])
+                 args['output_dir']+'files/'+sp1+'-'+sp2+'_', max_combin=300, ncores=args['cores'],
+                 ono2one_only=args['ono2one_only'])
 
 logger.info('Computing gene expression correlation between clusters of %s and %s', sp1, sp2)
-cp.compare_main(norm_mat1, norm_mat2, args['output_dir']+sp1+'-'+sp2+'_',
-                args['label_species1'], args['label_species2'])
+cp.compare_main(norm_mat1, norm_mat2, args['output_dir'], sp1, sp2)
 OUTDIR = args['output_dir']
 logger.info('Done! Results in %s', OUTDIR)

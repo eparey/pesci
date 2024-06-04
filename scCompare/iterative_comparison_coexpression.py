@@ -27,15 +27,6 @@ def wcov(v1, v2, w):
 
 def wcorr(v1, v2, w, get_markers=False):
     res = wcov(v1, v2, w) / np.sqrt(wcov(v1, v1, w) * wcov(v2, v2, w))
-    if get_markers:
-        all_contrib = w * (v1 - np.average(v1, weights=w)) * (v2 - np.average(v2, weights=w))
-        n_tops = 10
-        idx_best = np.argpartition(all_contrib, -n_tops)[-n_tops:]
-        v1_best = v1[idx_best]
-        v2_best = v2[idx_best]
-        w_best = w[idx_best]
-        return res, [idx_best, v1_best, v2_best, w_best, all_contrib[idx_best]]
-
     return res
 
 
@@ -132,7 +123,7 @@ def update_ec_until_convergence(mat1, mat2, ec, n, max_iter=100):
         i += 1
 
     if i == max_iter:
-        logger.warning('Warning, ICC convergence not reached, consider increasing max_iter.')
+        logger.warning('ICC convergence not reached, consider increasing max_iter.')
 
     return ec
 
@@ -207,12 +198,6 @@ def parse_matrix(input_file):
 def init_worker():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-    #create a unique seed generator for each pool
-    #TDOD: check this works as expected
-    global rng
-    rng = np.random.default_rng()
-
-
 def worker_add_gene_pairs(paralogs, a, b, mat1, mat2, mat1_genes, mat2_genes, max_combin):
 
     try:
@@ -221,7 +206,7 @@ def worker_add_gene_pairs(paralogs, a, b, mat1, mat2, mat1_genes, mat2_genes, ma
         for og in paralogs:
 
             #list all possible pairings (create list of tuples)
-            combin = [(i,j) for (i,j) in list(itertools.product(og[0], og[1])) if i in mat1_genes
+            combin = [(i, j) for (i, j) in list(itertools.product(og[0], og[1])) if i in mat1_genes
                                                                                and j in mat2_genes]
 
             if len(combin) > max_combin:
@@ -232,17 +217,12 @@ def worker_add_gene_pairs(paralogs, a, b, mat1, mat2, mat1_genes, mat2_genes, ma
                 #add all 'a' to matrix a (with duplicates to accomodate all possible pairings)
                 paralogs_a = [mat1_genes[i[0]] for i in combin]
 
-                idx_random = np.random.choice(a.shape[0], 1000, replace=False)
-
-                #TODO subset a to reduce time (1000 random orthologs), or we only do once
-                small_a = a[idx_random, :]
-                a_w_paralogs_tmp = np.concatenate((small_a, mat1[paralogs_a,:]), axis=0)
+                a_w_paralogs_tmp = np.concatenate((a, mat1[paralogs_a,:]), axis=0)
 
                 #add all 'b' to matrix b (with duplicates to accomodate all possible pairings)
                 paralogs_b = [mat2_genes[i[1]] for i in combin]
 
-                small_b = b[idx_random, :] #subset b to reduce time (1000 random orthologs)
-                b_w_paralogs_tmp = np.concatenate((small_b, mat2[paralogs_b,:]), axis=0)
+                b_w_paralogs_tmp = np.concatenate((b, mat2[paralogs_b,:]), axis=0)
 
                 #compute expresseion conservation with all possible 1-1 groupings of paralogs
                 expr_cons_w_paralogs_current = compute_expression_conservation(a_w_paralogs_tmp,
@@ -258,8 +238,8 @@ def worker_add_gene_pairs(paralogs, a, b, mat1, mat2, mat1_genes, mat2_genes, ma
 
 
 
-def icc_main(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=2500,
-                         ncores=1, batch_size=5, noparalogs=False):
+def icc_main(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
+             ncores=1, batch_size=5, ono2one_only=False, seed=None):
 
     logger.info('Loading gene-cluster expression matrices')
 
@@ -297,11 +277,20 @@ def icc_main(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=
 
     logger.info('Selecting best pair for many-to-many / one-to-many / many-to-one orthologs')
     async_res = []
-    if not noparalogs:
+    if not ono2one_only:
         try:
 
             pool = multiprocessing.Pool(ncores, init_worker) #, maxtasksperchild=200
             og_batches = [paralogs[i:i + batch_size] for i in range(0, len(paralogs), batch_size)]
+
+            if seed:
+                np.random.seed()
+
+            idx_random = np.random.choice(a.shape[0], 1000, replace=False)
+
+            a = a[idx_random, :]
+            b = b[idx_random, :]
+
             jobs = [pool.apply_async(worker_add_gene_pairs, args=(batch, a, b, mat1, mat2,
                                                                   mat1_genes, mat2_genes,
                                                                   max_combin))

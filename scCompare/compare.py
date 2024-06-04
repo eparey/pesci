@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -49,7 +50,7 @@ def filter_matrix(matrix, genedict, genes_to_keep):
 def plot_and_save_out(result, cell_types2, cell_types1, outprefix, sp1='', sp2='',
                       reorder='None'):
 
-    # #This does not work
+    #FIXME #This does not work
     if reorder == 'Diag':
         row_idx_final, col_idx_final = linear_sum_assignment(-result)
         all_row = list(range(len(result[:,0])))
@@ -167,15 +168,15 @@ def make_coexpressed_genes_table(result, mat1_ok, mat2_ok, genes1, genes2, ec, i
     df.to_csv(f'{outprefix}gene_coexpression_table.csv', sep='\t', index=False)
 
 
-def compare_main(matrix_a, matrix_b, outprefix, sp1='', sp2=''):
+def compare_main(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2'):
     #load expression matrices
     mat1, genes1, cell_types1 = icc.parse_matrix(matrix_a)
     mat2, genes2, cell_types2 = icc.parse_matrix(matrix_b)
 
     #load weight to compute correlations between cell types
-    ortho_ec = outprefix + 'one-to-one-orthologs_correlation_scores.csv'
+    ortho_ec = outprefix +'files/'+sp1+'-'+sp2+'_' + 'one-to-one-orthologs_correlation_scores.csv'
     ortho, orthologs_ec = load_ec_ortho(ortho_ec)
-    para_ec = outprefix + 'paralogs_correlation_scores.txt'
+    para_ec = outprefix +'files/'+sp1+'-'+sp2+'_' + 'paralogs_correlation_scores.txt'
     para, paralogs_ec = parse_ec_para(para_ec)
 
     ec = np.array(orthologs_ec + paralogs_ec)
@@ -188,16 +189,18 @@ def compare_main(matrix_a, matrix_b, outprefix, sp1='', sp2=''):
     mat1_ok = filter_matrix(mat1, genes1, genes1_ok)
     mat2_ok = filter_matrix(mat2, genes2, genes2_ok)
 
-    df = pd.DataFrame(data=mat1_ok[0:,0:], index=[i.split('+')[0] for i in ortho+para],
-                      columns=[sp1+'|'+i for i in cell_types1])
-    df.to_csv(f'{outprefix}matrix_{sp1}.csv', sep='\t')
+    # df = pd.DataFrame(data=mat1_ok[0:,0:], index=[i.split('+')[0] for i in ortho+para],
+    #                   columns=[sp1+'|'+i for i in cell_types1])
+    # df.to_csv(outprefix + 'file/' + Path(matrix_a).stem + '_orthologs.tsv', sep='\t')
 
-    df = pd.DataFrame(data=mat2_ok[0:,0:], index=[i.split('+')[0] for i in ortho+para],
-                      columns=[sp2+'|'+i for i in cell_types2])
-    df.to_csv(f'{outprefix}matrix_{sp2}.csv', sep='\t')
+    # df = pd.DataFrame(data=mat2_ok[0:,0:], index=[i.split('+')[0] for i in ortho+para],
+    #                   columns=[sp2+'|'+i for i in cell_types2])
+    # df.to_csv(outprefix + 'file/' + Path(matrix_b).stem + '_orthologs.tsv', sep='\t')
 
-    df = pd.DataFrame(data=ec, index=[i.split('+')[0] for i in ortho+para], columns=['ec'])
-    df.to_csv(f'{outprefix}ec_vector.csv', sep='\t')
+    is_one2one = np.concatenate([np.ones(len(ortho)), np.zeros(len(para))])
+
+    df = pd.DataFrame([genes1_ok, genes2_ok, ec, is_one2one]).T
+    df.to_csv(outprefix+sp1+'-'+sp2+'_'+'expression_conservation_scores.csv', sep='\t', index=False)
 
     #compute weighted correlations between cell types of sp1 and cell types of sp2
     result = icc.column_wise_wcorr_einsum(mat1_ok, mat2_ok, ec)
@@ -205,11 +208,11 @@ def compare_main(matrix_a, matrix_b, outprefix, sp1='', sp2=''):
     logger.info('Searching for co-expressed gene pairs')
 
     make_coexpressed_genes_table(result, mat1_ok, mat2_ok, genes1_ok, genes2_ok, ec, len(ortho),
-                                 cell_types1, cell_types2, outprefix, sp1, sp2)
+                                 cell_types1, cell_types2, outprefix+sp1+'-'+sp2+'_', sp1, sp2)
 
     logger.info('Saving outputs and plotting correlation matrix')
 
-    plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1, sp2)
+    plot_and_save_out(result, cell_types1, cell_types2, outprefix+sp1+'-'+sp2+'_', sp1, sp2)
 
 
     # plot_expression_conservation(ec, len(ortho), outprefix)
