@@ -67,10 +67,10 @@ norm_mat1 = args['output_dir'] + 'files/' + sp2 + '_' + Path(MAT1).stem + '_expr
 
 if os.path.exists(norm_mat1) and os.path.getsize(norm_mat1) > 0 and not args['force']:
     logger.warning('Normalized gene-cluster expression matrix %s already exists '
-                     'and will be used. Use --force to recompute.', norm_mat1)
+                   'and will be used. Use --force to recompute.', norm_mat1)
 else:
-    nm.normalize_main(args['matrix1'], args['clusters1'], norm_mat1, cores=args['cores'],
-                      filter_out_start=args['filter_out'])
+    nm.normalize(args['matrix1'], args['clusters1'], norm_mat1, cores=args['cores'],
+                 filter_out_start=args['filter_out'])
 
 MAT2 = args['matrix2']
 logger.info('Gene-cell expression matrix 2: %s', MAT2)
@@ -80,7 +80,7 @@ if os.path.exists(norm_mat2) and os.path.getsize(norm_mat2) > 0 and not args['fo
     logger.warning('Normalized gene-cluster expression matrix %s already exists'
                    ' and will be used. Use --force to recompute.', norm_mat2)
 else:
-    nm.normalize_main(args['matrix2'], args['clusters2'], norm_mat2,
+    nm.normalize(args['matrix2'], args['clusters2'], norm_mat2,
                       filter_out_start=args['filter_out'])
 
 #todo check paralogs and improve format
