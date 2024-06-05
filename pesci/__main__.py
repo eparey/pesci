@@ -1,10 +1,25 @@
 #!/usr/bin/env python3
 
 """
-python -m scCompare --matrix1 ../data/Cg_matrix_EM.csv --matrix2 ../data/Pc_matrix_EM.csv --clusters1 ../data/Cragig_cell_id.tsv --clusters2 ../data/Procro_cell_id.tsv --gene_families ../data/orthologous_pairs.txt -c 20 -sp1 Cragig -sp2 Procro
+pesci command-line entry point.
 
-python -m scCompare --matrix1 ../data/placozoa/Tadh_final_matrix.tsv --matrix2 ../data/placozoa/TrH2_final_matrix.tsv --clusters1 ../data/placozoa/Tadh.sc_annot.tsv --clusters2 ../data/placozoa/TrH2.sc_annot.tsv --gene_families ../data/placozoa/orthologous_pairs_ok.txt -c 20 -sp1 Tadh -sp2 TrH2
+Takes as input single-cell expression count matrices and cluster annotations for 2 species and uses
+the icc (iterative correlation coexpression) procedure to select orthologous gene pairs and compute
+expression similarity between clusters as a weighted correlation. 
+
+Examples::
+
+    $ pesci --matrix1 ../data/Cg_matrix_EM.csv --matrix2 ../data/Pc_matrix_EM.csv \
+      --clusters1 ../data/Cragig_cell_id.tsv --clusters2 ../data/Procro_cell_id.tsv \
+      --gene_families ../data/orthologous_pairs.txt -c 20 -sp1 Cragig -sp2 Procro
+
+    $ pesci --matrix1 ../data/placozoa/Tadh_final_matrix.tsv \
+            --matrix2 ../data/placozoa/TrH2_final_matrix.tsv \
+            --clusters1 ../data/placozoa/Tadh.sc_annot.tsv \
+            --clusters2 ../data/placozoa/TrH2.sc_annot.tsv \
+            --gene_families ../data/placozoa/orthologous_pairs_ok.txt -c 20 -sp1 Tadh -sp2 TrH2
 """
+
 import logging
 import os
 from pathlib import Path
@@ -83,17 +98,16 @@ else:
     nm.normalize(args['matrix2'], args['clusters2'], norm_mat2,
                       filter_out_start=args['filter_out'])
 
-#todo check paralogs and improve format
-ec_scores = args['output_dir']+'files/'+sp1+'-'+sp2+'_' + 'one-to-one-orthologs_correlation_scores.csv'
+ec_scores = args['output_dir']+'files/'+sp1+'-'+sp2+'_'+'1-to-1-orthologs_correlation_scores.csv'
 if os.path.exists(ec_scores) and os.path.getsize(ec_scores) > 0 and not args['force']:
     logger.warning('Orthologs expression conservation scores already computed %s'
                    ' and will be used. Use --force to recompute.', ec_scores)
 else:
-    icc.icc_main(norm_mat1, norm_mat2, args['gene_families'],
-                 args['output_dir']+'files/'+sp1+'-'+sp2+'_', max_combin=300, ncores=args['cores'],
-                 ono2one_only=args['ono2one_only'])
+    icc.icc(norm_mat1, norm_mat2, args['gene_families'],
+            args['output_dir']+'files/'+sp1+'-'+sp2+'_', max_combin=300, ncores=args['cores'],
+            ono2one_only=args['ono2one_only'])
 
 logger.info('Computing gene expression correlation between clusters of %s and %s', sp1, sp2)
-cp.compare_main(norm_mat1, norm_mat2, args['output_dir'], sp1, sp2)
+cp.compare(norm_mat1, norm_mat2, args['output_dir'], sp1, sp2)
 OUTDIR = args['output_dir']
 logger.info('Done! Results in %s', OUTDIR)

@@ -1,6 +1,6 @@
 """
-Module with functions to load an RNA-seq single-cell expression count matrix and precomputed cell clusters,
-and compute normalized fold-change expression per clusters.
+Module with functions to load an RNA-seq single-cell expression count matrix and precomputed
+cell clusters and compute normalized fold-change expression per clusters.
 """
 
 import sys
@@ -18,12 +18,13 @@ import pandas as pd
 
 import tqdm
 
-from . import pbar as pbar
+from . import pbar
 
 BAR_FORMAT = pbar.BAR_FORMAT
 
 logger = logging.getLogger(__name__)
 coloredlogs.install()
+
 
 def validate_input_format(expr_mat, clusters):
 
@@ -93,7 +94,7 @@ def load_matrix_tsv(inputfile, cores=1):
         cores (int, optional): Number of cores to use for loading
 
     Returns:
-        tuple: (scipy.sparse array, list, list) expression matrix, gene names (rows), cell barcodes (col)
+        tuple: (scipy.sparse array, list, list) expression matrix, genes (rows), cell barcodes (col)
     """
 
     dt.options.nthreads = cores
@@ -123,7 +124,7 @@ def to_expr_matrix(matrix, genes, cells, clusters):
     Simple named tuple object to represent a cell-by-gene expression matrix.
 
     Args:
-        matrix (scipy.sparse array): xxpression matrix
+        matrix (numpy.array | scipy.sparse array): expression matrix
         genes (list): list of genes in matrix rows (i.e. rownames)
         cells (lkist): list of cells in matrix columns (i.e. colnames)
         clusters (dict): for each cluster,corresponding cell barcodes (set)
@@ -164,7 +165,7 @@ def update_dict_of_set(mydict, key, val, filter_out_start=None):
     mydict[key].add(val)
 
 
-def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, filter_out_start=None, fmt='tsv', 
+def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, filter_out_start=None, fmt='tsv',
                            cores=1):
     """
     Loads expression matrix and clusters for 3 supported input formats (see validate_input_format).
@@ -244,6 +245,8 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, filter_out_start=
     else:
         logger.error('%s is not supported.', fmt)
         sys.exit(1)
+
+    logger.info('%s cells, %s genes, %s clusters.', len(cells), len(genes), len(clusters_dict))
     return to_expr_matrix(expr, genes, cells, clusters_dict)
 
 
@@ -267,7 +270,7 @@ def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=
     with open(cells_to_clusters, 'r', encoding='utf-8') as infile:
         for i, line in enumerate(infile):
             line = [i.strip('"') for i in line.strip().split('\t')]
-            if i == 0:
+            if i == 0: #TODO autodetect first colname missing
                 if colname not in line:
                     logger.error('Column %s not found in cluster annotation file %s', colname,
                                  cells_to_clusters)
@@ -298,23 +301,20 @@ def normalize_geom_mean_fc(expr_mat, bar_format=None):
 
     # For each cluster, compute gene expression as geometric mean over cells
     data = []
-    tot = 0
-
     all_clusts = sorted(expr_mat.clusters.keys())
 
     task = 'Computing gene expression per cluster'
     if bar_format:
         bar_format = bar_format.replace('task', task)
 
-    pbar = tqdm.tqdm(all_clusts, colour='#595c79', bar_format=bar_format)
-    pbar.unit = ""
-    pbar.refresh()
+    prbar = tqdm.tqdm(all_clusts, colour='#595c79', bar_format=bar_format)
+    prbar.unit = ""
+    prbar.refresh()
     mean_counts_per_cell = []
-    for j, cluster in enumerate(pbar):
+    for j, cluster in enumerate(prbar):
 
         #subset matrix to extract cells of the cluster only
         col_idx_cells = list(expr_mat.clusters[cluster])
-        tot += len(col_idx_cells)
         mat = expr_mat.matrix[:,col_idx_cells] #mat is a sparse matrix for RAM efficiency
 
         #compute mean counts per cell
@@ -332,9 +332,9 @@ def normalize_geom_mean_fc(expr_mat, bar_format=None):
         data.append(mat)
 
         #update progress bar on success
-        if j == len(pbar) - 1:
-            pbar.unit = "[done]"
-            pbar.refresh()
+        if j == len(prbar) - 1:
+            prbar.unit = "[done]"
+            prbar.refresh()
 
     #scale so that expression per cluster sum to 1000 (or less if avg umi per clust < 1000)
     ideal_count = min(1000, np.median(mean_counts_per_cell))
@@ -344,19 +344,30 @@ def normalize_geom_mean_fc(expr_mat, bar_format=None):
     medians = np.median(data, axis=1)
     medians = medians.reshape(len(medians), 1)
     data = (data + 0.05) / (medians + 0.05)
-    logger.info('%s cells, %s genes, %s clusters.', tot, len(data[:,0]), len(expr_mat.clusters)) #TODO this print should be above
     return data
 
 
 def normalize(expr_mat, cells_to_clusters, output, cores=1, filter_out_start=None,
               bar_format=BAR_FORMAT):
     """
-    Funtion to load the data (expression matrix and clusters) and compute per
+    Funtion to load the data (expression matrix and clusters) and compute per cluster normalized
+    gene expression (fold-change).
+
+    Args:
+        expr_mat (str): Expression matrix, either a tab-delimited file, cellranger directory or h5ad
+        cells_to_clusters (str): input cluster file name or name of cluster column in h5ad
+        output (str): output folder
+        cores (int, optional): Number of cores to use for loading
+        filter_out_start (str, optional): ignore clusters whose name start with provided string
+        bar_format (str, optional): tqdm bar format, use None for tqdm default
+
+    Returns:
+        dict: dict of set with key = cluster name, value = set of cell barcodes 
     """
     fm = validate_input_format(expr_mat, cells_to_clusters)
     matrix = load_expr_and_clusters(expr_mat, cells_to_clusters, fmt=fm,
-                                                             cores=cores,
-                                                             filter_out_start=filter_out_start)
-    norm_matrix = normalize_geom_mean_fc(matrix, bar_format=BAR_FORMAT)
+                                                                 cores=cores,
+                                                                 filter_out_start=filter_out_start)
+    norm_matrix = normalize_geom_mean_fc(matrix, bar_format=bar_format)
     df = pd.DataFrame(data=norm_matrix, index=matrix.genes, columns=sorted(matrix.clusters.keys()))
     df.to_csv(output, sep='\t')

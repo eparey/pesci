@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -168,27 +167,31 @@ def make_coexpressed_genes_table(result, mat1_ok, mat2_ok, genes1, genes2, ec, i
     df.to_csv(f'{outprefix}gene_coexpression_table.csv', sep='\t', index=False)
 
 
-def compare_main(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2'):
+def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2'):
     #load expression matrices
-    mat1, genes1, cell_types1 = icc.parse_matrix(matrix_a)
-    mat2, genes2, cell_types2 = icc.parse_matrix(matrix_b)
+    mat1 = icc.load_cluster_expression_matrix(matrix_a)
+    mat2 = icc.load_cluster_expression_matrix(matrix_b)
+
+    mat1, genes1, cell_types1 = mat1.matrix, mat1.genes, mat1.cells
+    mat2, genes2, cell_types2 = mat2.matrix, mat2.genes, mat2.cells
 
     #load weight to compute correlations between cell types
-    ortho_ec = outprefix +'files/'+sp1+'-'+sp2+'_' + 'one-to-one-orthologs_correlation_scores.csv'
+    ortho_ec = outprefix +'files/'+sp1+'-'+sp2+'_' + '1-to-1-orthologs_correlation_scores.csv'
     ortho, orthologs_ec = load_ec_ortho(ortho_ec)
-    para_ec = outprefix +'files/'+sp1+'-'+sp2+'_' + 'paralogs_correlation_scores.txt'
+    para_ec = outprefix +'files/'+sp1+'-'+sp2+'_' + 'orthologs_many_correlation_scores.txt'
     para, paralogs_ec = parse_ec_para(para_ec)
 
     ec = np.array(orthologs_ec + paralogs_ec)
     assert len(ec) == (len(para) + len(ortho))
     # logger.info(f'Loaded gene weigths ({len(ec)} genes)')
 
-    #filter matrix to retain 1-1 orthologs and selected best paralogs
+    #filter matrix to retain 1-1 orthologs and selected best for many-to-many / one-to-many
     genes1_ok = [i.split('+')[0] for i in ortho+para]
     genes2_ok = [i.split('+')[1] for i in ortho+para]
     mat1_ok = filter_matrix(mat1, genes1, genes1_ok)
     mat2_ok = filter_matrix(mat2, genes2, genes2_ok)
 
+    #TODO: remove this at the end when we are sure it's working as expected (unit tests needed)
     # df = pd.DataFrame(data=mat1_ok[0:,0:], index=[i.split('+')[0] for i in ortho+para],
     #                   columns=[sp1+'|'+i for i in cell_types1])
     # df.to_csv(outprefix + 'file/' + Path(matrix_a).stem + '_orthologs.tsv', sep='\t')
@@ -222,17 +225,3 @@ def compare_main(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2'):
     # with open(out_genes, 'w') as out:
     #     for pair in homologs:
     #         out.write(pair+'\n')
-
-    # out_genes = outprefix+f'top_genes.txt'
-    # with open(out_genes, 'w') as out:
-    #     for i in range(len(cell_types2)):
-    #         for j in range(len(cell_types1)):
-    #             top = tops[i, j]
-    #             out.write(f'{cell_types1[j]} {sp1} - {cell_types2[i]} {sp2}\n')
-    #             for k in range(len(top[0])):
-    #                 idx, v1 , v2, w, score = top[0][k], top[1][k], top[2][k], top[3][k], top[4][k]
-    #                 homologs = ortho+para
-    #                 # print(homologs)
-    #                 genes = homologs[idx]
-    #                 out.write(f'{genes} {v1} {v2} {w} {score}\n')
-    #             out.write(f'//\n')

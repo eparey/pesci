@@ -2,6 +2,8 @@
 Global definition for tqdm progress bar format.
 """
 
+import sys
+import os
 
 def supports_color():
     """
@@ -15,7 +17,7 @@ def supports_color():
     is_a_tty = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
     return supported_platform and is_a_tty
 
-if supports_color:
+if supports_color():
     BAR_FORMAT = '{percentage:3.0f}% |{bar:50}| task \x1B[1;32m{unit}'
 else:
     BAR_FORMAT = '{percentage:3.0f}% |{bar:50}| task {unit}'
