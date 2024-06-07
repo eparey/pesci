@@ -191,6 +191,7 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, filter_out_start=
         expr, genes, cells = load_matrix_tsv(expr_mat, cores)
 
         #filter out genes with no/very low expression
+        logger.info('Filtering out lowly-expressed genes (total umi < %s)', min_counts)
         idx_genes_to_keep = np.where(np.sum(expr, axis=1) >= min_counts)[0]
         genes = [genes[i] for i in idx_genes_to_keep]
         expr = expr[idx_genes_to_keep,:]
@@ -207,6 +208,7 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, filter_out_start=
         expr = sc.read_10x_mtx(expr_mat)
 
         #filter out genes with no/very low expression
+        logger.info('Filtering out lowly-expressed genes (total umi < %s)', min_counts)
         sc.pp.filter_genes(expr, min_counts=min_counts, inplace=True)
         genes = expr.var
         cells = expr.obs
@@ -228,6 +230,8 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, filter_out_start=
 
         #TODO check it does the same as expr.sum(axis = 1) >= 10
         sc.pp.filter_genes(expr, min_counts=min_counts, inplace=True)
+        logger.info('Filtering out lowly-expressed genes (total umi < %s)', min_counts)
+
         genes = expr.var.index
         cells = expr.obs.index
 

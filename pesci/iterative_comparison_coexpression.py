@@ -7,6 +7,7 @@ for many-to-many or 1-to-many orthologs (pair with the highest co-expression con
 import sys
 import logging
 
+import random
 import itertools
 
 import multiprocessing
@@ -34,7 +35,7 @@ coloredlogs.install()
 def init_ec(mat1, mat2):
 
     """
-    Initializes the expression conservation score (EC score), using unweighted orthologs
+    Initializes the expression conservation scores (EC scores), using unweighted orthologs
     co-correlation.
 
     mat1 and mat2 should be expression correlation matrices of the same size (ngenes * ngenes) with
@@ -57,7 +58,7 @@ def init_ec(mat1, mat2):
 def init_ec_optimized_einsum(mat1, mat2):
 
     """
-    Initializes the expression conservation score (EC score), using unweighted orthologs
+    Initializes the expression conservation scores (EC scores), using unweighted orthologs
     co-correlation. This is the same as init_ec() but using numpy einsum for better performance
     (to the cost of a decreased readability).
 
@@ -96,8 +97,8 @@ def init_ec_optimized_einsum(mat1, mat2):
 def update_ec(mat1, mat2, prev_ec):
 
     """
-    Updates the expression conservation score (EC score), using the ICC procedure
-    (Iterative Correlation of coexpression).
+    Updates the expression conservation scores (EC scores), using the ICC procedure
+    (Iterative Comparison of coexpression).
 
     mat1 and mat2 should be expression correlation matrices of the same size (ngenes * ngenes) with
     genes in the same order in both matrices (and same order as the ec vector).
@@ -129,12 +130,12 @@ def update_ec(mat1, mat2, prev_ec):
 def update_ec_optimized_einsum(mat1, mat2, prev_ec):
 
     """
-    Update the expression conservation score (EC score) from a previous iteration.
+    Update the expression conservation scores (EC scores) from a previous iteration.
     Same as update_ec() but using numpy einsum for better performance (to the cost of a decreased
     readability).
 
     mat1 and mat2 should be expression correlation matrices of the same size (ngenes * ngenes) with
-    genes in the same order in both matrices (and same order as the ec vector).
+    genes in the same order in both matrices (and same order in the ec vector).
 
     Args:
         mat1, mat2 (numpy.array): orthologs correlation matrix from species 1 and 2 respectively
@@ -158,9 +159,11 @@ def update_ec_optimized_einsum(mat1, mat2, prev_ec):
     cov12 = np.einsum("ij,ij->ij", mat1_m, mat2_m, optimize='optimal')
     wcov12 = np.einsum("ji,ij->j", wmat, cov12, optimize='optimal') / sum(prev_ec)
 
+    #weighted variance
     cov1 = np.einsum("ij,ij->ij", mat1_m, mat1_m, optimize='optimal')
     wcov1 = np.einsum("ji,ij->j", wmat, cov1, optimize='optimal') / sum(prev_ec)
 
+    #weighted variance
     cov2 = np.einsum("ij,ij->ij", mat2_m, mat2_m, optimize='optimal')
     wcov2 = np.einsum("ji,ij->j", wmat, cov2, optimize='optimal') / sum(prev_ec)
 
@@ -176,7 +179,7 @@ def update_ec_until_convergence(mat1, mat2, ec, max_iter=100):
 
     """
     Iteratively updates the expression conservation score (EC score) using the ICC procedure
-    (Iterative Correlation of coexpression) until convergence or max_iter is reach.
+    (Iterative Comparison of coexpression) until convergence or max_iter is reached.
 
     mat1 and mat2 should be expression correlation matrices of the same size (ngenes * ngenes) with
     genes in the same order in both matrices (and same order as the ec vector).
@@ -184,7 +187,7 @@ def update_ec_until_convergence(mat1, mat2, ec, max_iter=100):
     Args:
         mat1, mat2 (numpy.array): orthologs correlation matrix from species 1 and 2 respectively
         ec (numpy.array): initialized ec score vector
-        max_iter (int, optional): maximum iteration
+        max_iter (int, optional): maximum number of iterations
 
     Returns:
         numpy.array: vector with EC scores
@@ -208,9 +211,9 @@ def compute_expression_conservation(matrix_sp_a, matrix_sp_b):
 
     """
     Compute expression conservation score (EC score) using the ICC procedure
-    (Iterative Correlation of coexpression) until convergence or max_iter is reach.
+    (Iterative Comparison of coexpression) until convergence or max_iter is reach.
 
-    mat1 and mat2 should be expression matrices with the same number of rows (n genes) with
+    Inputs should be expression matrices with the same number of rows (n genes), and with
     genes in the same order in both matrices.
 
     Args:
@@ -251,9 +254,11 @@ def column_wise_wcorr_einsum(mat1, mat2, w):
         numpy.array: matrix (k, l) weighted pearson correlation coefficient for all column pairs
     """
 
-    #n variable is unused but it helps readability
-    (n, k) = mat1.shape  # n genes k clust
-    (n, l) = mat2.shape  # n genes l clust
+    (n1, k) = mat1.shape  # n genes k clust
+    (n2, l) = mat2.shape  # n genes l clust
+
+    if n1 != n2:
+        logger.error('Input matrices do not have the same number of rows.')
 
     wmat1 = np.tile(w, (k, 1)) #repeat weight vector k times for matrix operations
     wmat2 = np.tile(w, (l, 1)) #repeat weight vector l times for matrix operations
@@ -284,18 +289,27 @@ def column_wise_wcorr_einsum(mat1, mat2, w):
     return res.clip(min=0)
 
 
-def load_orthologs(input_file, genes_sp_a, genes_sp_b):
+def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
 
     """
     Load orthologs gene pairs from tab-delimited input file (one pair per line). 
 
     Args:
-        mat1, mat2 (numpy.array): orthologs expression matrix from species 1 and 2 respectively
-        w (numpy.array): weight vector
+        input_file (str): path to input orthology file
+        genes_sp_a, genes_sp_b (dict): genes in expression matrix of sp1 and sp2, respectively,
+                                       after filtering.
+        random_if (str, optional): set this param to trigger a randomization of orthologies
+                                  (useful to estimate level of expression similarity expected by
+                                  chance).
 
     Returns:
         (list, list): list of one2one orthologs and list many-to-many / many-to-one orthologs, 
                       each list is a list of tuple (genes in sp1, genes in species 2).
+
+    Note: Genes from species 1 and species 2 are considered after filtering out lowly-expressed
+          genes, this means that some many-to-many orthologs would be considered one-to-one if other
+          orthologs were filtered out. Disable filtering (set min_counts to 0) in pesci to avoid
+          this.
     """
 
     #load all orthologous pairs
@@ -329,6 +343,14 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b):
             tmp_genes_a = genes.intersection(genes_sp_a)
             tmp_genes_b = genes.intersection(genes_sp_b)
             many_ortho.append((tuple(tmp_genes_a), tuple(tmp_genes_b)))
+
+    #randomize orthologies if requested
+    if random_id:
+        logger.info('Randomizing gene orthologies')
+        all_genes2 = random.sample([i[1] for i in one2one], len(one2one))
+        one2one = [(i[0], j) for (i, j) in zip(one2one, all_genes2)]
+        all_genes2 = random.sample([i[1] for i in many_ortho], len(many_ortho))
+        many_ortho = [(i[0], j) for (i, j) in zip(many_ortho, all_genes2)]
 
     return one2one, many_ortho
 
@@ -365,7 +387,7 @@ def load_cluster_expression_matrix(input_file):
     return expr
 
 
-def init_worker():
+def __init_worker():
     """
     Initialisation of worker for parallel operations
     """
@@ -380,7 +402,7 @@ def worker_add_gene_pairs(manyortho, a, b, mat1, mat2, max_combin):
         manyortho (list of tuples): lits of sp1 - sp2 gene pairs that are many to many orthologs.
         a, b (numpy.array): gene - cluster expression matrix for the randomly selected subset
                             of 1-to-1 orthologs, for sp1 and sp2 respectively.
-        mat1, mat2 (tuple): tuple with gene - cluster expression matrix + list of genes (rows)
+        mat1, mat2 (tuple): tuple with full gene - cluster expression matrix + list of genes (rows)
                             for sp1 and sp2, respectively
         max_combin (int): maximum accepted number or pairwise combinations, massively multigeneic
                           families will be skipped.
@@ -468,14 +490,15 @@ def write_ec_manyortho(results, out_many, out_skipped):
         for i in results:
             if not i.startswith('skipped'):
                 out.write(i)
-                nbskipped += 1
+                nbmany += 1
             else:
                 out2.write(i)
-                nbmany += 1
+                nbskipped += 1
+
     return nbmany, nbskipped
 
 
-def icc(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
+def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300, random_id='',
         ncores=1, batch_size=10, ono2one_only=False, seed=None, bar_format=BAR_FORMAT):
 
     """
@@ -486,10 +509,13 @@ def icc(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
     Args:
         matrix_file_a, matrix_file_b (str): Tab-delimited gene - cluster expression (FC)
                                             matrix files for species 1 and 2, respectively
-        families_file (str): file with orthologous gene pairs (tab-delimited, 1 pair per line)
+        orthology_file (str): file with orthologous gene pairs (tab-delimited, 1 pair per line)
         outprefix (str): prefix for output files
         max_combin (int, optional): maximum accepted number or pairwise combinations,
                                     massively multigeneic families will be skipped.
+        random_id (str, optional): set param to specify that orthologs should be randomized
+                                   (results will be saved in a random_id subfolder,
+                                    so consider setting random1 or random2, ...etc)
         ncores (int, optional) number of cores to use
         batch_size (int, optional): size of batch for each parallel job
         ono2one_only (bool, optional): do not select best pairs for many-to-many / one-to-many,
@@ -497,6 +523,10 @@ def icc(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
         seed (int, optional): random seed, use for reproducible results
         bar_format (str, optional): tqdm bar format, use None for tqdm default
     """
+
+    if seed:
+        np.random.seed(seed)
+        random.seed(seed)
 
     #Load gene - cluster expression matrices (Fold-change)
     logger.info('Loading gene-cluster expression matrices')
@@ -506,11 +536,12 @@ def icc(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
 
     # Susbet matrices to retain 1-1 orthologs only
     logger.info('Loading gene orthologies')
-    one2one, manyortho = load_orthologs(families_file, set(mat1.genes), set(mat2.genes))
+    one2one, manyortho = load_orthologs(orthology_file, set(mat1.genes), set(mat2.genes),
+                                        random_id=random_id)
+
     one2one_a = [mat1.genes[i[0]] for i in one2one]
     one2one_b = [mat2.genes[i[1]] for i in one2one]
-    a = mat1.matrix[one2one_a,:]
-    b = mat2.matrix[one2one_b,:]
+    a, b = mat1.matrix[one2one_a,:], mat2.matrix[one2one_b,:]
     logger.info('Found %s one-to-one orthologs', len(one2one_a))
 
     if len(one2one_a) < 1000:
@@ -522,7 +553,7 @@ def icc(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
     expr_conservation_orthologs = compute_expression_conservation(a, b)
 
     write_ec_one2one(one2one, expr_conservation_orthologs,
-                     outprefix + '1-to-1-orthologs_correlation_scores.tsv')
+                     outprefix + '_1-to-1-orthologs_correlation_scores.tsv')
 
 
     if not ono2one_only:
@@ -532,19 +563,16 @@ def icc(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
 
         try:
 
-            pool = multiprocessing.Pool(ncores, init_worker) #, maxtasksperchild=200
             og_batches = [manyortho[i:i + batch_size] for i in range(0, len(manyortho), batch_size)]
-
-            if seed:
-                np.random.seed()
 
             idx_random = np.random.choice(a.shape[0], 1000, replace=False)
 
-            a = a[idx_random, :]
-            b = b[idx_random, :]
+            a, b = a[idx_random, :], b[idx_random, :]
 
             mat1 = (mat1.matrix, mat1.genes)
             mat2 = (mat2.matrix, mat2.genes)
+
+            pool = multiprocessing.Pool(ncores, __init_worker)
 
             jobs = [pool.apply_async(worker_add_gene_pairs, args=(batch, a, b, mat1, mat2,
                                                                   max_combin))
@@ -576,9 +604,9 @@ def icc(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
         logger.info('Using 1-to-1 orthologs only')
 
 
-    nmany, nskip = write_ec_manyortho(async_res, outprefix+'orthologs_many_correlation_scores.txt',
-                                      outprefix+'skipped_ogs.txt')
+    nmany, nskip = write_ec_manyortho(async_res, outprefix+'_orthologs_many_correlation_scores.txt',
+                                      outprefix+'_skipped_ogs.txt')
 
     logger.info('Added %s many-to-many / one-to-many / many-to-one, %s multigenic families skipped.'
                 ' Total retained genes for cross-species comparison: %s genes.', nmany, nskip,
-                 nmany+nskip)
+                 nmany+len(one2one_a))
