@@ -251,6 +251,7 @@ def column_wise_wcorr_einsum(mat1, mat2, w):
         numpy.array: matrix (k, l) weighted pearson correlation coefficient for all column pairs
     """
 
+    #n variable is unused but it helps readability
     (n, k) = mat1.shape  # n genes k clust
     (n, l) = mat2.shape  # n genes l clust
 
@@ -365,21 +366,38 @@ def load_cluster_expression_matrix(input_file):
 
 
 def init_worker():
+    """
+    Initialisation of worker for parallel operations
+    """
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-def worker_add_gene_pairs(paralogs, a, b, mat1, mat2, genes1, genes2, max_combin):
+def worker_add_gene_pairs(manyortho, a, b, mat1, mat2, max_combin):
 
     """
-    Worker to select best gene pairs for many-to-many or 1-to-many orthologs.
+    Selects the best gene pairs (most conserved expression) for many-to-many or 1-to-many orthologs.
 
+    Args:
+        manyortho (list of tuples): lits of sp1 - sp2 gene pairs that are many to many orthologs.
+        a, b (numpy.array): gene - cluster expression matrix for the randomly selected subset
+                            of 1-to-1 orthologs, for sp1 and sp2 respectively.
+        mat1, mat2 (tuple): tuple with gene - cluster expression matrix + list of genes (rows)
+                            for sp1 and sp2, respectively
+        max_combin (int): maximum accepted number or pairwise combinations, massively multigeneic
+                          families will be skipped.
+
+    Returns:
+        list of str: list of size two, (1) tab-separated tested gene pairs (2) tab-seprated 
+                     corresponding scores 
     """
 
     try:
 
         res = []
-        for og in paralogs:
+        mat1, genes1 = mat1
+        mat2, genes2 = mat2
+        for og in manyortho:
 
-            #list all possible pairings (create list of tuples)
+            #list all orthologs pairings (create list of tuples)
             combin = [(i, j) for (i, j) in list(itertools.product(og[0], og[1])) if i in genes1
                       and j in genes2]
 
@@ -388,22 +406,24 @@ def worker_add_gene_pairs(paralogs, a, b, mat1, mat2, genes1, genes2, max_combin
                            f'{len(combin)} combinations\n')
 
             else:
-                #add all 'a' to matrix a (with duplicates to accomodate all possible pairings)
-                paralogs_a = [genes1[i[0]] for i in combin]
+                #add all sp1 genes to matrix1 (with duplicates to accomodate all possible pairings)
+                manyortho_a = [genes1[i[0]] for i in combin]
 
-                a_w_paralogs_tmp = np.concatenate((a, mat1[paralogs_a,:]), axis=0)
+                a_w_manyortho_tmp = np.concatenate((a, mat1[manyortho_a,:]), axis=0)
 
-                #add all 'b' to matrix b (with duplicates to accomodate all possible pairings)
-                paralogs_b = [genes2[i[1]] for i in combin]
+                #add all sp2 genes to matrix2 (with duplicates to accomodate all possible pairings)
+                manyortho_b = [genes2[i[1]] for i in combin]
 
-                b_w_paralogs_tmp = np.concatenate((b, mat2[paralogs_b,:]), axis=0)
+                b_w_manyortho_tmp = np.concatenate((b, mat2[manyortho_b,:]), axis=0)
 
-                #compute expresseion conservation with all possible 1-1 groupings of paralogs
-                expr_cons_w_paralogs_current = compute_expression_conservation(a_w_paralogs_tmp,
-                                                                               b_w_paralogs_tmp)
-                scores = '\t'.join([str(i) for i in expr_cons_w_paralogs_current[1000:]])
+                #compute expression conservation for all possible pairings
+                expr_cons_w_manyortho_current = compute_expression_conservation(a_w_manyortho_tmp,
+                                                                                b_w_manyortho_tmp)
+
+                scores = '\t'.join([str(i) for i in expr_cons_w_manyortho_current[1000:]])
                 tmp = '\t'.join(['+'.join(comb) for comb in combin])+ '\n' + scores +'\n'
                 res.append(tmp)
+
         return res
 
     except Exception:
@@ -411,37 +431,18 @@ def worker_add_gene_pairs(paralogs, a, b, mat1, mat2, genes1, genes2, max_combin
         raise
 
 
+def write_ec_one2one(one2one, expr_conservation_orthologs, out_ortho):
 
-def icc(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
-        ncores=1, batch_size=5, ono2one_only=False, seed=None, bar_format=BAR_FORMAT):
+    """
+    Writes scores to a tab-seprated file.
 
-    logger.info('Loading gene-cluster expression matrices')
+    Args:
+        ono2one (list): gene names (column names of expr_conservation_orthologs)
+        expr_conservation_orthologs (numpy.array): vector with EC scores for each gene, genes in
+                                                   the same order as in one2one
+        out_ortho (int): name of output file
+    """
 
-    mat1 = load_cluster_expression_matrix(matrix_file_a)
-
-    mat2 = load_cluster_expression_matrix(matrix_file_b)
-
-
-    # Susbet the matrix to retain only 1-1 orthologs
-    logger.info('Parsing gene families')
-    one2one, manyortho = load_orthologs(families_file, set(mat1.genes), set(mat2.genes))
-
-    one2one_a = [mat1.genes[i[0]] for i in one2one]
-    one2one_b = [mat2.genes[i[1]] for i in one2one]
-    a = mat1.matrix[one2one_a,:]
-    b = mat2.matrix[one2one_b,:]
-    n = len(one2one_a)
-    logger.info('Found %s one-to-one orthologs', n)
-
-    if n < 1000:
-        logger.error('Too few one-to-one orthologs, please check your orthology file.')
-        sys.exit(1)
-
-    # Compute orthologs co-expression conservation
-    logger.info('Computing co-expression conservation for one-to-one orthologs')
-    expr_conservation_orthologs = compute_expression_conservation(a, b)
-
-    out_ortho = outprefix + '1-to-1-orthologs_correlation_scores.csv'
     with open(out_ortho, 'w', encoding = "utf-8") as out:
         for i, pair in enumerate(one2one):
             sp1 = pair[0]
@@ -449,9 +450,86 @@ def icc(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
             score = expr_conservation_orthologs[i]
             out.write('\t'.join([sp1, sp2, str(score)])+'\n')
 
-    logger.info('Selecting best pair for many-to-many / one-to-many / many-to-one orthologs')
-    async_res = []
+
+def write_ec_manyortho(results, out_many, out_skipped):
+
+    """
+    Writes scores to a tab-seprated file.
+
+    Args:
+        results (list): list with ec scores for all pairs of many-to-many / many-to-one orthologs
+        out_many (numpy.array): name of output file to write scores to
+        out_skipped (int): name of output file to write skipped multigenic families
+    """
+
+    nbmany, nbskipped = 0, 0
+    with open(out_many, 'w', encoding='utf-8') as out,\
+         open(out_skipped, 'w', encoding='utf-8') as out2:
+        for i in results:
+            if not i.startswith('skipped'):
+                out.write(i)
+                nbskipped += 1
+            else:
+                out2.write(i)
+                nbmany += 1
+    return nbmany, nbskipped
+
+
+def icc(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
+        ncores=1, batch_size=10, ono2one_only=False, seed=None, bar_format=BAR_FORMAT):
+
+    """
+    Use the ICC approach to: (i) compute expression conservation scores for 1-to-1 orthologs, (ii)
+    select best pairs (i.e. most conserved expression) for many-to-many / many-to-one / one-to-many
+    orthologs.
+
+    Args:
+        matrix_file_a, matrix_file_b (str): Tab-delimited gene - cluster expression (FC)
+                                            matrix files for species 1 and 2, respectively
+        families_file (str): file with orthologous gene pairs (tab-delimited, 1 pair per line)
+        outprefix (str): prefix for output files
+        max_combin (int, optional): maximum accepted number or pairwise combinations,
+                                    massively multigeneic families will be skipped.
+        ncores (int, optional) number of cores to use
+        batch_size (int, optional): size of batch for each parallel job
+        ono2one_only (bool, optional): do not select best pairs for many-to-many / one-to-many,
+                                       use only one-to-one orthologs
+        seed (int, optional): random seed, use for reproducible results
+        bar_format (str, optional): tqdm bar format, use None for tqdm default
+    """
+
+    #Load gene - cluster expression matrices (Fold-change)
+    logger.info('Loading gene-cluster expression matrices')
+    mat1 = load_cluster_expression_matrix(matrix_file_a)
+    mat2 = load_cluster_expression_matrix(matrix_file_b)
+
+
+    # Susbet matrices to retain 1-1 orthologs only
+    logger.info('Loading gene orthologies')
+    one2one, manyortho = load_orthologs(families_file, set(mat1.genes), set(mat2.genes))
+    one2one_a = [mat1.genes[i[0]] for i in one2one]
+    one2one_b = [mat2.genes[i[1]] for i in one2one]
+    a = mat1.matrix[one2one_a,:]
+    b = mat2.matrix[one2one_b,:]
+    logger.info('Found %s one-to-one orthologs', len(one2one_a))
+
+    if len(one2one_a) < 1000:
+        logger.error('Too few one-to-one orthologs, please check your orthology file.')
+        sys.exit(1)
+
+    # Compute 1-1 orthologs co-expression conservation
+    logger.info('Computing co-expression conservation for one-to-one orthologs')
+    expr_conservation_orthologs = compute_expression_conservation(a, b)
+
+    write_ec_one2one(one2one, expr_conservation_orthologs,
+                     outprefix + '1-to-1-orthologs_correlation_scores.tsv')
+
+
     if not ono2one_only:
+
+        #Select best pairs for many-many / one-many
+        logger.info('Selecting best pair for many-to-many / one-to-many / many-to-one orthologs')
+
         try:
 
             pool = multiprocessing.Pool(ncores, init_worker) #, maxtasksperchild=200
@@ -465,22 +543,24 @@ def icc(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
             a = a[idx_random, :]
             b = b[idx_random, :]
 
-            jobs = [pool.apply_async(worker_add_gene_pairs, args=(batch, a, b, mat1.matrix,
-                                                                  mat2.matrix, mat1.genes,
-                                                                  mat2.genes, max_combin))
+            mat1 = (mat1.matrix, mat1.genes)
+            mat2 = (mat2.matrix, mat2.genes)
+
+            jobs = [pool.apply_async(worker_add_gene_pairs, args=(batch, a, b, mat1, mat2,
+                                                                  max_combin))
                                                                   for batch in og_batches]
             pool.close()
 
-            task = 'Homologs selection'
             if bar_format:
-                bar_format = bar_format.replace('task', task)
+                bar_format = bar_format.replace('task', 'Homologs selection')
 
             prbar = tqdm.tqdm(jobs, colour='#595c79', bar_format=bar_format)
             prbar.unit = ""
             prbar.refresh()
+
+            async_res = []
             for i, job in enumerate(prbar):
                 async_res += job.get()
-                # print(len(async_res))
                 if i == len(prbar) - 1:
                     prbar.unit = "[done]"
                     prbar.refresh()
@@ -492,20 +572,13 @@ def icc(matrix_file_a, matrix_file_b, families_file, outprefix, max_combin=300,
             pool.join()
             sys.exit(1)
 
+    else:
+        logger.info('Using 1-to-1 orthologs only')
 
-    out_para = outprefix + 'orthologs_many_correlation_scores.txt'
-    out_skipped = outprefix + 'skipped_ogs.txt'
-    h = 0
-    k = 0
-    with open(out_para, 'w', encoding='utf-8') as out,\
-         open(out_skipped, 'w', encoding='utf-8') as out2:
-        for i in async_res:
-            if not i.startswith('skipped'):
-                out.write(i)
-                h += 1
-            else:
-                out2.write(i)
-                k += 1
 
-    logger.info('Added %s homologs, %s multigenic families skipped. Total retained genes for '
-                'cross-species comparison: %s genes.', h, k, h+n)
+    nmany, nskip = write_ec_manyortho(async_res, outprefix+'orthologs_many_correlation_scores.txt',
+                                      outprefix+'skipped_ogs.txt')
+
+    logger.info('Added %s many-to-many / one-to-many / many-to-one, %s multigenic families skipped.'
+                ' Total retained genes for cross-species comparison: %s genes.', nmany, nskip,
+                 nmany+nskip)

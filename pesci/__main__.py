@@ -50,7 +50,7 @@ parser.add_argument('-f', '--gene_families', type=str, required=True, help="gene
 
 parser.add_argument('-c', '--cores', type=int, required=False, default=1)
 
-parser.add_argument('-o', '--output_dir', type=str, required=False, default="out_scCompare/")
+parser.add_argument('-o', '--output_dir', type=str, required=False, default="output_pesci/")
 
 parser.add_argument('-sp1', '--label_species1', type=str, required=False, default="sp1")
 
@@ -98,7 +98,7 @@ else:
     nm.normalize(args['matrix2'], args['clusters2'], norm_mat2,
                       filter_out_start=args['filter_out'])
 
-ec_scores = args['output_dir']+'files/'+sp1+'-'+sp2+'_'+'1-to-1-orthologs_correlation_scores.csv'
+ec_scores = args['output_dir']+'files/'+sp1+'-'+sp2+'_'+'1-to-1-orthologs_correlation_scores.tsv'
 if os.path.exists(ec_scores) and os.path.getsize(ec_scores) > 0 and not args['force']:
     logger.warning('Orthologs expression conservation scores already computed %s'
                    ' and will be used. Use --force to recompute.', ec_scores)

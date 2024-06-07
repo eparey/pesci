@@ -196,7 +196,7 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, filter_out_start=
         expr = expr[idx_genes_to_keep,:]
 
         #load clusters
-        clusters_dict = load_cell_clust(clusters,  filter_out_start=filter_out_start)
+        clusters_dict = load_cell_clust(clusters, filter_out_start=filter_out_start)
 
     #Load count matrix in a cellranger output directory
     elif fmt == 'cellranger':
@@ -301,21 +301,19 @@ def normalize_geom_mean_fc(expr_mat, bar_format=None):
     Computes normalized gene expression per cluster
 
     Args:
-        cells_to_clusters (str): Input file name
-        colname (str, optional): Name of the column with clusters
-        filter_out_start (str, optional): ignore clusters whose name start with provided string
+        expr_mat (str): Input file name
+        bar_format (str, optional): tqdm bar format, use None for tqdm default
 
     Returns:
-        dict: dict of set with key = cluster name, value = set of cell barcodes 
+        numpy.array: normalized gene expression per cluster (Fold-change)
     """
 
     # For each cluster, compute gene expression as geometric mean over cells
     data = []
     all_clusts = sorted(expr_mat.clusters.keys())
 
-    task = 'Computing gene expression per cluster'
     if bar_format:
-        bar_format = bar_format.replace('task', task)
+        bar_format = bar_format.replace('task', 'Computing gene expression per cluster')
 
     prbar = tqdm.tqdm(all_clusts, colour='#595c79', bar_format=bar_format)
     prbar.unit = ""
@@ -366,13 +364,11 @@ def normalize(expr_mat, cells_to_clusters, output, cores=1, filter_out_start=Non
     Args:
         expr_mat (str): Expression matrix, either a tab-delimited file, cellranger directory or h5ad
         cells_to_clusters (str): input cluster file name or name of cluster column in h5ad
-        output (str): output folder
+        output (str): output file for nornalized gene-cluster expression matrix
         cores (int, optional): Number of cores to use for loading
         filter_out_start (str, optional): ignore clusters whose name start with provided string
         bar_format (str, optional): tqdm bar format, use None for tqdm default
 
-    Returns:
-        dict: dict of set with key = cluster name, value = set of cell barcodes 
     """
     fm = validate_input_format(expr_mat, cells_to_clusters)
     matrix = load_expr_and_clusters(expr_mat, cells_to_clusters, fmt=fm,
