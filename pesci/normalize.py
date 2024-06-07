@@ -270,13 +270,23 @@ def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=
     with open(cells_to_clusters, 'r', encoding='utf-8') as infile:
         for i, line in enumerate(infile):
             line = [i.strip('"') for i in line.strip().split('\t')]
-            if i == 0: #TODO autodetect first colname missing
+            if i == 0:
+                nb_col_header = len(line)
                 if colname not in line:
                     logger.error('Column %s not found in cluster annotation file %s', colname,
                                  cells_to_clusters)
                     sys.exit(1)
                 clust_col = line.index(colname)
             else:
+                nb_col = len(line)
+                if i == 1:
+                    if nb_col == (nb_col_header + 1): #autodetect if index label is not in header
+                        clust_col = clust_col + 1
+
+                if nb_col not in [nb_col_header, nb_col_header + 1]:
+                    logger.error('Malformed cluster annotation file %s, '
+                                 'different number of columns in header and line %s',
+                                 cells_to_clusters, i)
                 cell = line[0]
                 clust_curr = line[clust_col]
                 update_dict_of_set(clust, clust_curr, cell, filter_out_start)

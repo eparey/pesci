@@ -9,7 +9,7 @@ expression similarity between clusters as a weighted correlation.
 
 Examples::
 
-    $ pesci --matrix1 ../data/Cg_matrix_EM.csv --matrix2 ../data/Pc_matrix_EM.csv \
+    $ pesci --matrix1 ../data/Cg_matrix_EM.tsv --matrix2 ../data/Pc_matrix_EM.tsv \
       --clusters1 ../data/Cragig_cell_id.tsv --clusters2 ../data/Procro_cell_id.tsv \
       --gene_families ../data/orthologous_pairs.txt -c 20 -sp1 Cragig -sp2 Procro
 
