@@ -86,6 +86,8 @@ parser.add_argument('--min_fc', type=float, help="minimum fold-change ot be cons
 parser.add_argument('--seed', type=int, help="Fix random seed to ensure reproducible results",
                               default=123)
 
+#TODO ADD MIN UMI FILTER
+#TODO ADD BROAD
 
 args = vars(parser.parse_args())
 
@@ -138,7 +140,7 @@ if os.path.exists(ec_scores) and os.path.getsize(ec_scores) > 0 and not args['fo
                    ' and will be used. Homologs selection will not be re-run either.'
                    ' Use --force to recompute.', ec_scores)
 else:
-    icc.icc(norm_mat1, norm_mat2, args['gene_families'], outprefix, max_combin=300,
+    icc.icc(norm_mat1, norm_mat2, args['orthologous_gene_pairs'], outprefix, max_combin=300,
             ncores=args['cores'], ono2one_only=args['ono2one_only'], random_id=args['random_id'],
             seed=args['seed'])
 
