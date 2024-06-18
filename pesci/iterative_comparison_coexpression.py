@@ -316,7 +316,10 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
     edges = []
     with open(input_file, 'r', encoding = "utf-8") as infile:
         for line in infile:
-            g1, g2 = line.strip().split('\t')
+            line = line.strip().split('\t')
+            if len(line) != 2:
+                continue
+            g1, g2 = line
             if g1 in genes_sp_a and g2 in genes_sp_b:
                 edges.append((g1, g2))
             elif g2 in genes_sp_a and g1 in genes_sp_b:
@@ -335,9 +338,10 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
         genes = set(component)
         if len(component) == 2:
             g1, g2 = genes
-            if g1 in genes_sp_b:
-                g1, g2 = g2, g1
-            one2one.append((g1, g2))
+            if g1 in genes_sp_a and g2 in genes_sp_b:
+                one2one.append((g1, g2))
+            if g1 in genes_sp_b and g2 in genes_sp_a:
+                one2one.append((g2, g1))
 
         else:
             tmp_genes_a = genes.intersection(genes_sp_a)
@@ -497,6 +501,64 @@ def write_ec_manyortho(results, out_many, out_skipped):
 
     return nbmany, nbskipped
 
+def parallel_select_homologs(a, b, mat1, mat2, manyortho, batch_size, ncores=1, max_combin=300,
+                             bar_format=BAR_FORMAT):
+    """
+    Use the ICC approach to select best pairs (i.e. most conserved expression) for
+    many-to-many / many-to-one / one-to-many orthologs.
+
+    Args:
+        a, b (numpy.array): gene cluster expression matrix for one-to-one orthologs in species 1 and
+                            species 2, respectively, (genes in same order in both)
+        mat1, mat2 (ExprMat namedtuple): whole expression matrix, genes and cluster for species 1
+                                         and species 2, respectively, (genes in same order in both)
+        manyortho (list): list of tuples with many-to-many / many-to-one / one-to-many orthologs
+        batch_size (int, optional): size of batch for each parallel job
+        ncores (int, optional) number of cores to use
+        max_combin (int, optional): maximum accepted number or pairwise combinations,
+                                    massively multigeneic families will be skipped.
+        bar_format (str, optional): tqdm bar format, use None for tqdm default
+    """
+
+    try:
+
+        og_batches = [manyortho[i:i + batch_size] for i in range(0, len(manyortho), batch_size)]
+
+        idx_random = np.random.choice(a.shape[0], 1000, replace=False)
+
+        a, b = a[idx_random, :], b[idx_random, :]
+
+        mat1 = (mat1.matrix, mat1.genes)
+        mat2 = (mat2.matrix, mat2.genes)
+
+        pool = multiprocessing.Pool(ncores, __init_worker)
+
+        jobs = [pool.apply_async(worker_add_gene_pairs, args=(batch, a, b, mat1, mat2,
+                                                              max_combin))
+                                                              for batch in og_batches]
+        pool.close()
+
+        if bar_format:
+            bar_format = bar_format.replace('task', 'Homologs selection')
+
+        prbar = tqdm.tqdm(jobs, colour='#595c79', bar_format=bar_format)
+        prbar.unit = ""
+        prbar.refresh()
+
+        async_res = []
+        for i, job in enumerate(prbar):
+            async_res += job.get()
+            if i == len(prbar) - 1:
+                prbar.unit = "[done]"
+                prbar.refresh()
+
+    except KeyboardInterrupt:
+        logger.info("Caught KeyboardInterrupt, terminating workers")
+        pool.terminate()
+        pool.join()
+        sys.exit(1)
+
+    return async_res
 
 def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300, random_id='',
         ncores=1, batch_size=10, ono2one_only=False, seed=None, bar_format=BAR_FORMAT):
@@ -533,7 +595,6 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
     mat1 = load_cluster_expression_matrix(matrix_file_a)
     mat2 = load_cluster_expression_matrix(matrix_file_b)
 
-
     # Susbet matrices to retain 1-1 orthologs only
     logger.info('Loading gene orthologies')
     one2one, manyortho = load_orthologs(orthology_file, set(mat1.genes), set(mat2.genes),
@@ -546,6 +607,7 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
 
     if len(one2one_a) < 1000:
         logger.error('Too few one-to-one orthologs, please check your orthology file.')
+        traceback.print_exc()
         sys.exit(1)
 
     # Compute 1-1 orthologs co-expression conservation
@@ -555,52 +617,15 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
     write_ec_one2one(one2one, expr_conservation_orthologs,
                      outprefix + '_1-to-1-orthologs_correlation_scores.tsv')
 
-
     if not ono2one_only:
 
         #Select best pairs for many-many / one-many
         logger.info('Selecting best pair for many-to-many / one-to-many / many-to-one orthologs')
-
-        try:
-
-            og_batches = [manyortho[i:i + batch_size] for i in range(0, len(manyortho), batch_size)]
-
-            idx_random = np.random.choice(a.shape[0], 1000, replace=False)
-
-            a, b = a[idx_random, :], b[idx_random, :]
-
-            mat1 = (mat1.matrix, mat1.genes)
-            mat2 = (mat2.matrix, mat2.genes)
-
-            pool = multiprocessing.Pool(ncores, __init_worker)
-
-            jobs = [pool.apply_async(worker_add_gene_pairs, args=(batch, a, b, mat1, mat2,
-                                                                  max_combin))
-                                                                  for batch in og_batches]
-            pool.close()
-
-            if bar_format:
-                bar_format = bar_format.replace('task', 'Homologs selection')
-
-            prbar = tqdm.tqdm(jobs, colour='#595c79', bar_format=bar_format)
-            prbar.unit = ""
-            prbar.refresh()
-
-            async_res = []
-            for i, job in enumerate(prbar):
-                async_res += job.get()
-                if i == len(prbar) - 1:
-                    prbar.unit = "[done]"
-                    prbar.refresh()
-
-
-        except KeyboardInterrupt:
-            logger.info("Caught KeyboardInterrupt, terminating workers")
-            pool.terminate()
-            pool.join()
-            sys.exit(1)
+        async_res = parallel_select_homologs(a, b, mat1, mat2, manyortho, batch_size, ncores=ncores,
+                                             max_combin=max_combin, bar_format=bar_format)
 
     else:
+        async_res = []
         logger.info('Using 1-to-1 orthologs only')
 
 

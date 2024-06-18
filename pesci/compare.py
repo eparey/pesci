@@ -4,6 +4,7 @@ species, using pearson weighted correlation and pre-computed gene weights.
 """
 
 import logging
+import pickle
 import collections
 
 import numpy as np
@@ -86,9 +87,64 @@ def filter_matrix(matrix, genedict, genes_to_keep):
     res = matrix[index_to_keep,:]
     return res
 
+def make_palette_for_broad(broad_file1, broad_file2, cell_types1, cell_types2):
+
+    """
+    Creates a color palette for broad annotations
+
+    Args:
+        broad_file1, broad_file2 (str): path to pickled dict giving cluster to broad correspondence
+                                        for species1 and species2, respectively
+        cell_types1, cell_types2 (list): list of clusters in species1 and species2, giving order in
+                                         heatmap
+    Returns:
+        tuple: lists of broad annotations for species1 and species2 in the same order as clusters,
+               and a dict with broad to color palette
+    """
+
+    #load dict that was pickled during input file loading
+    with open(broad_file1, 'rb') as infile:
+        broad1 = pickle.load(infile)
+
+    with open(broad_file2, 'rb') as infile:
+        broad2 = pickle.load(infile)
+
+    broad1 = {key:broad1[key] for key in broad1 if key in cell_types1}
+    broad2 = {key:broad2[key] for key in broad2 if key in cell_types2}
+    broad_all = [broad1[c] for c in cell_types1] + [broad2[c] for c in cell_types2]
+
+    unique_broad = sorted(list(set(broad_all)))
+
+    colors = sns.color_palette("Set3", 12) + sns.color_palette("tab20", 20)
+    palettedict = {}
+    if 'Unknown' in unique_broad or 'Other' in unique_broad:
+        if 'Unknown' in unique_broad:
+            palettedict['Unknown'] = colors[8]
+            del colors[8]
+        else:
+            palettedict['Other'] = colors[8]
+            del colors[8]
+
+    if 'Muscle' in unique_broad:
+        palettedict['Muscle'] = colors[3]
+        del colors[3]
+
+    if len(unique_broad) > len(colors):
+        logger.warning('Found over 32 broad cell type classes (%s), broad annotation will not be '
+                       'plotted.', len(unique_broad))
+        return None
+
+    for i, b in enumerate(unique_broad):
+        if b not in palettedict:
+            palettedict[b] = colors[i]
+        else:
+            i = i - 1
+
+    return broad1, broad2, palettedict
 
 def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='',
-                      reorder='None', threshold_for_plot=0, outformat='svg'):
+                      threshold_for_plot=0, outformat='svg', broad_file1=None, broad_file2=None,
+                      reorder='DiagKeep'):
     """
     Saves and plots heatmap showing expression comparisons between all clusters of sp1 and all
     clusters of sp2.
@@ -99,68 +155,11 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
         cell_types1, cell_types2 (list): list of clusters in rows (species2) and columns (species2)
         outprefix (str): prefix for output files
         sp1, sp2 (str, optional): (short)name of species 1 and species 2 (to label axes on matrix)
-        reorder #TODO
         threshold_for_plot (float, optional): set all result entry < threshold_for_plot to 0, to
                                               filter out possibly spurrious match, consider using
                                               pesci randomization to estimate threshold
         outformat (str, optional): format for saved figure (svg, png or pdf)
     """
-
-    # #FIXME #This does not work
-    # if reorder == 'Diag':
-    #     row_idx_final, col_idx_final = linear_sum_assignment(-result)
-    #     all_row = list(range(len(result[:,0])))
-    #     col_idx_final, row_idx_final = list(col_idx_final), list(row_idx_final)
-    #     # for idx in all_row:
-    #     #     if idx in row_idx:
-    #     #         i = list(row_idx).index(idx)
-    #     #         row_idx_final.append(idx)
-    #     #         col_idx_final.append(col_idx[i])
-
-    #     # print(row_idx, col_idx)
-    #     # row_idx, col_idx = list(row_idx), list(col_idx)
-    #     all_col = list(range(len(result[0,:])))
-
-    #     row_idx_final = row_idx_final + [i for i in all_row if i not in row_idx_final]
-    #     col_idx_final = col_idx_final + [i for i in all_col if i not in col_idx_final]
-    #     result = result[row_idx_final,:]
-    #     result = result[:,col_idx_final]
-    #     cell_types1 = [cell_types1[i] for i in col_idx_final]
-    #     cell_types2 = [cell_types2[i] for i in row_idx_final]
-
-    # if reorder == 'DiagKeep':
-    #     row_idx, col_idx = linear_sum_assignment(-result)
-    #     all_row = range(len(result[:,0]))
-    #     col_idx_final, row_idx_final = [], []
-    #     for idx in all_row:
-    #         if idx in row_idx:
-    #             i = list(row_idx).index(idx)
-    #             row_idx_final.append(idx)
-    #             col_idx_final.append(col_idx[i])
-
-    #     print(row_idx, col_idx)
-    #     row_idx, col_idx = list(row_idx), list(col_idx)
-    #     all_col = range(len(result[0,:]))
-
-    #     row_idx_final = row_idx_final + [i for i in all_row if i not in row_idx_final]
-    #     col_idx_final = col_idx_final + [i for i in all_col if i not in col_idx_final]
-    #     result = result[row_idx_final,:]
-    #     result = result[:,col_idx_final]
-    #     cell_types1 = [cell_types1[i] for i in col_idx_final]
-    #     cell_types2 = [cell_types2[i] for i in row_idx_final]
-
-    # if reorder == 'Clust':
-    #     #use clustermap to get a reordering
-    #     clustergrid = sns.clustermap(result)
-
-    #     row_idx_final = clustergrid.dendrogram_row.reordered_ind
-    #     col_idx_final = clustergrid.dendrogram_col.reordered_ind
-
-    #     result = result[row_idx_final,:]
-    #     result = result[:,col_idx_final]
-    #     cell_types1 = [cell_types1[i] for i in col_idx_final]
-    #     cell_types2 = [cell_types2[i] for i in row_idx_final]
-    #     plt.close('all')
 
     df = pd.DataFrame(data=result[0:,0:], columns=[sp2+'|'+i for i in cell_types2],
                       index=[sp1+'|'+i for i in cell_types1])
@@ -169,39 +168,86 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
     #try to get cells to be ~square
     if len(cell_types2) / len(cell_types1) > 1.25:
         fsize = (8, 6)
+        cratio = (0.006*3, 0.008*3)
     elif len(cell_types1) / len(cell_types2) > 1.25:
         fsize = (6, 8)
+        cratio = (0.008*3, 0.006*3)
     else:
         fsize = (8, 8)
+        cratio = (0.008*3, 0.008*3)
 
     result[result<threshold_for_plot] = 0
 
-    #TODO reorder rows and columns by broad annotation
+    row_colors, col_colors = None, None
+    if broad_file1 and broad_file2:
+        pal = make_palette_for_broad(broad_file1, broad_file2, cell_types1, cell_types2)
+        if pal:
+            broad1, broad2, paldict = pal
+            c1 = [broad1[i] for i in cell_types1]
+            c2 = [broad2[i] for i in cell_types2]
+
+            sorter1 = sorted(range(len(broad1)), key=c1.__getitem__)
+            cell_types1 = [list(cell_types1.keys())[i] for i in sorter1]
+            result = result[sorter1,:]
+
+            sorter2 = sorted(range(len(broad2)), key=c2.__getitem__)
+            cell_types2 = [list(cell_types2.keys())[i] for i in sorter2]
+            result = result[:,sorter2]
+
+            row_colors = [paldict[broad1[i]] for i in cell_types1]
+            col_colors = [paldict[broad2[i]] for i in cell_types2]
+
+    elif reorder == 'DiagKeep':
+        row_idx, col_idx = linear_sum_assignment(-result)
+        all_row = range(len(result[:,0]))
+        col_idx_final, row_idx_final = [], []
+        for idx in all_row:
+            if idx in row_idx:
+                i = list(row_idx).index(idx)
+                row_idx_final.append(idx)
+                col_idx_final.append(col_idx[i])
+
+        row_idx, col_idx = list(row_idx), list(col_idx)
+        all_col = range(len(result[0,:]))
+
+        row_idx_final = row_idx_final + [i for i in all_row if i not in row_idx_final]
+        col_idx_final = col_idx_final + [i for i in all_col if i not in col_idx_final]
+        result = result[row_idx_final,:]
+        result = result[:,col_idx_final]
+        cell_types2 = [list(cell_types2.keys())[i] for i in col_idx_final]
+        cell_types1 = [list(cell_types1.keys())[i] for i in row_idx_final]
 
 
-    #TODO: fix palette here if broad clusters are supplied 
-    # palette = sns.color_palette("Set3", 12) + sns.color_palette("tab20", 20) +\
-    #           sns.color_palette("tab20b", 20)
-    # row_colors = [palette[i] for i, _ in enumerate(cell_types1)]
-    # col_colors = 
-    #TODO: also force unknown to be gray (set3[-4])
+    elif reorder == 'Clust':
+        #use clustermap to get a reordering
+        clustergrid = sns.clustermap(result)
 
-    #TODO: add palette legend
-    # handles = [Patch(facecolor=lut[name]) for name in lut]
-    # plt.legend(handles, lut, title='Broad annotation',
-    #            bbox_to_anchor=(1, 1), bbox_transform=plt.gcf().transFigure, loc='bottom right')
+        row_idx_final = clustergrid.dendrogram_row.reordered_ind
+        col_idx_final = clustergrid.dendrogram_col.reordered_ind
+
+        result = result[row_idx_final,:]
+        result = result[:,col_idx_final]
+        cell_types2 = [list(cell_types2.keys())[i] for i in col_idx_final]
+        cell_types1 = [list(cell_types1.keys())[i] for i in row_idx_final]
+        plt.close('all')
 
     g = sns.clustermap(result, cmap='BuPu', annot=False, vmin=0, vmax=1, xticklabels=cell_types2,
                 yticklabels=cell_types1, cbar_kws={'label': 'weighted\ncorrelation', "shrink": 0.1},
-                row_cluster=False, col_cluster=False, dendrogram_ratio=0.01, 
-                figsize=fsize, cbar_pos=(1.05, 0.8, 0.02, 0.15)) #row_colors=row_colors
+                row_cluster=False, col_cluster=False, dendrogram_ratio=0.01,
+                figsize=fsize, cbar_pos=(1.05, 0.8, 0.02, 0.15), row_colors=row_colors,
+                col_colors=col_colors, colors_ratio=cratio)
+
+    if broad_file1 and broad_file2:
+        handles = [Patch(facecolor=paldict[name]) for name in sorted(list(paldict.keys()))]
+        plt.legend(handles, sorted(list(paldict.keys())), title='Broad annotation',
+                   bbox_to_anchor=(1.22, 0.1), bbox_transform=plt.gcf().transFigure,
+                   loc='lower right')
 
     ax = g.ax_heatmap
     ax.set_ylabel(sp1)
     ax.set_xlabel(sp2)
     plt.savefig(f'{outprefix}correlation_scores_matrix.{outformat}', bbox_inches='tight')
     plt.close('all')
-    return result
 
 
 def plot_expression_conservation(ec, n_ortho, outprefix):
@@ -227,7 +273,7 @@ def plot_expression_conservation(ec, n_ortho, outprefix):
 
 
 def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, sp1='sp1', sp2='sp2',
-                                 fc=1.5):
+                                 fc=1.5, wmin=0):
     """
     Searches for co-expressed marker genes for matching clusters in the pairwise cross species
     comparison.
@@ -247,7 +293,7 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
     records = []
     for i, clus1 in enumerate(mat1.clusters):
         for j, clus2 in enumerate(mat2.clusters):
-            if result[i, j] > 0:
+            if result[i, j] > wmin:
                 genes_clus1_sp1 = np.where(mat1.matrix[:, i] > fc)[0]
                 genes_clus2_sp2 = np.where(mat2.matrix[:, j] > fc)[0]
                 ortho_idx = set(genes_clus1_sp1).intersection(set(genes_clus2_sp2))
@@ -275,7 +321,8 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
 
 
 def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
-            threshold_for_plot=0, outformat='svg', min_fc=1.5):
+            threshold_for_plot=0, outformat='svg', min_fc=1.5, broad_file1=None,
+            broad_file2=None):
 
     """
     Compares gene expression across all pairs clusters species 1 - clusters species 2, using
@@ -294,6 +341,8 @@ def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
                                             for co-expressed marker gene pairs
         outformat (str, optional): format for saved figure (svg, png or pdf)
         min_fc (float, optional): minimum fold change to be considered marker of a cluster
+        broad_file1, broad_file2 (str, optional): path to pickle file with dict cluster to broad
+                                                  annotations (file generated by pesci)
     """
 
     #load expression matrices
@@ -354,14 +403,16 @@ def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
 
     logger.info('Saving outputs and plotting correlation matrix')
 
-    result = plot_and_save_out(result, mat1.clusters, mat2.clusters,
+    plot_and_save_out(result, mat1.clusters, mat2.clusters,
                                outprefix+random_id+sp1+'-'+sp2+'_', sp1, sp2,
-                               threshold_for_plot=threshold_for_plot, outformat=outformat)
+                               threshold_for_plot=threshold_for_plot, outformat=outformat,
+                               broad_file1=broad_file1, broad_file2=broad_file2)
 
     logger.info('Searching for co-expressed gene pairs')
 
     make_coexpressed_genes_table(result, mat1, mat2, ec, len(ortho),
-                                 outprefix+random_id+sp1+'-'+sp2+'_', sp1, sp2, min_fc)
+                                 outprefix+random_id+sp1+'-'+sp2+'_', sp1, sp2, fc=min_fc,
+                                 wmin=threshold_for_plot)
 
 
     # out_genes = outprefix+f'ortho_and_para.txt'
