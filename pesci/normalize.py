@@ -7,7 +7,6 @@ import sys
 import os
 import collections
 
-import traceback
 import logging
 import pickle
 import gzip
@@ -49,7 +48,6 @@ def get_open(ext):
         return bz2.open
 
     logger.error('Unsuported format %s', ext)
-    traceback.print_exc()
     sys.exit(1)
 
 def validate_input_format(expr_mat, clusters):
@@ -94,7 +92,6 @@ def validate_input_format(expr_mat, clusters):
             if not os.path.isfile(clusters):
                 logger.error('Count matrix provided as csv/tsv but expected cluster file %s '
                               'does not exists.', clusters)
-                traceback.print_exc()
                 sys.exit(1)
 
         elif ext == '.h5ad':
@@ -104,7 +101,6 @@ def validate_input_format(expr_mat, clusters):
             logger.error('%s format not supported, please provided a .tsv, .csv, .txt, .h5ad or a '
                          'cellranger directory (.tsv, .csv and .txt can be compressed in .gz '
                          'or .gz2)', ext)
-            traceback.print_exc()
             sys.exit(1)
 
     elif os.path.isdir(expr_mat):
@@ -112,12 +108,10 @@ def validate_input_format(expr_mat, clusters):
         if not os.path.isfile(clusters):
             logger.error('Count matrix cellranger directory but expected cluster file %s '
                          'does not exists.', clusters)
-            traceback.print_exc()
             sys.exit(1)
 
     else:
         logger.error('%s is not an existing file or directory.', expr_mat)
-        traceback.print_exc()
         sys.exit(1)
 
     return fmt, open_func
@@ -214,7 +208,6 @@ def load_matrix_tsv(inputfile, cores=1, fmt='tsv', open_func=open):
                     column_ind = 'C0' #default name given by datatable
             else:
                 logger.error('%s does not seem %s delimited.', inputfile, sep)
-                traceback.print_exc()
                 sys.exit(1)
             break
 
@@ -249,12 +242,10 @@ def to_expr_matrix(matrix, genes, cells, clusters):
 
     if len(set(genes)) != len(genes):
         logger.error('Duplicate gene names in count matrix')
-        traceback.print_exc()
         sys.exit(1)
 
     if len(set(cells)) != len(cells):
         logger.error('Duplicate cell barcodes in count matrix')
-        traceback.print_exc()
         sys.exit(1)
 
     genes = {gene: idx for idx, gene in enumerate(genes)}
@@ -381,7 +372,6 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, fmt='tsv', colclu
 
         if clusters not in expr.obs:
             logger.error('%s column not found in .obs of h5ad', clusters)
-            traceback.print_exc()
             sys.exit(1)
 
         #load clusters
@@ -392,7 +382,6 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, fmt='tsv', colclu
         if broad:
             if broad not in expr.obs:
                 logger.error('%s column not found in .obs of h5ad', clusters)
-                traceback.print_exc()
                 sys.exit(1)
 
             clust2broad = {}
@@ -405,7 +394,6 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, fmt='tsv', colclu
 
     else:
         logger.error('%s is not supported.', fmt)
-        traceback.print_exc()
         sys.exit(1)
 
     logger.info('%s cells, %s genes, %s clusters.', len(cells), len(genes), len(clusters_dict))
@@ -429,7 +417,6 @@ def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=
     """
     if not os.path.isfile(cells_to_clusters):
         logger.error('%s does not exist.', cells_to_clusters)
-        traceback.print_exc()
         sys.exit(1)
 
     clust = {}
@@ -450,9 +437,8 @@ def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=
                 nb_col_header = len(line)
                 if colname not in line:
                     if colname != 'cluster_name':
-                        logger.error('Column %s not found in cluster annotation file %s',
-                                      colname, cells_to_clusters)
-                        traceback.print_exc()
+                        logger.error('Column %s not found in cluster annotation file %s: columms '
+                                     'are: %s', colname, cells_to_clusters, ','.join(line))
                         sys.exit(1)
                     else:
                         logger.warning('Using second column of %s as cluster annotation, provide'
@@ -473,8 +459,7 @@ def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=
                 if nb_col not in [nb_col_header, nb_col_header + 1]:
                     logger.error('Malformed cluster annotation file %s, '
                                  'different number of columns in header and line %s',
-                                 cells_to_clusters, i)
-                    traceback.print_exc()
+                                 cells_to_clusters, i+1)
                     sys.exit(1)
 
                 cell = line[0]
@@ -503,7 +488,6 @@ def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
     """
     if not os.path.isfile(cells_to_clusters):
         logger.error('%s does not exist.', cells_to_clusters)
-        traceback.print_exc()
         sys.exit(1)
 
     clust2broad = {}
@@ -524,9 +508,8 @@ def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
                 nb_col_header = len(line)
                 if colname not in line:
                     if colname != 'cluster_name':
-                        logger.error('Column %s not found in cluster annotation file %s',
-                                      colname, cells_to_clusters)
-                        traceback.print_exc()
+                        logger.error('Column %s not found in cluster annotation file %s: columms '
+                                     'are: %s', colname, cells_to_clusters, ','.join(line))
                         sys.exit(1)
                     else:
                         logger.warning('Using second column of %s as cluster annotation, provide'
@@ -538,9 +521,8 @@ def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
 
                 if colname_broad not in line:
                     if colname != 'broad_annotation':
-                        logger.error('Column %s not found in cluster annotation file %s',
-                                      colname_broad, cells_to_clusters)
-                        traceback.print_exc()
+                        logger.error('Column %s not found in cluster annotation file %s: columms '
+                                     'are: %s', colname_broad, cells_to_clusters, ','.join(line))
                         sys.exit(1)
                     else:
                         logger.warning('Using third column of %s as broad annotation, provide'
@@ -565,7 +547,7 @@ def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
                 if nb_col not in [nb_col_header, nb_col_header + 1]:
                     logger.error('Malformed cluster annotation file %s, '
                                  'different number of columns in header and line %s',
-                                 cells_to_clusters, i)
+                                 cells_to_clusters, i+1)
                     traceback.print_exc()
                     sys.exit(1)
 
@@ -630,8 +612,8 @@ def normalize_geom_mean_fc(expr_mat, bar_format=None):
     data = np.array(data).T * 1000
 
     # transform expression to fold-change (expression cluster a / median expression across clusters)
-    medians = np.median(data, axis=1)
-    # medians = np.quantile(data, 0.75, axis=1)
+    # medians = np.median(data, axis=1)
+    medians = np.quantile(data, 0.5, axis=1)
     medians = medians.reshape(len(medians), 1)
     data = (data + 0.05) / (medians + 0.05)
     return data
