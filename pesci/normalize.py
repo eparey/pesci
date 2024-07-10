@@ -548,7 +548,6 @@ def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
                     logger.error('Malformed cluster annotation file %s, '
                                  'different number of columns in header and line %s',
                                  cells_to_clusters, i+1)
-                    traceback.print_exc()
                     sys.exit(1)
 
                 clust = line[clust_col]
@@ -558,13 +557,18 @@ def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
     return clust2broad
 
 
-def normalize_geom_mean_fc(expr_mat, bar_format=None):
+def normalize_geom_mean_fc(expr_mat, marker_specificity=0.5, bar_format=None):
 
     """
     Computes normalized gene expression per cluster
 
     Args:
         expr_mat (str): Input file name
+        marker_specificity (float): marker specificity value, between 0.5 and 0.95
+                                    (higher = more specific), used in fold change calculation as
+                                    follows: 0.5 computes fold change in cluster a vs median across
+                                    clusters, 0.75 computes fold change in cluster a vs 75
+                                    expression percentile across clusters (3rd quartile)
         bar_format (str, optional): tqdm bar format, use None for tqdm default
 
     Returns:
@@ -613,15 +617,15 @@ def normalize_geom_mean_fc(expr_mat, bar_format=None):
 
     # transform expression to fold-change (expression cluster a / median expression across clusters)
     # medians = np.median(data, axis=1)
-    medians = np.quantile(data, 0.5, axis=1)
+    medians = np.quantile(data, marker_specificity, axis=1)
     medians = medians.reshape(len(medians), 1)
     data = (data + 0.05) / (medians + 0.05)
     return data
 
 
 def normalize(expr_mat, cells_to_clusters, output, cores=1, filter_out_start=None,
-              keep_only=None, bar_format=BAR_FORMAT, colclust='cluster_name', broad=None,
-              min_umi=10):
+              keep_only=None, marker_specificity=0.5, colclust='cluster_name', broad=None,
+              min_umi=10, bar_format=BAR_FORMAT):
     """
     Funtion to load the data (expression matrix and clusters) and compute per cluster normalized
     gene expression (fold-change).
@@ -646,6 +650,7 @@ def normalize(expr_mat, cells_to_clusters, output, cores=1, filter_out_start=Non
         outpkl = output.split('_matrix_')[0] + '_clusters_to_broad.pkl'
         with open(outpkl, 'wb') as outfile:
             pickle.dump(clust2broad, outfile)
-    norm_matrix = normalize_geom_mean_fc(matrix, bar_format=bar_format)
+    norm_matrix = normalize_geom_mean_fc(matrix, marker_specificity=marker_specificity,
+                                         bar_format=bar_format)
     df = pd.DataFrame(data=norm_matrix, index=matrix.genes, columns=sorted(matrix.clusters.keys()))
     df.to_csv(output, sep='\t')
