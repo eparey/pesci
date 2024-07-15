@@ -32,7 +32,7 @@ from . import normalize as nm, iterative_comparison_coexpression as icc, compare
 
 
 parser = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter, prog='pesci')
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter, prog='pesci')
 
 #Required arguments
 required = parser.add_argument_group('Required arguments')
