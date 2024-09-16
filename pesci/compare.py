@@ -59,7 +59,7 @@ def load_ec_ortho_many(input_file, threshold=None):
     """
     res_genes = []
     res_ec = []
-    seen = set()
+    # seen = set()
     with open(input_file, 'r', encoding = "utf-8") as infile:
         for i, line in enumerate(infile):
             if i%2 == 0:
@@ -77,7 +77,7 @@ def load_ec_ortho_many(input_file, threshold=None):
                             break
 
                         pair = genes[ind]
-                        g1, g2 = pair.split('+')
+                        # g1, g2 = pair.split('+')
                         # if g1 not in seen and g2 not in seen: #TODO try even without this one
                         res_genes.append(pair)
                         res_ec.append(float(scores[ind]))

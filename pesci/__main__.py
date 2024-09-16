@@ -32,15 +32,20 @@ from . import normalize as nm, iterative_comparison_coexpression as icc, compare
 
 
 parser = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter, prog='pesci')
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                 prog='pesci')
 
 #Required arguments
 required = parser.add_argument_group('Required arguments')
 required.add_argument('-m1', '--matrix1', type=str, required=True,
-                                        help="gene expression per cell for species 1 (raw count matrix), either: a dense matrix text file, a cellranger directory or an h5ad file")
+                                        help="gene expression per cell for species 1 "
+                                        "(raw count matrix), either: a dense matrix text file, "
+                                        "a cellranger directory or an h5ad file")
 
 required.add_argument('-m2', '--matrix2', type=str, required=True,
-                                        help="gene expression per cell for species 2 (raw count matrix), either: a dense matrix text file, a cellranger directory or an h5ad file")
+                                        help="gene expression per cell for species 2 "
+                                        "(raw count matrix), either: a dense matrix text file, "
+                                        "a cellranger directory or an h5ad file")
 
 required.add_argument('-c1', '--clusters1', type=str, required=True,
                                           help="cell-to-clusters table for species 1 "
@@ -71,11 +76,12 @@ ropt.add_argument('--seed', type=int, help="Fix random seed to ensure reproducib
                               default=123)
 
 ropt.add_argument('--marker_specificity', type=float, help="Marker specificity (btwn 0.5 and 0.95)."
-                                                           " Used in fold change expression calculation as "
-                                "follows: 0.5 computes fold change in cluster 'a' vs median expression across "
+                                " Used in fold change expression calculation as "
+                                "follows: 0.5 computes fold change in cluster 'a' vs median "
+                                "expression across "
                                 "clusters, 0.75 computes fold change in cluster 'a' vs 75 "
                                 "expression percentile across clusters (3rd quartile)",
-                              default=0.5)
+                                default=0.5)
 
 ropt.add_argument('--ono2one_only', action='store_true', help="only use 1-to-1 orthologs")
 
@@ -185,16 +191,18 @@ iopt.add_argument('--keep_only2', type=str, required=False, default="",
 oopt = parser.add_argument_group('Output options')
 
 oopt.add_argument('-o', '--outdir', type=str, required=False, default="output_pesci/",
-                                    help='Name of output directory (will be created if does not exist)')
+                                    help='Name of output directory (will be created if does not '
+                                         'exist)')
 
 oopt.add_argument('-sp1', '--label_species1', type=str, required=False, default="sp1",
-                                              help='Name of species 1 (label for plots and outputs)')
+                                              help='Name of species1 (label for plots and outputs)')
 
 oopt.add_argument('-sp2', '--label_species2', type=str, required=False, default="sp2",
-                                              help='Name of species 2 (label for plots and outputs)')
+                                              help='Name of species2 (label for plots and outputs)')
 
 oopt.add_argument('-f', '--figure_format', type=str, required=False, default="svg",
-                                            help='format for output figures', choices=['svg', 'png', 'pdf'])
+                                           help='format for output figures',
+                                           choices=['svg', 'png', 'pdf'])
 
 
 oopt.add_argument('--plot_thresh', type=float, help="threshold to plot matches in resulting "
@@ -203,7 +211,8 @@ oopt.add_argument('--plot_thresh', type=float, help="threshold to plot matches i
 
 oopt.add_argument('--min_fc', type=float, help="minimum fold-change to be considered marker of "
                                                "a cluster. Only used for the co-expressed marker "
-                                               "gene table (to set in conjunction with --marker_specificity)", default=1.5)
+                                               "gene table (to set in conjunction with "
+                                               "--marker_specificity)", default=1.5)
 
 args = vars(parser.parse_args())
 
