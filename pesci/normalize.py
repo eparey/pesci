@@ -197,8 +197,10 @@ def load_matrix_tsv(inputfile, cores=1, fmt='tsv', open_func=open):
         tuple: (scipy.sparse array, list, list) expression matrix, genes (rows), cell barcodes (col)
     """
     sep = '\t'
+    sepname = 'tab'
     if fmt == 'csv':
         sep = ','
+        sepname = 'comma'
 
     dt.options.nthreads = cores
     with open_func(inputfile, 'rt') as infile:
@@ -209,7 +211,7 @@ def load_matrix_tsv(inputfile, cores=1, fmt='tsv', open_func=open):
                 if column_ind == '':
                     column_ind = 'C0' #default name given by datatable
             else:
-                logger.error('%s does not seem %s delimited.', inputfile, sep)
+                logger.error('%s does not seem %s-delimited.', inputfile, sepname)
                 sys.exit(1)
             break
 
