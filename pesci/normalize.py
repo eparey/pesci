@@ -47,8 +47,9 @@ def get_open(ext):
     if ext in ['gz2', '.gz2']:
         return bz2.open
 
-    logger.error('Unsuported format %s', ext)
+    logger.error('Unsupported format %s', ext)
     sys.exit(1)
+
 
 def validate_input_format(expr_mat, clusters):
 
@@ -66,7 +67,7 @@ def validate_input_format(expr_mat, clusters):
 
     Args:
         expr_mat (str): Expression matrix input file or cellranger directory
-        clusters (str): Cell-to-clusters annotation file, or name of the cluster column in the h5ad 
+        clusters (str): Cell-to-clusters annotation file, or name of the cluster column in the h5ad
 
     Returns:
         str: Inferred file format
@@ -137,6 +138,7 @@ def dt_to_sparse_high_ram(expr, column_ind):
     expr = sparse.csr_matrix(expr)
     return expr
 
+
 def iterative_dt_to_sparse(dt_expr, cells_per_iter=10000):
 
     """
@@ -184,7 +186,7 @@ def iterative_dt_to_sparse(dt_expr, cells_per_iter=10000):
 def load_matrix_tsv(inputfile, cores=1, fmt='tsv', open_func=open):
 
     """
-    Loads expression matrix provided as a text file format, either tab-delimited (fmt='.tsv') or 
+    Loads expression matrix provided as a text file format, either tab-delimited (fmt='.tsv') or
     comma delimited (fmt='.csv').
 
     Args:
@@ -256,6 +258,81 @@ def to_expr_matrix(matrix, genes, cells, clusters):
 
     return ExprMatrix(matrix, genes, cells, clusters)
 
+def permute_sparse_matrix(mat, new_row_order):
+    """
+    https://stackoverflow.com/questions/60318598/re-ordering-of-the-rows-and-columns-in-a-csr-matrix
+    Reorders the rows in a scipy sparse matrix using specified array of indexes e.g. [1,0,2,3,...]
+    would swap the first and second rows.
+
+    Args:
+        mat (scipy.sparse array): input matrix
+        new_row_order (list or np.array): new order of row indexes
+
+    Returns:
+        scipy.sparse array: reordered sparse matrix
+    """
+    new_mat = mat
+    i = sparse.eye(mat.shape[0]).tocoo()
+    i.row = i.row[new_row_order]
+    new_mat = i.dot(new_mat)
+    return new_mat
+
+
+def cat_matrices(expr_matrices):
+    """
+    Concatenate expression matrices for cases with several sequencing and/or biological replicates.
+
+    Args:
+        expr_matrices (list of ExprMatrix namedtuple): matrices to concatenate
+
+    Returns:
+        ExprMatrix namedtuple
+
+    Note: see to_expr_matrix() for ExprMatrix object description
+    """
+    if len(expr_matrices) == 1:
+        return expr_matrices[0]
+
+    #update cells indexes
+    cellsorder = [cell for i in expr_matrices for cell in i.cells]
+    if len(cellsorder) != len(set(cellsorder)):
+        logger.error('Duplicate cell barcodes across count matrices')
+        sys.exit(1)
+    cells = {cell: idx for idx, cell in enumerate(cellsorder)}
+
+    #update genes indexes
+    geneorder = list(set().intersection({gene for i in expr_matrices for gene in i.genes}))
+    genes = {gene: idx for idx, gene in enumerate(geneorder)}
+
+    logger.info('Retained %s genes present across all input matrices', len(genes))
+
+    #update clusters to cells dict
+    clusters = {}
+    for i in expr_matrices:
+        for clust in i.clusters:
+
+            #transform previous indexes to new
+            oldidx2new = {i.cells[cell]:cells[cell] for cell in i.cells}
+
+            if clust not in clusters:
+                clusters[clust] = {oldidx2new[j] for j in i.clusters[clust]}
+            else:
+                clusters[clust].update({oldidx2new[j] for j in i.clusters[clust]})
+
+    #update matrix by concat all sparse to one (reorder genes first)
+    newgeneidx2old = sorted({genes[gene]:expr_matrices[0].genes[gene] for gene in genes})
+    matrix = permute_sparse_matrix(expr_matrices[0].matrix, list(newgeneidx2old.values()))
+    mat_to_cat = [matrix]
+    for i in expr_matrices[1:]:
+        newgeneidx2old = sorted({genes[gene]:i.genes[gene] for gene in genes})
+        tmp_mat = permute_sparse_matrix(i.matrix, list(newgeneidx2old.values()))
+        mat_to_cat.append(tmp_mat)
+    matrix = sparse.hstack(mat_to_cat)
+
+    ExprMatrix = collections.namedtuple('ExprMatrix', ['matrix', 'genes', 'cells', 'clusters'])
+
+    return ExprMatrix(matrix, genes, cells, clusters)
+
 
 def update_dict_of_set(mydict, key, val, filter_out_start=None, keep_only=None):
     """
@@ -286,12 +363,18 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, fmt='tsv', colclu
 
     Args:
         expr_mat (str): Expression matrix input file or cellranger directory
-        clusters (str): Cell-to-clusters annotation file, or name of the cluster column in the h5ad 
-        filter_out_start (str, optional): ignore clusters whose name start with provided string
+        clusters (str): Cell-to-clusters annotation file, or name of the cluster column in the h5ad
+        min_counts (int, optional): Retain only genes with >= `min_counts` counts
         fmt (str, optional): input format, one of 'tsv' | 'csv' | 'cellranger' | 'h5ad'
-        cores (int, optional): number of cores for loading
-        colname (str, optional): name of column with clusters in tab-delimited cluster file, default
+        colclust (str, optional): name of column with clusters in tab-delim cluster file, default
                                  is 'cluster_name' and will use second column if it does not exist.
+        cores (int, optional): number of cores for loading (default 1)
+        filter_out_start (str, optional): ignore clusters whose name start with provided string
+        keep_only (str, optional): keep only cells from clusters starting with provided string
+        broad (str, optional): name of column with broad clusters in tab-delim cluster file, used
+                               to group clusters for plotting, default is to not load broad if not
+                               provided.
+        open_func (function, optional): auto-detected in pesci, open as file or as compressed file
 
     Returns:
         tuple: ExprMat namedtuple stores expression matrix, genes, cells and clusters
@@ -413,7 +496,7 @@ def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=
         filter_out_start (str, optional): ignore clusters whose name start with provided string
 
     Returns:
-        dict: dict of set with key = cluster name, value = set of cell barcodes 
+        dict: dict of set with key = cluster name, value = set of cell barcodes
     """
     if not os.path.isfile(cells_to_clusters):
         logger.error('%s does not exist.', cells_to_clusters)
@@ -623,7 +706,7 @@ def normalize_geom_mean_fc(expr_mat, marker_specificity=0.5, bar_format=None):
     return data
 
 
-def normalize(expr_mat, cells_to_clusters, output, cores=1, filter_out_start=None,
+def normalize(expr_mats, cells_to_clusters, output, cores=1, filter_out_start=None,
               keep_only=None, marker_specificity=0.5, colclust='cluster_name', broad=None,
               min_umi=10, bar_format=BAR_FORMAT):
     """
@@ -631,7 +714,8 @@ def normalize(expr_mat, cells_to_clusters, output, cores=1, filter_out_start=Non
     gene expression (fold-change).
 
     Args:
-        expr_mat (str): Expression matrix, either a tab-delimited file, cellranger directory or h5ad
+        expr_mat (list): Expression matrix (or matrices), either a tab-delimited file, cellranger
+                         directory or h5ad
         cells_to_clusters (str): input cluster file name or name of cluster column in h5ad
         output (str): output file for nornalized gene-cluster expression matrix
         cores (int, optional): Number of cores to use for loading
@@ -639,12 +723,19 @@ def normalize(expr_mat, cells_to_clusters, output, cores=1, filter_out_start=Non
         bar_format (str, optional): tqdm bar format, use None for tqdm default
 
     """
-    fm, open_func = validate_input_format(expr_mat, cells_to_clusters)
-    matrix, clust2broad = load_expr_and_clusters(expr_mat, cells_to_clusters, fmt=fm,
-                                                 cores=cores, filter_out_start=filter_out_start,
-                                                 colclust=colclust, broad=broad,
-                                                 open_func=open_func, keep_only=keep_only,
-                                                 min_counts=min_umi)
+
+    all_matrices = []
+    for expr_mat in expr_mats:
+        fm, open_func = validate_input_format(expr_mat, cells_to_clusters)
+        matrix, clust2broad = load_expr_and_clusters(expr_mat, cells_to_clusters, fmt=fm,
+                                                     cores=cores, filter_out_start=filter_out_start,
+                                                     colclust=colclust, broad=broad,
+                                                     open_func=open_func, keep_only=keep_only,
+                                                     min_counts=min_umi)
+        all_matrices.append(matrix)
+
+    matrix = cat_matrices(all_matrices)
+
     if broad:
         #this assumes pesci-defined output file name
         outpkl = output.split('_matrix_')[0] + '_clusters_to_broad.pkl'

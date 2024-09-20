@@ -37,12 +37,12 @@ parser = argparse.ArgumentParser(description=__doc__,
 
 #Required arguments
 required = parser.add_argument_group('Required arguments')
-required.add_argument('-m1', '--matrix1', type=str, required=True,
+required.add_argument('-m1', '--matrix1', type=str, nargs='+', required=True,
                                         help="gene expression per cell for species 1 "
                                         "(raw count matrix), either: a dense matrix text file, "
                                         "a cellranger directory or an h5ad file")
 
-required.add_argument('-m2', '--matrix2', type=str, required=True,
+required.add_argument('-m2', '--matrix2', type=str, nargs='+', required=True,
                                         help="gene expression per cell for species 2 "
                                         "(raw count matrix), either: a dense matrix text file, "
                                         "a cellranger directory or an h5ad file")
@@ -228,8 +228,8 @@ sp1 = args["label_species1"]
 sp2 = args["label_species2"]
 
 MAT1 = args['matrix1']
-logger.info('Gene-cell expression matrix 1: %s', MAT1)
-norm_mat1 = args['outdir'] + 'files/' + sp1 + '_' + Path(MAT1).stem + '_expr_clusters_norm.tsv'
+logger.info('Gene-cell expression matrix 1: %s', ' '.join(MAT1))
+norm_mat1 = args['outdir'] + 'files/' + sp1 + '_' + Path(MAT1[0]).stem + '_expr_clusters_norm_all.tsv'
 force_ec = False
 if os.path.exists(norm_mat1) and os.path.getsize(norm_mat1) > 0 and not args['force']:
     logger.warning('Normalized gene-cluster expression matrix %s already exists '
@@ -261,8 +261,8 @@ else:
     force_ec = True
 
 MAT2 = args['matrix2']
-logger.info('Gene-cell expression matrix 2: %s', MAT2)
-norm_mat2 = args['outdir'] + 'files/' + sp2 + '_' + Path(MAT2).stem + '_expr_clusters_norm.tsv'
+logger.info('Gene-cell expression matrix 2: %s', ' '.join(MAT2))
+norm_mat2 = args['outdir'] + 'files/' + sp2 + '_' + Path(MAT2[0]).stem + '_expr_clusters_norm_all.tsv'
 
 if os.path.exists(norm_mat2) and os.path.getsize(norm_mat2) > 0 and not args['force']:
     logger.warning('Normalized gene-cluster expression matrix %s already exists'
