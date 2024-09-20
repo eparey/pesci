@@ -194,7 +194,7 @@ def update_ec_until_convergence(mat1, mat2, ec, max_iter=100):
     """
 
     i = 0
-    diff = np.Inf
+    diff = np.inf
     while i < max_iter and diff > 0.05:
         ec_new = update_ec_optimized_einsum(mat1, mat2, ec)
         diff = np.sum((ec - ec_new)**2)

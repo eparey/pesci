@@ -12,9 +12,9 @@ import pandas as pd
 
 from scipy.optimize import linear_sum_assignment
 
-import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
+import seaborn as sns
 
 import coloredlogs
 
