@@ -16,5 +16,6 @@ setup(name='pesci',
       packages=['pesci'],
       entry_points={'console_scripts': ['pesci = pesci.__main__:main']},
       install_requires=['coloredlogs', 'datatable', 'matplotlib', 'networkx', 'numpy>=2.0',
-                        'pandas>=2.2.2', 'scanpy>=1.10.3', 'scipy', 'seaborn', 'tqdm'],
+                        'pandas>=2.2.2', 'scikit-learn>=1.5.2', 'scanpy>=1.10.1', 'scipy',
+                        'seaborn', 'tqdm'],
       zip_safe=False)
