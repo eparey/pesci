@@ -1,3 +1,0 @@
-data/Cg_matrix_EM.tsv filter=lfs diff=lfs merge=lfs -text
-data/Pc_matrix_EM.tsv filter=lfs diff=lfs merge=lfs -text
-.gitattributes filter diff merge text=auto
