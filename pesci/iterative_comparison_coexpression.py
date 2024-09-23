@@ -19,6 +19,9 @@ import coloredlogs
 import tqdm
 
 import numpy as np
+from threadpoolctl import threadpool_limits
+threadpool_limits(limits=1) # limit numpy threads
+
 import pandas as pd
 
 import networkx as nx
