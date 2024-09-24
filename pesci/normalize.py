@@ -292,6 +292,9 @@ def cat_matrices(expr_matrices):
 
     Note: see to_expr_matrix() for ExprMatrix object description
     """
+    #FIXME THIS DOES NOT WORK: MATRICES ARE NOT CAT CORRECTLY!!!
+    #I suspect gene indexes are not properly kept in permutations
+
     if len(expr_matrices) == 1:
         return expr_matrices[0]
 
@@ -303,7 +306,9 @@ def cat_matrices(expr_matrices):
     cells = {cell: idx for idx, cell in enumerate(cellsorder)}
 
     #update genes indexes
-    geneorder = list(set().intersection({gene for i in expr_matrices for gene in i.genes}))
+    geneorder = list(set.intersection(*[set(i.genes.keys()) for i in expr_matrices]))
+
+    # geneorder = list(set().intersection({gene for i in expr_matrices for gene in i.genes}))
     genes = {gene: idx for idx, gene in enumerate(geneorder)}
 
     logger.info('Retained %s genes present across all input matrices', len(genes))
@@ -322,13 +327,25 @@ def cat_matrices(expr_matrices):
                 clusters[clust].update({oldidx2new[j] for j in i.clusters[clust]})
 
     #update matrix by concat all sparse to one (reorder genes first)
-    newgeneidx2old = sorted({genes[gene]:expr_matrices[0].genes[gene] for gene in genes})
+    newgeneidx2old = dict(sorted({genes[gene]:expr_matrices[0].genes[gene] for gene in genes}.items()))
+    filtered_out_genesold = {i for i in expr_matrices[0].genes.values() if i not in newgeneidx2old}
+    max_new = len(newgeneidx2old)
+    j = max_new
+    for i in filtered_out_genesold:
+        newgeneidx2old[j] = i
+        j+=1
     matrix = permute_sparse_matrix(expr_matrices[0].matrix, list(newgeneidx2old.values()))
-    mat_to_cat = [matrix]
+    mat_to_cat = [matrix[:max_new,:]]
     for i in expr_matrices[1:]:
-        newgeneidx2old = sorted({genes[gene]:i.genes[gene] for gene in genes})
+        newgeneidx2old = dict(sorted({genes[gene]:i.genes[gene] for gene in genes}.items()))
+        filtered_out_genesold = {k for k in i.genes.values() if k not in newgeneidx2old}
+        max_new = len(newgeneidx2old)
+        j = max_new
+        for k in filtered_out_genesold:
+            newgeneidx2old[j] = k
+            j+=1
         tmp_mat = permute_sparse_matrix(i.matrix, list(newgeneidx2old.values()))
-        mat_to_cat.append(tmp_mat)
+        mat_to_cat.append(tmp_mat[:max_new,:])
     matrix = sparse.hstack(mat_to_cat)
 
     ExprMatrix = collections.namedtuple('ExprMatrix', ['matrix', 'genes', 'cells', 'clusters'])

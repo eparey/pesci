@@ -1,5 +1,5 @@
-- set-up conda install
+- set minimum python to 3.7 (ordered dict)
 - print all log to file / what happens in a non-colored term
-- test input with several replicate matrices
+- test input with several replicate matrices --> TESTED, DOES NOT WORK, NEED TO FIX
 - color of cbar different in and outside tmux --> I don't get it
 - tkAgg error sometimes "ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running"
