@@ -1,0 +1,8 @@
+[tool.pytest.ini_options]
+markers = [
+    "long: marks tests as long (deselect with '-m \"not long\"')",
+    "serial",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]

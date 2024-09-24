@@ -429,8 +429,8 @@ def worker_add_gene_pairs(manyortho, a, b, mat1, mat2, max_combin):
         for og in manyortho:
 
             #list all orthologs pairings (create list of tuples)
-            combin = [(i, j) for (i, j) in list(itertools.product(og[0], og[1])) if i in genes1
-                      and j in genes2]
+            combin = [(i, j) for (i, j) in sorted(list(itertools.product(og[0], og[1])))
+                      if i in genes1 and j in genes2]
 
             if len(combin) > max_combin:
                 res.append(f'skipped {og} - {len(og[0])} sp1 genes - {len(og[1])} sp2 genes - '
@@ -634,7 +634,8 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
         logger.info('Using 1-to-1 orthologs only')
 
 
-    nmany, nskip = write_ec_manyortho(async_res, outprefix+'_orthologs_many_correlation_scores.txt',
+    nmany, nskip = write_ec_manyortho(sorted(async_res),
+                                      outprefix+'_orthologs_many_correlation_scores.txt',
                                       outprefix+'_skipped_ogs.txt')
 
     logger.info('Added %s many-to-many / one-to-many / many-to-one, %s multigenic families skipped.'

@@ -378,7 +378,7 @@ def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
     para, paralogs_ec = load_ec_ortho_many(outprefix1+sp1+'-'+sp2+\
                                            '_orthologs_many_correlation_scores.txt',
                                            threshold=many_threshold)
-    print(len(para))
+
     ec = np.array(orthologs_ec + paralogs_ec)
     assert len(ec) == (len(para) + len(ortho))
 

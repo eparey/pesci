@@ -32,9 +32,9 @@ requirements:
     - seaborn
     - tqdm
 
-# test:
-#   imports:
-#     - pesci
+test:
+  imports:
+    - pesci
 
 about:
   home: http://github.com/eparey/pesci
