@@ -1,0 +1,46 @@
+{% set version = "0.1.0" %}
+
+package:
+  name: pesci
+  version: {{ version }}
+
+source:
+  path: ../
+  # git_url: https://github.com/eparey/pesci.git
+  # git_rev: v{{ version }}
+
+build:
+  number: 0
+  script: "{{PYTHON}} -m pip install . --no-deps -vv"
+  noarch: python
+
+requirements:
+  build:
+    - python>=3.8
+    - setuptools
+  run:
+    - python>=3.8
+    - numpy>=2.0
+    - matplotlib
+    - coloredlogs
+    - datatable
+    - networkx
+    - pandas>=2.2.2
+    - scikit-learn>=1.5.2
+    - scanpy>=1.10.1
+    - scipy
+    - seaborn
+    - tqdm
+
+# test:
+#   imports:
+#     - pesci
+
+about:
+  home: http://github.com/eparey/pesci
+  license: 'NONE'
+  license_family: 'NONE'
+  summary: 'Pretty Easy Single-cell Comparisons with ICC'
+
+extra:
+  recipe-maintainers: 'e.parey@ucl.ac.uk'

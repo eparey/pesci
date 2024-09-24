@@ -28,12 +28,15 @@ import argparse
 
 import coloredlogs
 
+from . import version
 from . import normalize as nm, iterative_comparison_coexpression as icc, compare as cp
 
 def parse_commandline():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                      prog='pesci')
+
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + version.__version__)
 
     #Required arguments
     required = parser.add_argument_group('Required arguments')

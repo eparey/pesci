@@ -1,0 +1,38 @@
+{
+  "info": {
+    "subdir": "noarch"
+  },
+  "packages": {
+    "pesci-0.1.0-py_0.tar.bz2": {
+      "build": "py_0",
+      "build_number": 0,
+      "depends": [
+        "coloredlogs",
+        "datatable",
+        "matplotlib",
+        "networkx",
+        "numpy >=2.0",
+        "pandas >=2.2.2",
+        "python >=3.8",
+        "scanpy >=1.10.1",
+        "scikit-learn >=1.5.2",
+        "scipy",
+        "seaborn",
+        "tqdm"
+      ],
+      "license": "NONE",
+      "license_family": "NONE",
+      "md5": "4dd7b05bc330dacdefa9ec5fd1f4187b",
+      "name": "pesci",
+      "noarch": "python",
+      "sha256": "a66b098bf05f61459e170335c047933872e3ec9eac18b97dd0a77241f1a6a1ac",
+      "size": 30561,
+      "subdir": "noarch",
+      "timestamp": 1727170619376,
+      "version": "0.1.0"
+    }
+  },
+  "packages.conda": {},
+  "removed": [],
+  "repodata_version": 1
+}

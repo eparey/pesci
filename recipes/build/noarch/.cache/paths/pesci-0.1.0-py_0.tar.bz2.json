@@ -1,0 +1,109 @@
+{
+  "paths": [
+    {
+      "_path": "python-scripts/pesci",
+      "file_mode": "text",
+      "path_type": "hardlink",
+      "prefix_placeholder": "/home/elise/miniconda3/conda-bld/pesci_1727169463135/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_place",
+      "sha256": "e39bdedd2acdc6a4112fc74008ab83cdc90ddb32e349aa1ef7ebbfa68d008495",
+      "size_in_bytes": 496
+    },
+    {
+      "_path": "site-packages/pesci-0.1.dist-info/INSTALLER",
+      "path_type": "hardlink",
+      "sha256": "d0edee15f91b406f3f99726e44eb990be6e34fd0345b52b910c568e0eef6a2a8",
+      "size_in_bytes": 5
+    },
+    {
+      "_path": "site-packages/pesci-0.1.dist-info/LICENSE",
+      "path_type": "hardlink",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_in_bytes": 0
+    },
+    {
+      "_path": "site-packages/pesci-0.1.dist-info/METADATA",
+      "path_type": "hardlink",
+      "sha256": "e17237b130288354e9e75adf28d5dc62d44e7a325053d563f1839042615f9fde",
+      "size_in_bytes": 518
+    },
+    {
+      "_path": "site-packages/pesci-0.1.dist-info/RECORD",
+      "path_type": "hardlink",
+      "sha256": "7f9db40198f99367f46e07d3374288fb01975d8f5d9d578a21d63d82f9839589",
+      "size_in_bytes": 1677
+    },
+    {
+      "_path": "site-packages/pesci-0.1.dist-info/REQUESTED",
+      "path_type": "hardlink",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_in_bytes": 0
+    },
+    {
+      "_path": "site-packages/pesci-0.1.dist-info/WHEEL",
+      "path_type": "hardlink",
+      "sha256": "715c5c07d026b93717aa6c2bb4f84d2bcf1dafb211fdbeaa6a04e3d14bc811b6",
+      "size_in_bytes": 91
+    },
+    {
+      "_path": "site-packages/pesci-0.1.dist-info/direct_url.json",
+      "path_type": "hardlink",
+      "sha256": "2232639d6c6c528b93b314f99df5b4e6ea3dac892e0b88eb898b6c87677cbcda",
+      "size_in_bytes": 91
+    },
+    {
+      "_path": "site-packages/pesci-0.1.dist-info/entry_points.txt",
+      "path_type": "hardlink",
+      "sha256": "dc31dfa0f6c7a421cb1297066be26bc195b45d4a848ae18642b8feb8f488943a",
+      "size_in_bytes": 46
+    },
+    {
+      "_path": "site-packages/pesci-0.1.dist-info/top_level.txt",
+      "path_type": "hardlink",
+      "sha256": "a02f877d4aa11ff8fdb3e0d8024f3fa7eb931a4d7911b054d159d386987ff6e2",
+      "size_in_bytes": 6
+    },
+    {
+      "_path": "site-packages/pesci/__init__.py",
+      "path_type": "hardlink",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_in_bytes": 0
+    },
+    {
+      "_path": "site-packages/pesci/__main__.py",
+      "path_type": "hardlink",
+      "sha256": "0842db270cb5e4dd92d361bbe088e48227345028c9df4bf32ad051e66e6303a2",
+      "size_in_bytes": 18684
+    },
+    {
+      "_path": "site-packages/pesci/compare.py",
+      "path_type": "hardlink",
+      "sha256": "dc0764e80f31bf104ac343d027fd9aa3127339050de474342bc5b175090adc9e",
+      "size_in_bytes": 19552
+    },
+    {
+      "_path": "site-packages/pesci/iterative_comparison_coexpression.py",
+      "path_type": "hardlink",
+      "sha256": "85be503658bfbe8698ffd1df3865e9229d7deb2357fa90e52b016a8639091a6e",
+      "size_in_bytes": 23859
+    },
+    {
+      "_path": "site-packages/pesci/normalize.py",
+      "path_type": "hardlink",
+      "sha256": "2800a4475d302f83eea326461cf793d4f715cf38f11d065c22e26937006e0c76",
+      "size_in_bytes": 29184
+    },
+    {
+      "_path": "site-packages/pesci/pbar.py",
+      "path_type": "hardlink",
+      "sha256": "e9d627368178bd6f92055715594c243676e5e3c441f7f2db86760611c22d86c7",
+      "size_in_bytes": 695
+    },
+    {
+      "_path": "site-packages/pesci/version.py",
+      "path_type": "hardlink",
+      "sha256": "0aef38c782e5a5e8d8d99a6cb0bfdaacb56de0e844e1aec585f43df17cefb327",
+      "size_in_bytes": 42
+    }
+  ],
+  "paths_version": 1
+}
