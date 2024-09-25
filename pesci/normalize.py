@@ -121,7 +121,8 @@ def validate_input_format(expr_mat, clusters):
 def dt_to_sparse_high_ram(expr, column_ind):
     """
     Converts a datatable Frame count matrix to a scipy sparse matrix. This has high RAM usage since
-    the whole matrix is loaded in memory in dense format first.
+    the whole matrix is loaded in memory in dense format first. Function not used in pesci, retained
+    here for testing purposes.
 
     Args:
         expr (datatable.Frame): count matrix (with genes still in first column)
@@ -260,6 +261,7 @@ def to_expr_matrix(matrix, genes, cells, clusters):
 
     return ExprMatrix(matrix, genes, cells, clusters)
 
+
 def permute_sparse_matrix(mat, new_row_order):
     """
     https://stackoverflow.com/questions/60318598/re-ordering-of-the-rows-and-columns-in-a-csr-matrix
@@ -303,53 +305,58 @@ def cat_matrices(expr_matrices):
     if len(cellsorder) != len(set(cellsorder)):
         logger.error('Duplicate cell barcodes across count matrices')
         sys.exit(1)
+
     cells = {cell: idx for idx, cell in enumerate(cellsorder)}
-
-    #update genes indexes
-    geneorder = list(set.intersection(*[set(i.genes.keys()) for i in expr_matrices]))
-
-    # geneorder = list(set().intersection({gene for i in expr_matrices for gene in i.genes}))
-    genes = {gene: idx for idx, gene in enumerate(geneorder)}
-
-    logger.info('Retained %s genes present across all input matrices', len(genes))
 
     #update clusters to cells dict
     clusters = {}
     for i in expr_matrices:
-        for clust in i.clusters:
+        #transform previous indexes to new
+        oldidx2new = {i.cells[cell]:cells[cell] for cell in i.cells}
 
-            #transform previous indexes to new
-            oldidx2new = {i.cells[cell]:cells[cell] for cell in i.cells}
+        for clust in i.clusters:
 
             if clust not in clusters:
                 clusters[clust] = {oldidx2new[j] for j in i.clusters[clust]}
             else:
                 clusters[clust].update({oldidx2new[j] for j in i.clusters[clust]})
 
+
+    #update genes indexes
+    geneorder = sorted(list(set.intersection(*[set(i.genes.keys()) for i in expr_matrices])))
+    genes = {gene: idx for idx, gene in enumerate(geneorder)}
+
+    logger.info('Retained %s genes present across all input matrices', len(genes))
+
+
     #update matrix by concat all sparse to one (reorder genes first)
-    newgeneidx2old = dict(sorted({genes[gene]:expr_matrices[0].genes[gene] for gene in genes}.items()))
-    filtered_out_genesold = {i for i in expr_matrices[0].genes.values() if i not in newgeneidx2old}
-    max_new = len(newgeneidx2old)
+    oldgeneidx2new = {expr_matrices[0].genes[gene]:genes[gene] for gene in genes}
+
+    filtered_out_genesold = {i for i in expr_matrices[0].genes.values() if i not in oldgeneidx2new}
+    max_new = len(oldgeneidx2new)
     j = max_new
     for i in filtered_out_genesold:
-        newgeneidx2old[j] = i
+        oldgeneidx2new[i] = j
         j+=1
-    matrix = permute_sparse_matrix(expr_matrices[0].matrix, list(newgeneidx2old.values()))
+
+    oldgeneidx2new = dict(sorted(oldgeneidx2new.items()))
+    matrix = permute_sparse_matrix(expr_matrices[0].matrix, list(oldgeneidx2new.values()))
     mat_to_cat = [matrix[:max_new,:]]
     for i in expr_matrices[1:]:
-        newgeneidx2old = dict(sorted({genes[gene]:i.genes[gene] for gene in genes}.items()))
-        filtered_out_genesold = {k for k in i.genes.values() if k not in newgeneidx2old}
-        max_new = len(newgeneidx2old)
+        oldgeneidx2new = {i.genes[gene]:genes[gene] for gene in genes}
+
+        filtered_out_genesold = {k for k in i.genes.values() if k not in oldgeneidx2new}
+        max_new = len(oldgeneidx2new)
         j = max_new
         for k in filtered_out_genesold:
-            newgeneidx2old[j] = k
+            oldgeneidx2new[k] = j
             j+=1
-        tmp_mat = permute_sparse_matrix(i.matrix, list(newgeneidx2old.values()))
+
+        oldgeneidx2new = dict(sorted(oldgeneidx2new.items()))
+        tmp_mat = permute_sparse_matrix(i.matrix, list(oldgeneidx2new.values()))
         mat_to_cat.append(tmp_mat[:max_new,:])
     matrix = sparse.hstack(mat_to_cat)
-
     ExprMatrix = collections.namedtuple('ExprMatrix', ['matrix', 'genes', 'cells', 'clusters'])
-
     return ExprMatrix(matrix, genes, cells, clusters)
 
 
