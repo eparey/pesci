@@ -20,6 +20,7 @@ Examples::
             -g ../data/placozoa/orthologous_pairs_ok.txt -c 10 -sp1 Tadh -sp2 TrH2
 """
 
+import sys
 import logging
 import os
 from pathlib import Path
