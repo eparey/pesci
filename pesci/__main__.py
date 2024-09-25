@@ -29,12 +29,16 @@ import argparse
 
 import coloredlogs
 
+
+import tqdm
+from functools import partialmethod
+
 from . import version
 from . import normalize as nm, iterative_comparison_coexpression as icc, compare as cp
 
 #do not show progress bar if stderr is redirected to file
 if not sys.stderr.isatty():
-    os.environ["TQDM_DISABLE"] = "1"
+    tqdm.tqdm.__init__ = partialmethod(tqdm.tqdm.__init__, disable=True)
 
 def parse_commandline():
     """
