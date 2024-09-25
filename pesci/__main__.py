@@ -31,6 +31,10 @@ import coloredlogs
 from . import version
 from . import normalize as nm, iterative_comparison_coexpression as icc, compare as cp
 
+#do not show progress bar if stderr is redirected to file
+if not sys.stderr.isatty():
+    os.environ["TQDM_DISABLE"] = "1"
+
 def parse_commandline():
     """
     pesci command-line argument parser
