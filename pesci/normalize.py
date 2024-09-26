@@ -55,7 +55,7 @@ def validate_input_format(expr_mat, clusters):
 
     """
     Infers and validates input file format.
-    Infers expression matrix file format (check filename extension, or is directory)
+    Infers expression matrix file format (check filename extension, or is_directory)
     and check provided cell-to-clusters annotation.
 
     Three different formats are supported:
@@ -119,6 +119,7 @@ def validate_input_format(expr_mat, clusters):
 
 
 def dt_to_sparse_high_ram(expr, column_ind):
+
     """
     Converts a datatable Frame count matrix to a scipy sparse matrix. This has high RAM usage since
     the whole matrix is loaded in memory in dense format first. Function not used in pesci, retained
@@ -126,7 +127,7 @@ def dt_to_sparse_high_ram(expr, column_ind):
 
     Args:
         expr (datatable.Frame): count matrix (with genes still in first column)
-        column_inc (str): name of the column with genes
+        column_ind (str): name of the column with genes
 
     Returns:
         scipy.sparse.csr_matrix: count matrix in sparse format
@@ -193,6 +194,8 @@ def load_matrix_tsv(inputfile, cores=1, fmt='tsv', open_func=open):
     Args:
         inputfile (str): Name of the input file
         cores (int, optional): Number of cores to use for loading
+        fmt (str, optional): format (tsv or csv)
+        open_func (function): open function to use (to handle compressed inputs)
 
     Returns:
         tuple: (scipy.sparse array, list, list) expression matrix, genes (rows), cell barcodes (col)
@@ -234,7 +237,7 @@ def to_expr_matrix(matrix, genes, cells, clusters):
     Args:
         matrix (numpy.array | scipy.sparse array): expression matrix
         genes (list): list of genes in matrix rows (i.e. rownames)
-        cells (lkist): list of cells in matrix columns (i.e. colnames)
+        cells (list): list of cells in matrix columns (i.e. colnames)
         clusters (dict): for each cluster,corresponding cell barcodes (set)
 
     Returns:
@@ -263,14 +266,13 @@ def to_expr_matrix(matrix, genes, cells, clusters):
 
 
 def permute_sparse_matrix(mat, new_row_order):
+
     """
-    https://stackoverflow.com/questions/60318598/re-ordering-of-the-rows-and-columns-in-a-csr-matrix
-    Reorders the rows in a scipy sparse matrix using specified array of indexes e.g. [1,0,2,3,...]
-    would swap the first and second rows.
+    Reorders the rows in a scipy sparse matrix using specified index list.
 
     Args:
         mat (scipy.sparse array): input matrix
-        new_row_order (list or np.array): new order of row indexes
+        new_row_order (list): new order of row indexes (e.g. [1,0,2,3] swaps first two rows)
 
     Returns:
         scipy.sparse array: reordered sparse matrix
@@ -282,9 +284,35 @@ def permute_sparse_matrix(mat, new_row_order):
     return new_mat
 
 
-def cat_matrices(expr_matrices):
+def get_reorder_indexes(prevegenes, newgenes):
+
     """
-    Concatenate expression matrices for cases with several sequencing and/or biological replicates.
+    Get correspondence between old gene row indices and desired new ordering.
+
+    Args:
+        prevegenes (dict): dict with gene-name:row-index correspondance in old matrix
+        newgenes (dict): dict with disered gene-name:row-index correspondance for reoredered matrix
+
+    Returns:
+        dict: old_row-indexe:new_row-indexes, sorted by values
+    """
+
+    oldgeneidx2new = {prevegenes[gene]:newgenes[gene] for gene in newgenes}
+    filtered_out_genesold = {i for i in prevegenes.values() if i not in oldgeneidx2new}
+    n = len(oldgeneidx2new)
+    j = n
+    for i in filtered_out_genesold:
+        oldgeneidx2new[i] = j
+        j+=1
+
+    oldgeneidx2new = dict(sorted(oldgeneidx2new.items()))
+    return oldgeneidx2new, n
+
+
+def cat_matrices(expr_matrices):
+
+    """
+    Concatenate expression matrices (for cases with several sequencing/biological replicates).
 
     Args:
         expr_matrices (list of ExprMatrix namedtuple): matrices to concatenate
@@ -294,8 +322,6 @@ def cat_matrices(expr_matrices):
 
     Note: see to_expr_matrix() for ExprMatrix object description
     """
-    #FIXME THIS DOES NOT WORK: MATRICES ARE NOT CAT CORRECTLY!!!
-    #I suspect gene indexes are not properly kept in permutations
 
     if len(expr_matrices) == 1:
         return expr_matrices[0]
@@ -328,39 +354,23 @@ def cat_matrices(expr_matrices):
 
     logger.info('Retained %s genes present across all input matrices', len(genes))
 
-
     #update matrix by concat all sparse to one (reorder genes first)
-    oldgeneidx2new = {expr_matrices[0].genes[gene]:genes[gene] for gene in genes}
-
-    filtered_out_genesold = {i for i in expr_matrices[0].genes.values() if i not in oldgeneidx2new}
-    max_new = len(oldgeneidx2new)
-    j = max_new
-    for i in filtered_out_genesold:
-        oldgeneidx2new[i] = j
-        j+=1
-
-    oldgeneidx2new = dict(sorted(oldgeneidx2new.items()))
+    oldgeneidx2new, max_new = get_reorder_indexes(expr_matrices[0].genes, genes)
     matrix = permute_sparse_matrix(expr_matrices[0].matrix, list(oldgeneidx2new.values()))
     mat_to_cat = [matrix[:max_new,:]]
     for i in expr_matrices[1:]:
-        oldgeneidx2new = {i.genes[gene]:genes[gene] for gene in genes}
 
-        filtered_out_genesold = {k for k in i.genes.values() if k not in oldgeneidx2new}
-        max_new = len(oldgeneidx2new)
-        j = max_new
-        for k in filtered_out_genesold:
-            oldgeneidx2new[k] = j
-            j+=1
-
-        oldgeneidx2new = dict(sorted(oldgeneidx2new.items()))
+        oldgeneidx2new, max_new = get_reorder_indexes(i.genes, genes)
         tmp_mat = permute_sparse_matrix(i.matrix, list(oldgeneidx2new.values()))
         mat_to_cat.append(tmp_mat[:max_new,:])
+
     matrix = sparse.hstack(mat_to_cat)
     ExprMatrix = collections.namedtuple('ExprMatrix', ['matrix', 'genes', 'cells', 'clusters'])
     return ExprMatrix(matrix, genes, cells, clusters)
 
 
 def update_dict_of_set(mydict, key, val, filter_out_start=None, keep_only=None):
+
     """
     Helper function to update a dict of str:set in-place. Used to load cell clusters annotation.
     Skip dict update if cluster name is an empty string or starts with `filter_out_start`.
@@ -370,7 +380,9 @@ def update_dict_of_set(mydict, key, val, filter_out_start=None, keep_only=None):
         key (str): key to update with new value
         val (str): value to add
         filter_out_start (str, optional): ignore clusters whose name start with provided string
+        keep_only (str, optional): keep only cells from clusters starting with provided string
     """
+
     if key == '':
         return
     if filter_out_start and key.startswith(filter_out_start):
@@ -384,6 +396,7 @@ def update_dict_of_set(mydict, key, val, filter_out_start=None, keep_only=None):
 def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, fmt='tsv', colclust='cluster_name',
                            cores=1, filter_out_start=None, keep_only=None, broad=None,
                            open_func=open):
+
     """
     Loads expression matrix and clusters for 3 supported input formats (see validate_input_format).
 
@@ -512,6 +525,7 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, fmt='tsv', colclu
 
 def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=None,
                     keep_only=None):
+
     """
     Loads cells cluster annotation from a tab-delimited input file.
 
@@ -520,6 +534,8 @@ def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=
         colname (str, optional): Name of the column with clusters, default is 'cluster_name' and the
                                  second column will be used if 'cluster_name' is not in columns
         filter_out_start (str, optional): ignore clusters whose name start with provided string
+        keep_only (str, optional): keep only cells from clusters starting with provided string
+
 
     Returns:
         dict: dict of set with key = cluster name, value = set of cell barcodes
@@ -581,6 +597,7 @@ def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=
 
 def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
                               colname_broad='broad_annotation'):
+
     """
     Loads cluster to broad annotation from a tab-delimited input file.
 
@@ -735,6 +752,7 @@ def normalize_geom_mean_fc(expr_mat, marker_specificity=0.5, bar_format=None):
 def normalize(expr_mats, cells_to_clusters, output, cores=1, filter_out_start=None,
               keep_only=None, marker_specificity=0.5, colclust='cluster_name', broad=None,
               min_umi=10, bar_format=BAR_FORMAT):
+
     """
     Funtion to load the data (expression matrix and clusters) and compute per cluster normalized
     gene expression (fold-change).
@@ -746,6 +764,18 @@ def normalize(expr_mats, cells_to_clusters, output, cores=1, filter_out_start=No
         output (str): output file for nornalized gene-cluster expression matrix
         cores (int, optional): Number of cores to use for loading
         filter_out_start (str, optional): ignore clusters whose name start with provided string
+        keep_only (str, optional): keep only cells from clusters starting with provided string
+        marker_specificity (float): marker specificity value, between 0.5 and 0.95
+                                    (higher = more specific), used in fold change calculation as
+                                    follows: 0.5 computes fold change in cluster a vs median across
+                                    clusters, 0.75 computes fold change in cluster a vs 75
+                                    expression percentile across clusters (3rd quartile)
+        colclust (str, optional): name of column with clusters in tab-delim cluster file, default
+                                 is 'cluster_name' and will use second column if it does not exist
+        broad (str, optional): name of column with broad clusters in tab-delim cluster file, used
+                               to group clusters for plotting, default is to not load broad if not
+                               provided.
+        min_umi (int, optional): Retain only genes with umi >= `min_umi`
         bar_format (str, optional): tqdm bar format, use None for tqdm default
 
     """

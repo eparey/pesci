@@ -24,14 +24,13 @@ import sys
 import logging
 import os
 from pathlib import Path
+from functools import partialmethod
 
 import argparse
 
 import coloredlogs
 
-
 import tqdm
-from functools import partialmethod
 
 from . import version
 from . import normalize as nm, iterative_comparison_coexpression as icc, compare as cp

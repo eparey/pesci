@@ -303,7 +303,7 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
         input_file (str): path to input orthology file
         genes_sp_a, genes_sp_b (dict): genes in expression matrix of sp1 and sp2, respectively,
                                        after filtering.
-        random_if (str, optional): set this param to trigger a randomization of orthologies
+        random_id (str, optional): set this param to trigger a randomization of orthologies
                                   (useful to estimate level of expression similarity expected by
                                   chance).
 
@@ -397,6 +397,7 @@ def load_cluster_expression_matrix(input_file):
 
 
 def __init_worker():
+
     """
     Initialisation of worker for parallel operations
     """

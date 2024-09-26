@@ -1,3 +1,5 @@
 - set minimum python to 3.7 (ordered dict)
-- print all log to file / what happens in a non-colored term
+- remove the datatable part and replace by direct loading (by line and then in batch) + sparse conversion + final sparse.vstack
+
+Low priority
 - tkAgg error sometimes "ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running"
