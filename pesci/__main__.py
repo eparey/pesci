@@ -51,16 +51,18 @@ def parse_commandline():
                                            version='%(prog)s ' + version.__version__)
 
     #Required arguments
-    required = parser.add_argument_group('Required arguments')
+    required = parser.add_argument_group('required arguments')
     required.add_argument('-m1', '--matrix1', type=str, nargs='+', required=True,
                                               help="gene expression per cell for species 1 "
-                                            "(raw count matrix), either: a dense matrix text file, "
-                                            "a cellranger directory or an h5ad file")
+                                              "(raw count matrix), either: a dense matrix text file"
+                                              " (can be .gz), a cellranger directory or an h5ad "
+                                              "file; several inputs can be specified")
 
     required.add_argument('-m2', '--matrix2', type=str, nargs='+', required=True,
-                                            help="gene expression per cell for species 2 "
-                                            "(raw count matrix), either: a dense matrix text file, "
-                                            "a cellranger directory or an h5ad file")
+                                              help="gene expression per cell for species 2 "
+                                              "(raw count matrix), either: a dense matrix text file"
+                                              " (can be .gz), a cellranger directory or an h5ad "
+                                              "file; several inputs can be specified")
 
     required.add_argument('-c1', '--clusters1', type=str, required=True,
                                               help="cell-to-clusters table for species 1 "
@@ -75,13 +77,13 @@ def parse_commandline():
                                                           "(tab-delimited, 1 pair per line)")
 
     #Optional arguments resources
-    resources = parser.add_argument_group('Resources')
+    resources = parser.add_argument_group('resources')
     resources.add_argument('-c', '--cores', help='number of cores to use for parallel operations',
                                             type=int, required=False, default=1)
 
 
     #Optional arguments running
-    ropt = parser.add_argument_group('Running options')
+    ropt = parser.add_argument_group('running')
 
     ropt.add_argument('--force', action='store_true',
                                    help="recompute the per cluster normalized gene expression and "
@@ -108,7 +110,7 @@ def parse_commandline():
                                                     "store results in outdir/random_id", default='')
 
     #Optional arguments input
-    iopt = parser.add_argument_group('Input options')
+    iopt = parser.add_argument_group('inputs')
 
     iopt.add_argument('--min_umi', type=int, help="Minimum total umi for a gene to be retained for "
                                                   "comparison", default=10)
@@ -119,7 +121,8 @@ def parse_commandline():
                                                    "--clusters1/--cluster2 directly) - "
                                                    "if not set, will use column `cluster_name`, "
                                                    "if it does not exist, will attempt to use the "
-                                                   "2nd column - use --colclust1 & --colclust2 to "
+                                                   "2nd column \n"
+                                                   "use --colclust1 & --colclust2 to "
                                                    "specify different column names for species1 & "
                                                    "species2.",
                                     default='cluster_name')
@@ -146,7 +149,8 @@ def parse_commandline():
                                                     "annotations in the cell to cluster annotation "
                                                     "file or h5ad - if not set, will not use "
                                                     "broad annotations (this is for the heatmap "
-                                                    "plot only) - use --colbroad1 & --colbroad2 "
+                                                    "plot only) \n"
+                                                    "use --colbroad1 & --colbroad2 "
                                                     "to specify different column names for species1"
                                                     " & species2.",
                                     default=None)
@@ -202,7 +206,7 @@ def parse_commandline():
                                              'only.')
 
     #Optional arguments output
-    oopt = parser.add_argument_group('Output options')
+    oopt = parser.add_argument_group('outputs')
 
     oopt.add_argument('-o', '--outdir', type=str, required=False, default="output_pesci/",
                                         help='name of output directory (will be created if does '

@@ -14,6 +14,14 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
 
+from unittest.mock import MagicMock
+
+MOCK_MODULES = ["matplotlib", 'seaborn', "sklearn", "numpy", "pandas",
+                "scipy", 'coloredlogs', 'datatable', 'tqdm', 'threadpoolctl',
+                'scanpy', 'networkx', 'scipy.optimize', 'matplotlib.pyplot', 'matplotlib.patches']
+
+for mod in MOCK_MODULES:
+    sys.modules[mod] = MagicMock()
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -29,20 +37,18 @@ master_doc = 'index'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["sphinx_nefertiti", "sphinx-prompt", "sphinx.ext.autosectionlabel",
-              "sphinx.ext.autodoc", 'sphinx.ext.napoleon']
+extensions = ["sphinx_nefertiti", "sphinx-prompt", "sphinx.ext.autosectionlabel", 'sphinxarg.ext',
+              "sphinx.ext.autodoc", 'sphinx.ext.napoleon', 'sphinxcontrib.autoprogram']
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
-autodoc_mock_imports = ["matplotlib", 'seaborn', "sklearn", "numpy", "pandas",
-                        "scipy", 'coloredlogs', 'datatable', 'tqdm', 'threadpoolctl',
-                        'scanpy', 'networkx']
+# autodoc_mock_imports = ["matplotlib", 'seaborn', "sklearn", "numpy", "pandas",
+#                         "scipy", 'coloredlogs', 'datatable', 'tqdm', 'threadpoolctl',
+#                         'scanpy', 'networkx']
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-# import sphinx_nefertiti
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
@@ -52,5 +58,5 @@ html_static_path = ['_static']
 
 html_theme_options = {
     
-    "doc_headers_font": "Exo",  # Default value, no need to provide.
+    "doc_headers_font": "Exo",  
 }

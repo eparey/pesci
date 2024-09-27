@@ -213,8 +213,166 @@ span.prompt1:before {
 </pre></div></div></section>
 <section id="command-line-example">
 <h2>Command-line example<a class="headerlink" href="#command-line-example" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pesci<span class="w"> </span>-m1<span class="w"> </span>mat1.tsv.gz<span class="w"> </span>-m2<span class="w"> </span>mat2.tsv<span class="w"> </span>-c1<span class="w"> </span>cell_id1.tsv<span class="w"> </span>-c2<span class="w"> </span>cell_id2.tsv<span class="w"> </span>-g<span class="w"> </span>orthologous_pairs.txt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pesci<span class="w"> </span>--matrix1<span class="w"> </span>mat1.tsv.gz<span class="w"> </span>--matrix2<span class="w"> </span>mat2_rep1.tsv<span class="w"> </span>mat2_rep2.tsv<span class="w"> </span>-clusters1<span class="w"> </span>cell_id1.tsv<span class="w"> </span>--clusters2<span class="w"> </span>cell_id2.tsv<span class="w"> </span>-g<span class="w"> </span>orthologous_pairs.txt</span>
 </pre></div></div></section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<dl>
+<dt><strong>options:</strong></dt><dd><dl class="option-list">
+<dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>
+<dd><p>show this help message and exit</p>
+</dd>
+<dt><kbd><span class="option">-v</span>, <span class="option">--version</span></kbd></dt>
+<dd><p>show program’s version number and exit</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>required arguments:</strong></dt><dd><dl class="option-list">
+<dt><kbd><span class="option">--matrix1 <var>MATRIX1</var></span></kbd></dt>
+<dd><p>gene expression per cell for species 1 (raw count matrix), either: a dense matrix text file (can be .gz), a cellranger directory or an h5ad file; several inputs can be specified</p>
+</dd>
+<dt><kbd><span class="option">--matrix2 <var>MATRIX2</var></span></kbd></dt>
+<dd><p>gene expression per cell for species 2 (raw count matrix), either: a dense matrix text file (can be .gz), a cellranger directory or an h5ad file; several inputs can be specified</p>
+</dd>
+<dt><kbd><span class="option">--clusters1 <var>CLUSTERS1</var></span></kbd></dt>
+<dd><p>cell-to-clusters table for species 1 or name of cluster column in h5ad</p>
+</dd>
+<dt><kbd><span class="option">--clusters2 <var>CLUSTERS2</var></span></kbd></dt>
+<dd><p>cell-to-clusters table for species 2 or name of cluster column in h5ad</p>
+</dd>
+<dt><kbd><span class="option">-g <var>ORTHOLOGOUS_GENE_PAIRS</var></span>, <span class="option">--orthologous_gene_pairs <var>ORTHOLOGOUS_GENE_PAIRS</var></span></kbd></dt>
+<dd><p>gene orthologies file (tab-delimited, 1 pair per line)</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>resources:</strong></dt><dd><dl class="option-list">
+<dt><kbd><span class="option">-c <var>CORES</var></span>, <span class="option">--cores <var>CORES</var></span></kbd></dt>
+<dd><p>number of cores to use for parallel operations (default: 1)</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>running:</strong></dt><dd><dl class="option-list">
+<dt><kbd><span class="option">--force</span></kbd></dt>
+<dd><p>recompute the per cluster normalized gene expression and ec scores even if output already exists (default: False)</p>
+</dd>
+<dt><kbd><span class="option">--seed <var>SEED</var></span></kbd></dt>
+<dd><p>set random seed (default: 123)</p>
+</dd>
+<dt><kbd><span class="option">--marker_specificity <var>MARKER_SPECIFICITY</var></span></kbd></dt>
+<dd><p>marker specificity (btwn 0.5 and 0.95) - used in fold change expression calculation
+as follows: 0.5 computes fold change in cluster ‘a’ vs median expression across
+clusters, 0.75 computes fold change in cluster ‘a’ vs 75 expression percentile across
+clusters (3rd quartile) (default: 0.5)</p>
+</dd>
+<dt><kbd><span class="option">--ono2one_only</span></kbd></dt>
+<dd><p>only use 1-to-1 orthologs (default: False)</p>
+</dd>
+<dt><kbd><span class="option">--ec_threshold_many <var>EC_THRESHOLD_MANY</var></span></kbd></dt>
+<dd><p>if set, instead of only best pair retain all distinct pairs with score &gt; threshold
+(default: None)</p>
+</dd>
+<dt><kbd><span class="option">--random_id <var>RANDOM_ID</var></span></kbd></dt>
+<dd><p>triggers a randomization of orthologies and store results in outdir/random_id
+(default: )</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>input:</strong></dt><dd><dl class="option-list">
+<dt><kbd><span class="option">--min_umi <var>MIN_UMI</var></span></kbd></dt>
+<dd><p>Minimum total umi for a gene to be retained for comparison (default: 10)</p>
+</dd>
+<dt><kbd><span class="option">--colclust <var>COLCLUST</var></span></kbd></dt>
+<dd><p>name of the column corresponding to clusters in the cell to cluster annotation file
+(does not apply to h5ad input as it is specified by –clusters1/–cluster2 directly)
+- if not set, will use column <cite>cluster_name</cite>, if it does not exist, will attempt to
+use the 2nd column</p>
+<p>use –colclust1 &amp; –colclust2 to specify different column names
+for species1 &amp; species2. (default: cluster_name)</p>
+</dd>
+<dt><kbd><span class="option">--colclust1 <var>COLCLUST1</var></span></kbd></dt>
+<dd><p>name of the column corresponding to clusters in the cell to cluster annotation file
+for species1 (does not apply to h5ad input as it is specified by –clusters1
+directly) - if not set, will use column <cite>cluster_name</cite>, if it does not exist, will
+attempt to use the 2nd column. (default: None)</p>
+</dd>
+<dt><kbd><span class="option">--colclust2 <var>COLCLUST2</var></span></kbd></dt>
+<dd><p>name of the column corresponding to clusters in the cell to cluster annotation file
+for species2 (does not apply to h5ad input as it is specified by –clusters1
+directly) - if not set, will use column <cite>cluster_name</cite>, if it does not exist, will
+attempt to use the 2nd column. (default: None)</p>
+</dd>
+<dt><kbd><span class="option">--colbroad <var>COLBROAD</var></span></kbd></dt>
+<dd><p>name of the column corresponding to broad annotations in the cell to cluster
+annotation file or h5ad - if not set, will not use broad annotations (this is for the
+heatmap plot only)</p>
+<p>use –colbroad1 &amp; –colbroad2 to specify different column names
+for species1 &amp; species2. (default: None)</p>
+</dd>
+<dt><kbd><span class="option">--colbroad1 <var>COLBROAD1</var></span></kbd></dt>
+<dd><p>name of the column corresponding to broad annotations in the cell to cluster
+annotation file or h5ad of species1 - if not set, will not use broad annotations
+(this is for the heatmap plot only). (default: None)</p>
+</dd>
+<dt><kbd><span class="option">--colbroad2 <var>COLBROAD2</var></span></kbd></dt>
+<dd><p>name of the column corresponding to broad annotations in the cell to cluster
+annotation file or h5ad of species2 - if not set, will not use broad annotations
+(this is for the heatmap plot only). (default: None)</p>
+</dd>
+<dt><kbd><span class="option">--filter_out <var>FILTER_OUT</var></span></kbd></dt>
+<dd><p>discard clusters starting with specified string,several can be specified as a comma-
+separated list (ex: –filter_out BC_,RGC_). Applies to both species1 &amp; species2.
+(default: )</p>
+</dd>
+<dt><kbd><span class="option">--filter_out1 <var>FILTER_OUT1</var></span></kbd></dt>
+<dd><p>discard clusters starting with specified string,several can be specified as a comma-
+separated list (ex: –filter_out1 BC_,RGC_) - applies to species1 only. (default: )</p>
+</dd>
+<dt><kbd><span class="option">--filter_out2 <var>FILTER_OUT2</var></span></kbd></dt>
+<dd><p>discard clusters starting with specified string,several can be specified as a comma-
+separated list (ex: –filter_out2 BC_,RGC_) - applies to species2 only. (default: )</p>
+</dd>
+<dt><kbd><span class="option">--keep_only <var>KEEP_ONLY</var></span></kbd></dt>
+<dd><p>keep only clusters starting with specified string, several can be specified as a
+comma-separated list (ex: –keep_only BC_,RGC_) - applies to both species1 &amp;
+species2. (default: )</p>
+</dd>
+<dt><kbd><span class="option">--keep_only1 <var>KEEP_ONLY1</var></span></kbd></dt>
+<dd><p>keep only clusters starting with specified string, several can be specified as a
+comma-separated list (ex: –keep_only1 BC_,RGC_) - applies to species1 only.
+(default: )</p>
+</dd>
+<dt><kbd><span class="option">--keep_only2 <var>KEEP_ONLY2</var></span></kbd></dt>
+<dd><p>keep only clusters starting with specified string, several can be specified as a
+comma-separated list (ex: –keep_only2 BC_,RGC_) - applies to species2 only.
+(default: )</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>output:</strong></dt><dd><dl class="option-list">
+<dt><kbd><span class="option">-o <var>OUTDIR</var></span>, <span class="option">--outdir <var>OUTDIR</var></span></kbd></dt>
+<dd><p>name of output directory (will be created if does not exist) (default: output_pesci/)</p>
+</dd>
+<dt><kbd><span class="option">--label_species1 <var>LABEL_SPECIES1</var></span></kbd></dt>
+<dd><p>name of species1 (label for plots &amp; outputs) (default: sp1)</p>
+</dd>
+<dt><kbd><span class="option">--label_species2 <var>LABEL_SPECIES2</var></span></kbd></dt>
+<dd><p>name of species2 (label for plots &amp; outputs) (default: sp2)</p>
+</dd>
+<dt><kbd><span class="option">-f <var>FIGURE_FORMAT</var></span>, <span class="option">--figure_format <var>FIGURE_FORMAT</var></span></kbd></dt>
+<dd><p>{svg,png,pdf} format for output figures (default: svg)</p>
+</dd>
+<dt><kbd><span class="option">--plot_thresh <var>PLOT_THRESH</var></span></kbd></dt>
+<dd><p>threshold to plot matches in resulting comparison matrix &amp; search for co-expressed marker gene pairs (default: 0)</p>
+</dd>
+<dt><kbd><span class="option">--min_fc <var>MIN_FC</var></span></kbd></dt>
+<dd><p>minimum fold-change to be considered marker of a cluster - only used for the co-
+expressed marker gene table (to set in conjunction with –marker_specificity)
+(default: 1.5)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
 </section>
 
 </article>
@@ -232,6 +390,7 @@ span.prompt1:before {
 <li><a class="reference internal" href="#">Quick start</a><ul>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#command-line-example">Command-line example</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
 </ul>
@@ -286,7 +445,7 @@ span.prompt1:before {
         
         
         <div class="built-with pt-2">
-          Built with <a href="http://sphinx-doc.org">Sphinx 7.4.7</a> and <a href="https://github.com/danirus/sphinx-nefertiti">Nefertiti 0.4.0</a>
+          Built with <a href="http://sphinx-doc.org">Sphinx 7.3.7</a> and <a href="https://github.com/danirus/sphinx-nefertiti">Nefertiti 0.4.0</a>
         </div>
         
       </div>
