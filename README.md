@@ -35,20 +35,19 @@ Pesci takes as input **single-cell expression count matrices** (raw count matric
 
 ## Usage
 
-Test the installation on provided example data:
+- Running pesci on provided example data:
 
 ```
 pesci -m1 data/Cg_matrix_EM.tsv.gz -m2 data/Pc_matrix_EM.tsv.gz -c1 data/Cragig_cell_id.tsv -c2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt -c 4 -sp1 Oyster-larva -sp2 Flatworm-larva
 ```
 
-TODO Figure
+- Using broad annotation to order the heatmap:
 
-Use broad annotation to order the heatmap:
 ```
-pesci -m1 data/Cg_matrix_EM.tsv.gz -m2 data/Pc_matrix_EM.tsv.gz -c1 data/Cragig_cell_id.tsv -c2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt -c 4 -sp1 Oyster-larva -sp2 Flatworm-larva --force --colbroad 
+pesci -m1 data/Cg_matrix_EM.tsv.gz -m2 data/Pc_matrix_EM.tsv.gz -c1 data/Cragig_cell_id.tsv -c2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt -c 4 -sp1 Oyster-larva -sp2 Flatworm-larva --force --colbroad broad
 ```
 
-TODO Figure
+ ![pesci fig](https://github.com/eparey/pesci/blob/main/docs/img/Oyster-larva-Flatworm-larva_correlation_scores_matrix.png)
 
 TODO Link to the full doc for info on all options (see --help)
 

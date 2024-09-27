@@ -7,6 +7,7 @@
 	- fig examples (with and without --broad)
 	- input types
 	- resources
+	- going into subtypes
 
 - look a bit more into markers
 
