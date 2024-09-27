@@ -1,4 +1,4 @@
-sphinx==3.0.3
-sphinx_nefertiti
+sphinx>=5
+sphinx-nefertiti>=0.4
 sphinx-prompt
-docutils==0.16
+Jinja2<3.1

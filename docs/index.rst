@@ -1,23 +1,11 @@
-Welcome to pesci's documentation!
-==================================
+pesci
+=======
 
-
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3727519.svg
-    :target: https://doi.org/10.5281/zenodo.3727519
-
-.. image:: https://img.shields.io/badge/License-GPLv3-blue.svg
-    :target: https://www.gnu.org/licenses/gpl-3.0
-
-.. image:: https://img.shields.io/badge/snakemake-≥6.6.1-brightgreen.svg
-    :target: https://snakemake.bitbucket.io
-
-.. image:: https://readthedocs.org/projects/scorpios/badge/?version=latest
-   :target: https://scorpios.readthedocs.io/en/latest/?badge=latest
+.. image:: https://img.shields.io/badge/python-3.7+-blue.svg
+    :target: https://www.python.org/downloads/
 
 Quick Description
 
-
-.. image:: https://raw.githubusercontent.com/DyogenIBENS/SCORPIOS/master/doc/img/scorpios_illustrated.png
 
 .. toctree::
    :caption: Quick start
@@ -52,4 +40,5 @@ Quick Description
    :hidden:
    :maxdepth: 1
 
+   modules.rst
    project_info.rst

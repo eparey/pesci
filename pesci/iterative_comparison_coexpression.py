@@ -308,13 +308,15 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
                                   chance).
 
     Returns:
-        (list, list): list of one2one orthologs and list many-to-many / many-to-one orthologs, 
-                      each list is a list of tuple (genes in sp1, genes in species 2).
+        (list, list):
+            list of one2one orthologs and list many-to-many / many-to-one orthologs, 
+            each list is a list of tuple (genes in sp1, genes in species 2).
 
-    Note: Genes from species 1 and species 2 are considered after filtering out lowly-expressed
-          genes, this means that some many-to-many orthologs would be considered one-to-one if other
-          orthologs were filtered out. Disable filtering (set min_counts to 0) in pesci to avoid
-          this.
+    Note:
+        Genes from species 1 and species 2 are considered after filtering out lowly-expressed
+        genes, this means that some many-to-many orthologs would be considered one-to-one if other
+        orthologs were filtered out. Disable filtering (set min_counts to 0) in pesci to avoid
+        this.
     """
 
     #load all orthologous pairs
@@ -418,8 +420,9 @@ def worker_add_gene_pairs(manyortho, a, b, mat1, mat2, max_combin):
                           families will be skipped.
 
     Returns:
-        list of str: list of size two, (1) tab-separated tested gene pairs (2) tab-seprated 
-                     corresponding scores 
+        list of str:
+            list of size two, (1) tab-separated tested gene pairs (2) tab-seprated 
+            corresponding scores 
     """
 
     try:
@@ -472,7 +475,7 @@ def write_ec_one2one(one2one, expr_conservation_orthologs, out_ortho):
         ono2one (list): gene names (column names of expr_conservation_orthologs)
         expr_conservation_orthologs (numpy.array): vector with EC scores for each gene, genes in
                                                    the same order as in one2one
-        out_ortho (int): name of output file
+        out_ortho (str): name of output file
     """
 
     with open(out_ortho, 'w', encoding = "utf-8") as out:
@@ -520,7 +523,7 @@ def parallel_select_homologs(a, b, mat1, mat2, manyortho, batch_size, ncores=1, 
                                          and species 2, respectively, (genes in same order in both)
         manyortho (list): list of tuples with many-to-many / many-to-one / one-to-many orthologs
         batch_size (int, optional): size of batch for each parallel job
-        ncores (int, optional) number of cores to use
+        ncores (int, optional): number of cores to use
         max_combin (int, optional): maximum accepted number or pairwise combinations,
                                     massively multigeneic families will be skipped.
         bar_format (str, optional): tqdm bar format, use None for tqdm default
@@ -583,8 +586,8 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
                                     massively multigeneic families will be skipped.
         random_id (str, optional): set param to specify that orthologs should be randomized
                                    (results will be saved in a random_id subfolder,
-                                    so consider setting random1 or random2, ...etc)
-        ncores (int, optional) number of cores to use
+                                   so consider setting random1 or random2, ...etc)
+        ncores (int, optional): number of cores to use
         batch_size (int, optional): size of batch for each parallel job
         ono2one_only (bool, optional): do not select best pairs for many-to-many / one-to-many,
                                        use only one-to-one orthologs

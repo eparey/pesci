@@ -1,6 +1,6 @@
 """
 Module with functions to load an RNA-seq single-cell expression count matrix and precomputed
-cell clusters and compute normalized fold-change expression per clusters.
+cell clusters and compute normalized fold-change expression per cluster.
 """
 
 import sys
@@ -243,8 +243,11 @@ def to_expr_matrix(matrix, genes, cells, clusters):
     Returns:
         ExprMatrix namedtuple:
             matrix (scipy.sparse array): Expression matrix
+
             genes (dict): Names of the genes in rows (for each gene, give its row index)
+
             cells (dict): Names of the cell in columns (for each cell barcode, give its col index)
+
             clusters (dict): For each cluster, column indices of corresponding cells (set)
     """
 
@@ -320,7 +323,8 @@ def cat_matrices(expr_matrices):
     Returns:
         ExprMatrix namedtuple
 
-    Note: see to_expr_matrix() for ExprMatrix object description
+    Note:
+        see to_expr_matrix() for ExprMatrix object description
     """
 
     if len(expr_matrices) == 1:
@@ -416,9 +420,10 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, fmt='tsv', colclu
         open_func (function, optional): auto-detected in pesci, open as file or as compressed file
 
     Returns:
-        tuple: ExprMat namedtuple stores expression matrix, genes, cells and clusters
-               dict with correspondance clusters (key) to broad annoatation (val), empty if
-               broad=None
+        tuple:
+            ExprMat namedtuple stores expression matrix, genes, cells and clusters
+            dict with correspondance clusters (key) to broad annoatation (val), empty if
+            broad=None
     """
 
     clust2broad = {}
@@ -801,3 +806,4 @@ def normalize(expr_mats, cells_to_clusters, output, cores=1, filter_out_start=No
                                          bar_format=bar_format)
     df = pd.DataFrame(data=norm_matrix, index=matrix.genes, columns=sorted(matrix.clusters.keys()))
     df.to_csv(output, sep='\t')
+
