@@ -1,0 +1,4 @@
+sphinx==3.0.3
+sphinx_nefertiti
+sphinx-prompt
+docutils==0.16
