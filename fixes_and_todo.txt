@@ -13,3 +13,5 @@
 -----
 
 - LICENSE
+
+'To calculate expression similarity, pesci uses 1-to-1 orthologs and accounts for  many-to-many orthologs by selecting the gene pair with the most similar expression (i.e. most likely to reflect the ancestral gene function).'

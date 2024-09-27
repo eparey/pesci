@@ -8,8 +8,6 @@ Pesci is an efficient and user-friendly implementation of the Iterative Comparis
 
 Pesci takes as input **single-cell expression count matrices** (raw count matrices, CellRanger directory and/or h5ad files), **cell cluster annotations** and **gene orthologies** files.
 
-To calculate expression similarity, pesci uses 1-to-1 orthologs and accounts for  many-to-many orthologs by selecting the gene pair with the most similar expression (i.e. most likely to reflect the ancestral gene function).
-
 .. toctree::
    :caption: Manual
    :name: manual
@@ -17,7 +15,9 @@ To calculate expression similarity, pesci uses 1-to-1 orthologs and accounts for
 
    getting_started.rst
    input_description.rst
+   outputs_description.rst
    output_advanced.rst
+   options.rst
 
 
 .. toctree::

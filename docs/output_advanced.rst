@@ -1,2 +1,2 @@
-Avdanced options
-=================
+Figure parameters
+===================
