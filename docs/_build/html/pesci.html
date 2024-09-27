@@ -1,0 +1,1236 @@
+
+
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="docsearch:name" content="pesci" />
+    <meta name="docsearch:package_type" content="" />
+    <meta name="docsearch:release" content="pesci 0.1.0" />
+    <meta name="docsearch:version" content="" />
+    
+      <title>pesci &mdash; pesci pesci 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/bootstrap-icons.css" type="text/css" />
+          <!-- add (1) pathto "_CascadingStyleSheet('_static/pygments.css', priority=200, rel='stylesheet', type='text/css')" -->
+          <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8e8a900e" />
+          <!-- add (1) pathto "_CascadingStyleSheet('_static/colorsets/sphinx-nefertiti-default-0.4.0.min.css', priority=500, rel='stylesheet', type='text/css')" -->
+          <link rel="stylesheet" type="text/css" href="_static/colorsets/sphinx-nefertiti-default-0.4.0.min.css" />
+          <!-- add (1) pathto "_CascadingStyleSheet('_static/fonts/nunito/stylesheet.css', priority=500, rel='stylesheet', type='text/css')" -->
+          <link rel="stylesheet" type="text/css" href="_static/fonts/nunito/stylesheet.css" />
+          <!-- add (1) pathto "_CascadingStyleSheet('_static/fonts/red-hat-mono/stylesheet.css', priority=500, rel='stylesheet', type='text/css')" -->
+          <link rel="stylesheet" type="text/css" href="_static/fonts/red-hat-mono/stylesheet.css" />
+          <!-- add (1) pathto "_CascadingStyleSheet('_static/fonts/exo/stylesheet.css', priority=500, rel='stylesheet', type='text/css')" -->
+          <link rel="stylesheet" type="text/css" href="_static/fonts/exo/stylesheet.css" />
+          <!-- add (1) pathto "_CascadingStyleSheet('_static/pygments_dark.css', priority=500, rel='stylesheet', type='text/css')" -->
+          <link rel="stylesheet" type="text/css" href="_static/pygments_dark.css" />
+        <link rel="index" title="Index" href="genindex.html" />
+        <link rel="search" title="Search" href="search.html" />
+        <link rel="top" title="pesci pesci 0.1.0 documentation" href="#" />
+        <link rel="up" title="API" href="modules.html" />
+        <link rel="prev" title="API" href="modules.html" />
+    <style>
+      :root {
+        --nftt-body-font-family: "Nunito", var(--nftt-font-sans-serif) !important;
+        --nftt-font-monospace: "Red Hat Mono", var(--nftt-font-family-monospace) !important;
+        --nftt-project-name-font: var(--nftt-body-font-family);
+        --nftt-documentation-font: var(--nftt-body-font-family);
+        --nftt-doc-headers-font: "Exo", var(--nftt-documentation-font);}
+      h1 *, h2 *, h3 *, h4 *, h5 *, h6 * { font-size: inherit; }
+    </style>
+  </head>
+  <body>
+    <header class="navbar navbar-expand-xl navbar-dark nftt-navbar flex-column fixed-top">
+      <div class="skip-links container-fluid visually-hidden-focusable overflow-hidden justify-content-start flex-grow-1">
+        <div class="border-bottom mb-2 pb-2 w-100">
+          <a class="d-none d-md-inline-flex p-2 m-1" href="#sidebar-filter">Skip to docs navigation</a>
+          <a class="d-inline-flex p-2 m-1" href="#content">Skip to main content</a>
+        </div>
+      </div>
+      <nav class="container-xxl nftt-gutter flex-wrap flex-xl-nowrap" aria-label="Main navigation">
+        <div class="nftt-navbar-toggler">
+          <button class="navbar-toggler p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Toggle documentation navigation">
+            <i class="bi bi-list"></i>
+          </button>
+        </div>
+          <a href="index.html"
+              
+              class="navbar-brand p-0 me-0 md-lg-2"
+          ><span class="brand-text">pesci</span></a>
+        
+        <div class="d-flex d-xl-none">
+          <button class="navbar-toggler p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#nfttSearch" aria-controls="nfttSearch" aria-label="Search">
+            <i class="bi bi-search"></i>
+          </button>
+          <button class="navbar-toggler p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#nfttNavbar" aria-controls="nfttNavbar" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+        </div>
+        
+<div class="offcanvas-xl offcanvas-end flex-grow-1" tabindex="-1" id="nfttSearch" aria-labelledby="nfttSearchOffcanvasLabel" data-bs-scroll="true">
+  <div class="offcanvas-header px-4 pb-0">
+    <h5 class="offcanvas-title fw-bold" id="nfttSearchOffcanvasLabel">Search the documentation</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" data-bs-target="#nfttSearch"></button>
+  </div>
+  <div class="offcanvas-body p-4 pt-0 p-xl-0 px-xl-3">
+    <hr class="d-xl-none text-white-50">
+    <ul class="navbar-nav flex-row align-items-center flex-wrap ms-md-auto">
+      <li class="nav-item col-12 col-xl-auto">
+        <form id="nftt-search-form" action="search.html" method="get">
+          <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search docs" aria-label="Search" aria-describedby="button-search">
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+            <button class="btn btn-primary" type="submit" id="button-search" aria-label="Search"><i class="bi bi-search"></i></button>
+          </div>
+        </form>
+      </li>
+    </ul>
+  </div>
+</div>
+
+        <div class="offcanvas-xl offcanvas-end" tabindex="-1" id="nfttNavbar" aria-labelledby="nfttNavbarOffcanvasLabel" data-bs-scroll="true">
+          <div class="offcanvas-header px-4 pb-0">
+            <div class="offcanvas-title navbar-brand" id="nfttNavbarOffcanvasLabel"><span class="brand-text">Nefertiti for Sphinx</span></div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close" data-bs-target="#nfttNavbar"></button>
+          </div>
+          <div class="offcanvas-body p-4 pt-0 p-xl-0 px-xl-3">
+            <hr class="d-xl-none text-white-50">
+            <ul class="navbar-nav flex-row align-items-center flex-wrap ms-lg-auto">
+              
+              <!-- version_dropdown.html -->
+
+              
+              <!-- colorscheme_dropdown.html -->
+<li class="nav-item dropdown">
+  <a class="nav-link d-flex py-2 px-0 px-xl-2 dropdown-toggle align-items-center" id="snftt-luz" href="#" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" aria-label="Toggle light/dark">
+    <i class="bi bi-circle-half" data-snftt-luz-icon-active></i>
+    <span id="snftt-luz-text" class="d-xl-none small ms-2">Toggle light/dark</span>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="snftt-luz-text">
+    <li>
+      <h6 class="dropdown-header">Light/dark</h6>
+    </li>
+    <li>
+      <a class="dropdown-item d-flex align-items-center" data-snftt-luz="light" href="#" aria-pressed="false">
+        <span class="small">
+          <i class="bi bi-sun" data-snftt-luz-icon="light"></i>
+        </span>
+        <span class="small ms-3">Light</span>
+        <i class="bi bi-check ms-auto"></i>
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item d-flex align-items-center" data-snftt-luz="dark" href="#" aria-pressed="false">
+        <span class="small">
+          <i class="bi bi-moon-stars" data-snftt-luz-icon="dark"></i>
+        </span>
+        <span class="small ms-3">Dark</span>
+        <i class="bi bi-check ms-auto"></i>
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item current d-flex align-items-center" data-snftt-luz="default" href="#" aria-pressed="false">
+        <span class="small">
+          <i class="bi bi-circle-half" data-snftt-luz-icon="default"></i>
+        </span>
+        <span class="small ms-3">Default</span>
+        <i class="bi bi-check ms-auto"></i>
+      </a>
+    </li>
+  </ul>
+</li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container-fluid flex-grow-1">
+      <div class="nftt-gutter nftt-page">
+        <aside class="nftt-sidebar ">
+          <div class="nftt-sidebar-content">
+            
+            <div class="title d-none d-xl-block">
+              <i class="bi bi-book"></i>&nbsp;&nbsp;<span>Index</span>
+            </div>
+            <div id="sidebar" tabindex="-1" class="offcanvas-xl offcanvas-start" aria-labelledby="nfttSidebarOffcanvasLabel">
+                <!-- danirus sidebartemplate: "globaltoc.html" --><div class="offcanvas-header border-bottom">
+  <h5 class="offcanvas-title fw-bold" id="nfttSidebarOffcanvasLabel">
+    Table of contents
+  </h5>
+  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" data-bs-target="#sidebar"></button>
+</div>
+
+<div class="offcanvas-body">
+  <nav class="toc" aria-label="Main menu">
+    <div class="mb-3 p-1 pt-3 pb-4 border-bottom">
+      <input id="sidebar-filter" type="text" name="filter" class="form-control form-control-sm" placeholder="filter" aria-label="filter">
+    </div>
+    <p class="caption" role="heading"><span class="caption-text">Manual</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_description.html">Preparing input files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputs_description.html">Description of output files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="output_advanced.html">Figure parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Advanced options</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Information</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pesci</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav>
+  <template data-toggle-item-template>
+    <button class="btn btn-sm btn-link toctree-expand" type="button">
+      <i class="bi bi-caret-right"></i>
+      <span class="visually-hidden">Toggle menu contents</span>
+    </button>
+  </template>
+</div>
+            </div>
+            
+          </div>
+        </aside>
+        <article id="content" class="nftt-content" role="main">
+    <section id="pesci">
+<h1>pesci<a class="headerlink" href="#pesci" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-pesci.normalize">
+<span id="pesci-normalize-module"></span><h2>pesci.normalize module<a class="headerlink" href="#module-pesci.normalize" title="Link to this heading">¶</a></h2>
+<p>Module with functions to load an RNA-seq single-cell expression count matrix and precomputed
+cell clusters and compute normalized fold-change expression per cluster.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.cat_matrices">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">cat_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr_matrices</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.cat_matrices" title="Link to this definition">¶</a></dt>
+<dd><p>Concatenate expression matrices (for cases with several sequencing/biological replicates).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>expr_matrices</strong> (<em>list</em><em> of </em><em>ExprMatrix namedtuple</em>) – matrices to concatenate</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ExprMatrix namedtuple</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>see to_expr_matrix() for ExprMatrix object description</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.dt_to_sparse_high_ram">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">dt_to_sparse_high_ram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_ind</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.dt_to_sparse_high_ram" title="Link to this definition">¶</a></dt>
+<dd><p>Converts a datatable Frame count matrix to a scipy sparse matrix. This has high RAM usage since
+the whole matrix is loaded in memory in dense format first. Function not used in pesci, retained
+here for testing purposes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> (<em>datatable.Frame</em>) – count matrix (with genes still in first column)</p></li>
+<li><p><strong>column_ind</strong> (<em>str</em>) – name of the column with genes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>count matrix in sparse format</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>scipy.sparse.csr_matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.get_open">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">get_open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.get_open" title="Link to this definition">¶</a></dt>
+<dd><p>Infers open function to use for compressed file based on extension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ext</strong> (<em>str</em>) – file extention</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>open function</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.get_reorder_indexes">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">get_reorder_indexes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prevegenes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newgenes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.get_reorder_indexes" title="Link to this definition">¶</a></dt>
+<dd><p>Get correspondence between old gene row indices and desired new ordering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prevegenes</strong> (<em>dict</em>) – dict with gene-name:row-index correspondance in old matrix</p></li>
+<li><p><strong>newgenes</strong> (<em>dict</em>) – dict with disered gene-name:row-index correspondance for reoredered matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>old_row-indexe:new_row-indexes, sorted by values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.iterative_dt_to_sparse">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">iterative_dt_to_sparse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt_expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cells_per_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.iterative_dt_to_sparse" title="Link to this definition">¶</a></dt>
+<dd><p>Converts a datatable Frame count matrix to a scipy sparse matrix.
+Conversion is done in chunks of <cite>cells_per_iter</cite> cells (10,000 default) to decrease RAM usage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> (<em>datatable.Frame</em>) – count matrix (with genes still in first column)</p></li>
+<li><p><strong>cells_per_iter</strong> (<em>int</em>) – size of chunks</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>count matrix in sparse format</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>scipy.sparse.csr_matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.load_cell_clust">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">load_cell_clust</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cells_to_clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster_name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_out_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.load_cell_clust" title="Link to this definition">¶</a></dt>
+<dd><p>Loads cells cluster annotation from a tab-delimited input file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cells_to_clusters</strong> (<em>str</em>) – Input file name</p></li>
+<li><p><strong>colname</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the column with clusters, default is ‘cluster_name’ and the
+second column will be used if ‘cluster_name’ is not in columns</p></li>
+<li><p><strong>filter_out_start</strong> (<em>str</em><em>, </em><em>optional</em>) – ignore clusters whose name start with provided string</p></li>
+<li><p><strong>keep_only</strong> (<em>str</em><em>, </em><em>optional</em>) – keep only cells from clusters starting with provided string</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of set with key = cluster name, value = set of cell barcodes</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.load_cell_clust_and_broad">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">load_cell_clust_and_broad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cells_to_clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster_name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colname_broad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'broad_annotation'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.load_cell_clust_and_broad" title="Link to this definition">¶</a></dt>
+<dd><p>Loads cluster to broad annotation from a tab-delimited input file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cells_to_clusters</strong> (<em>str</em>) – Input file name</p></li>
+<li><p><strong>colname_clust</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the column with clusters, default is ‘cluster_name’
+and the second column will be used if ‘cluster_name’ is not
+in columns</p></li>
+<li><p><strong>colname_broad</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the column with broad annotation, default is
+‘broad_annotation’ and the third column will be used if
+‘broad_annotation’ is not in columns</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of set with key = cluster name, value = broad annotation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.load_expr_and_clusters">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">load_expr_and_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr_mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_counts=10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt='tsv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colclust='cluster_name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_out_start=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_only=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">broad=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open_func=&lt;built-in</span> <span class="pre">function</span> <span class="pre">open&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.load_expr_and_clusters" title="Link to this definition">¶</a></dt>
+<dd><p>Loads expression matrix and clusters for 3 supported input formats (see validate_input_format).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr_mat</strong> (<em>str</em>) – Expression matrix input file or cellranger directory</p></li>
+<li><p><strong>clusters</strong> (<em>str</em>) – Cell-to-clusters annotation file, or name of the cluster column in the h5ad</p></li>
+<li><p><strong>min_counts</strong> (<em>int</em><em>, </em><em>optional</em>) – Retain only genes with &gt;= <cite>min_counts</cite> counts</p></li>
+<li><p><strong>fmt</strong> (<em>str</em><em>, </em><em>optional</em>) – input format, one of ‘tsv’ | ‘csv’ | ‘cellranger’ | ‘h5ad’</p></li>
+<li><p><strong>colclust</strong> (<em>str</em><em>, </em><em>optional</em>) – name of column with clusters in tab-delim cluster file, default
+is ‘cluster_name’ and will use second column if it does not exist.</p></li>
+<li><p><strong>cores</strong> (<em>int</em><em>, </em><em>optional</em>) – number of cores for loading (default 1)</p></li>
+<li><p><strong>filter_out_start</strong> (<em>str</em><em>, </em><em>optional</em>) – ignore clusters whose name start with provided string</p></li>
+<li><p><strong>keep_only</strong> (<em>str</em><em>, </em><em>optional</em>) – keep only cells from clusters starting with provided string</p></li>
+<li><p><strong>broad</strong> (<em>str</em><em>, </em><em>optional</em>) – name of column with broad clusters in tab-delim cluster file, used
+to group clusters for plotting, default is to not load broad if not
+provided.</p></li>
+<li><p><strong>open_func</strong> (<em>function</em><em>, </em><em>optional</em>) – auto-detected in pesci, open as file or as compressed file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ExprMat namedtuple stores expression matrix, genes, cells and clusters
+dict with correspondance clusters (key) to broad annoatation (val), empty if
+broad=None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.load_matrix_tsv">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">load_matrix_tsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt='tsv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open_func=&lt;built-in</span> <span class="pre">function</span> <span class="pre">open&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.load_matrix_tsv" title="Link to this definition">¶</a></dt>
+<dd><p>Loads expression matrix provided as a text file format, either tab-delimited (fmt=’.tsv’) or
+comma delimited (fmt=’.csv’).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputfile</strong> (<em>str</em>) – Name of the input file</p></li>
+<li><p><strong>cores</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of cores to use for loading</p></li>
+<li><p><strong>fmt</strong> (<em>str</em><em>, </em><em>optional</em>) – format (tsv or csv)</p></li>
+<li><p><strong>open_func</strong> (<em>function</em>) – open function to use (to handle compressed inputs)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(scipy.sparse array, list, list) expression matrix, genes (rows), cell barcodes (col)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.normalize">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr_mats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cells_to_clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_out_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker_specificity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colclust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cluster_name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">broad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_umi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bar_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'{percentage:3.0f}%</span> <span class="pre">|{bar:50}|</span> <span class="pre">task</span> <span class="pre">\x1b[1;32m{unit}'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.normalize" title="Link to this definition">¶</a></dt>
+<dd><p>Funtion to load the data (expression matrix and clusters) and compute per cluster normalized
+gene expression (fold-change).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr_mat</strong> (<em>list</em>) – Expression matrix (or matrices), either a tab-delimited file, cellranger
+directory or h5ad</p></li>
+<li><p><strong>cells_to_clusters</strong> (<em>str</em>) – input cluster file name or name of cluster column in h5ad</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – output file for nornalized gene-cluster expression matrix</p></li>
+<li><p><strong>cores</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of cores to use for loading</p></li>
+<li><p><strong>filter_out_start</strong> (<em>str</em><em>, </em><em>optional</em>) – ignore clusters whose name start with provided string</p></li>
+<li><p><strong>keep_only</strong> (<em>str</em><em>, </em><em>optional</em>) – keep only cells from clusters starting with provided string</p></li>
+<li><p><strong>marker_specificity</strong> (<em>float</em>) – marker specificity value, between 0.5 and 0.95
+(higher = more specific), used in fold change calculation as
+follows: 0.5 computes fold change in cluster a vs median across
+clusters, 0.75 computes fold change in cluster a vs 75
+expression percentile across clusters (3rd quartile)</p></li>
+<li><p><strong>colclust</strong> (<em>str</em><em>, </em><em>optional</em>) – name of column with clusters in tab-delim cluster file, default
+is ‘cluster_name’ and will use second column if it does not exist</p></li>
+<li><p><strong>broad</strong> (<em>str</em><em>, </em><em>optional</em>) – name of column with broad clusters in tab-delim cluster file, used
+to group clusters for plotting, default is to not load broad if not
+provided.</p></li>
+<li><p><strong>min_umi</strong> (<em>int</em><em>, </em><em>optional</em>) – Retain only genes with umi &gt;= <cite>min_umi</cite></p></li>
+<li><p><strong>bar_format</strong> (<em>str</em><em>, </em><em>optional</em>) – tqdm bar format, use None for tqdm default</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.normalize_geom_mean_fc">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">normalize_geom_mean_fc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr_mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker_specificity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bar_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.normalize_geom_mean_fc" title="Link to this definition">¶</a></dt>
+<dd><p>Computes normalized gene expression per cluster</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr_mat</strong> (<em>str</em>) – Input file name</p></li>
+<li><p><strong>marker_specificity</strong> (<em>float</em>) – marker specificity value, between 0.5 and 0.95
+(higher = more specific), used in fold change calculation as
+follows: 0.5 computes fold change in cluster a vs median across
+clusters, 0.75 computes fold change in cluster a vs 75
+expression percentile across clusters (3rd quartile)</p></li>
+<li><p><strong>bar_format</strong> (<em>str</em><em>, </em><em>optional</em>) – tqdm bar format, use None for tqdm default</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>normalized gene expression per cluster (Fold-change)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.permute_sparse_matrix">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">permute_sparse_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_row_order</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.permute_sparse_matrix" title="Link to this definition">¶</a></dt>
+<dd><p>Reorders the rows in a scipy sparse matrix using specified index list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat</strong> (<em>scipy.sparse array</em>) – input matrix</p></li>
+<li><p><strong>new_row_order</strong> (<em>list</em>) – new order of row indexes (e.g. [1,0,2,3] swaps first two rows)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>reordered sparse matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>scipy.sparse array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.to_expr_matrix">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">to_expr_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.to_expr_matrix" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a simple named tuple object to represent a cell-by-gene expression matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>matrix</strong> (<em>numpy.array</em><em> | </em><em>scipy.sparse array</em>) – expression matrix</p></li>
+<li><p><strong>genes</strong> (<em>list</em>) – list of genes in matrix rows (i.e. rownames)</p></li>
+<li><p><strong>cells</strong> (<em>list</em>) – list of cells in matrix columns (i.e. colnames)</p></li>
+<li><p><strong>clusters</strong> (<em>dict</em>) – for each cluster,corresponding cell barcodes (set)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>matrix (scipy.sparse array): Expression matrix</p>
+<p>genes (dict): Names of the genes in rows (for each gene, give its row index)</p>
+<p>cells (dict): Names of the cell in columns (for each cell barcode, give its col index)</p>
+<p>clusters (dict): For each cluster, column indices of corresponding cells (set)</p>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ExprMatrix namedtuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.update_dict_of_set">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">update_dict_of_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mydict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_out_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.update_dict_of_set" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to update a dict of str:set in-place. Used to load cell clusters annotation.
+Skip dict update if cluster name is an empty string or starts with <cite>filter_out_start</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mydict</strong> (<em>dict</em>) – dict to update</p></li>
+<li><p><strong>key</strong> (<em>str</em>) – key to update with new value</p></li>
+<li><p><strong>val</strong> (<em>str</em>) – value to add</p></li>
+<li><p><strong>filter_out_start</strong> (<em>str</em><em>, </em><em>optional</em>) – ignore clusters whose name start with provided string</p></li>
+<li><p><strong>keep_only</strong> (<em>str</em><em>, </em><em>optional</em>) – keep only cells from clusters starting with provided string</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.normalize.validate_input_format">
+<span class="sig-prename descclassname"><span class="pre">pesci.normalize.</span></span><span class="sig-name descname"><span class="pre">validate_input_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr_mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.normalize.validate_input_format" title="Link to this definition">¶</a></dt>
+<dd><p>Infers and validates input file format.
+Infers expression matrix file format (check filename extension, or is_directory)
+and check provided cell-to-clusters annotation.</p>
+<dl class="simple">
+<dt>Three different formats are supported:</dt><dd><ul class="simple">
+<li><p>raw expression matrix as a tab-delimited file
+(.tsv, .txt or .csv, can be compressed in .gz, .gz2)
++ tab-delimited cell-to-clusters file</p></li>
+<li><p>cellranger output directory + tab-delimited cell-to-clusters file</p></li>
+<li><p>scanpy h5ad + name of the column with cluster annotations</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr_mat</strong> (<em>str</em>) – Expression matrix input file or cellranger directory</p></li>
+<li><p><strong>clusters</strong> (<em>str</em>) – Cell-to-clusters annotation file, or name of the cluster column in the h5ad</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Inferred file format</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pesci.iterative_comparison_coexpression">
+<span id="pesci-iterative-comparison-coexpression-module"></span><h2>pesci.iterative_comparison_coexpression module<a class="headerlink" href="#module-pesci.iterative_comparison_coexpression" title="Link to this heading">¶</a></h2>
+<p>Module with functions to compute expression conservation scores for 1-to-1 orthologs across
+scRNA-seq datasets in two species, using the ICC procedure. Also selects best gene pairs
+for many-to-many or 1-to-many orthologs (pair with the highest co-expression conservation).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.column_wise_wcorr_einsum">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">column_wise_wcorr_einsum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.column_wise_wcorr_einsum" title="Link to this definition">¶</a></dt>
+<dd><p>Computes weighted correlation for all pairs of columns mat1 - mat2, using numpy einsum for
+performance.</p>
+<p>mat1 and mat2 are expected to be expression matrix of the form (n genes x k clusters) and
+(n genes x l clusters), respectively, with genes in the same order (= same order in weight
+vector w).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat1</strong> (<em>numpy.array</em>) – orthologs expression matrix from species 1 and 2 respectively</p></li>
+<li><p><strong>mat2</strong> (<em>numpy.array</em>) – orthologs expression matrix from species 1 and 2 respectively</p></li>
+<li><p><strong>w</strong> (<em>numpy.array</em>) – weight vector</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix (k, l) weighted pearson correlation coefficient for all column pairs</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.compute_expression_conservation">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">compute_expression_conservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix_sp_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_sp_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.compute_expression_conservation" title="Link to this definition">¶</a></dt>
+<dd><p>Compute expression conservation score (EC score) using the ICC procedure
+(Iterative Comparison of coexpression) until convergence or max_iter is reach.</p>
+<p>Inputs should be expression matrices with the same number of rows (n genes), and with
+genes in the same order in both matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>matrix_sp_a</strong> (<em>numpy.array</em>) – expression matrix from species 1 and 2 respectively</p></li>
+<li><p><strong>matrix_sp_b</strong> (<em>numpy.array</em>) – expression matrix from species 1 and 2 respectively</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>vector with EC scores</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.icc">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">icc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix_file_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_file_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthology_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outprefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_combin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ono2one_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bar_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'{percentage:3.0f}%</span> <span class="pre">|{bar:50}|</span> <span class="pre">task</span> <span class="pre">\x1b[1;32m{unit}'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.icc" title="Link to this definition">¶</a></dt>
+<dd><p>Use the ICC approach to: (i) compute expression conservation scores for 1-to-1 orthologs, (ii)
+select best pairs (i.e. most conserved expression) for many-to-many / many-to-one / one-to-many
+orthologs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>matrix_file_a</strong> (<em>str</em>) – Tab-delimited gene - cluster expression (FC)
+matrix files for species 1 and 2, respectively</p></li>
+<li><p><strong>matrix_file_b</strong> (<em>str</em>) – Tab-delimited gene - cluster expression (FC)
+matrix files for species 1 and 2, respectively</p></li>
+<li><p><strong>orthology_file</strong> (<em>str</em>) – file with orthologous gene pairs (tab-delimited, 1 pair per line)</p></li>
+<li><p><strong>outprefix</strong> (<em>str</em>) – prefix for output files</p></li>
+<li><p><strong>max_combin</strong> (<em>int</em><em>, </em><em>optional</em>) – maximum accepted number or pairwise combinations,
+massively multigeneic families will be skipped.</p></li>
+<li><p><strong>random_id</strong> (<em>str</em><em>, </em><em>optional</em>) – set param to specify that orthologs should be randomized
+(results will be saved in a random_id subfolder,
+so consider setting random1 or random2, …etc)</p></li>
+<li><p><strong>ncores</strong> (<em>int</em><em>, </em><em>optional</em>) – number of cores to use</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – size of batch for each parallel job</p></li>
+<li><p><strong>ono2one_only</strong> (<em>bool</em><em>, </em><em>optional</em>) – do not select best pairs for many-to-many / one-to-many,
+use only one-to-one orthologs</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – random seed, use for reproducible results</p></li>
+<li><p><strong>bar_format</strong> (<em>str</em><em>, </em><em>optional</em>) – tqdm bar format, use None for tqdm default</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.init_ec">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">init_ec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.init_ec" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the expression conservation scores (EC scores), using unweighted orthologs
+co-correlation.</p>
+<p>mat1 and mat2 should be expression correlation matrices of the same size (ngenes * ngenes) with
+genes in the same order in both matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat1</strong> (<em>numpy.array</em>) – orthologs correlation matrix from species 1 and 2 respectively</p></li>
+<li><p><strong>mat2</strong> (<em>numpy.array</em>) – orthologs correlation matrix from species 1 and 2 respectively</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>vector with EC scores</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.init_ec_optimized_einsum">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">init_ec_optimized_einsum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.init_ec_optimized_einsum" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the expression conservation scores (EC scores), using unweighted orthologs
+co-correlation. This is the same as init_ec() but using numpy einsum for better performance
+(to the cost of a decreased readability).</p>
+<p>mat1 and mat2 should be expression correlation matrices of the same size (ngenes * ngenes) with
+genes in the same order in both matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat1</strong> (<em>numpy.array</em>) – orthologs correlation matrix from species 1 and 2 respectively</p></li>
+<li><p><strong>mat2</strong> (<em>numpy.array</em>) – orthologs correlation matrix from species 1 and 2 respectively</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>vector with EC scores</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.load_cluster_expression_matrix">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">load_cluster_expression_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.load_cluster_expression_matrix" title="Link to this definition">¶</a></dt>
+<dd><p>Load tab-delimited cluster gene expression matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputfile</strong> (<em>str</em>) – name of the expression matrix file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>stores expression matrix, genes and cell_types (clusters)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ExprMat namedtuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.load_orthologs">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">load_orthologs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genes_sp_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genes_sp_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.load_orthologs" title="Link to this definition">¶</a></dt>
+<dd><p>Load orthologs gene pairs from tab-delimited input file (one pair per line).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_file</strong> (<em>str</em>) – path to input orthology file</p></li>
+<li><p><strong>genes_sp_a</strong> (<em>dict</em>) – genes in expression matrix of sp1 and sp2, respectively,
+after filtering.</p></li>
+<li><p><strong>genes_sp_b</strong> (<em>dict</em>) – genes in expression matrix of sp1 and sp2, respectively,
+after filtering.</p></li>
+<li><p><strong>random_id</strong> (<em>str</em><em>, </em><em>optional</em>) – set this param to trigger a randomization of orthologies
+(useful to estimate level of expression similarity expected by
+chance).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of one2one orthologs and list many-to-many / many-to-one orthologs,
+each list is a list of tuple (genes in sp1, genes in species 2).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(list, list)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Genes from species 1 and species 2 are considered after filtering out lowly-expressed
+genes, this means that some many-to-many orthologs would be considered one-to-one if other
+orthologs were filtered out. Disable filtering (set min_counts to 0) in pesci to avoid
+this.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.parallel_select_homologs">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">parallel_select_homologs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manyortho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_combin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bar_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'{percentage:3.0f}%</span> <span class="pre">|{bar:50}|</span> <span class="pre">task</span> <span class="pre">\x1b[1;32m{unit}'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.parallel_select_homologs" title="Link to this definition">¶</a></dt>
+<dd><p>Use the ICC approach to select best pairs (i.e. most conserved expression) for
+many-to-many / many-to-one / one-to-many orthologs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>numpy.array</em>) – gene cluster expression matrix for one-to-one orthologs in species 1 and
+species 2, respectively, (genes in same order in both)</p></li>
+<li><p><strong>b</strong> (<em>numpy.array</em>) – gene cluster expression matrix for one-to-one orthologs in species 1 and
+species 2, respectively, (genes in same order in both)</p></li>
+<li><p><strong>mat1</strong> (<em>ExprMat namedtuple</em>) – whole expression matrix, genes and cluster for species 1
+and species 2, respectively, (genes in same order in both)</p></li>
+<li><p><strong>mat2</strong> (<em>ExprMat namedtuple</em>) – whole expression matrix, genes and cluster for species 1
+and species 2, respectively, (genes in same order in both)</p></li>
+<li><p><strong>manyortho</strong> (<em>list</em>) – list of tuples with many-to-many / many-to-one / one-to-many orthologs</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – size of batch for each parallel job</p></li>
+<li><p><strong>ncores</strong> (<em>int</em><em>, </em><em>optional</em>) – number of cores to use</p></li>
+<li><p><strong>max_combin</strong> (<em>int</em><em>, </em><em>optional</em>) – maximum accepted number or pairwise combinations,
+massively multigeneic families will be skipped.</p></li>
+<li><p><strong>bar_format</strong> (<em>str</em><em>, </em><em>optional</em>) – tqdm bar format, use None for tqdm default</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.update_ec">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">update_ec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_ec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.update_ec" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the expression conservation scores (EC scores), using the ICC procedure
+(Iterative Comparison of coexpression).</p>
+<p>mat1 and mat2 should be expression correlation matrices of the same size (ngenes * ngenes) with
+genes in the same order in both matrices (and same order as the ec vector).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat1</strong> (<em>numpy.array</em>) – orthologs correlation matrix from species 1 and 2 respectively</p></li>
+<li><p><strong>mat2</strong> (<em>numpy.array</em>) – orthologs correlation matrix from species 1 and 2 respectively</p></li>
+<li><p><strong>prev_ec</strong> (<em>numpy.array</em>) – ec score vector from previous iteration</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>vector with EC scores</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.update_ec_optimized_einsum">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">update_ec_optimized_einsum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_ec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.update_ec_optimized_einsum" title="Link to this definition">¶</a></dt>
+<dd><p>Update the expression conservation scores (EC scores) from a previous iteration.
+Same as update_ec() but using numpy einsum for better performance (to the cost of a decreased
+readability).</p>
+<p>mat1 and mat2 should be expression correlation matrices of the same size (ngenes * ngenes) with
+genes in the same order in both matrices (and same order in the ec vector).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat1</strong> (<em>numpy.array</em>) – orthologs correlation matrix from species 1 and 2 respectively</p></li>
+<li><p><strong>mat2</strong> (<em>numpy.array</em>) – orthologs correlation matrix from species 1 and 2 respectively</p></li>
+<li><p><strong>prev_ec</strong> (<em>numpy.array</em>) – ec score vector from previous iteration</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>vector with EC scores</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.update_ec_until_convergence">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">update_ec_until_convergence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.update_ec_until_convergence" title="Link to this definition">¶</a></dt>
+<dd><p>Iteratively updates the expression conservation score (EC score) using the ICC procedure
+(Iterative Comparison of coexpression) until convergence or max_iter is reached.</p>
+<p>mat1 and mat2 should be expression correlation matrices of the same size (ngenes * ngenes) with
+genes in the same order in both matrices (and same order as the ec vector).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat1</strong> (<em>numpy.array</em>) – orthologs correlation matrix from species 1 and 2 respectively</p></li>
+<li><p><strong>mat2</strong> (<em>numpy.array</em>) – orthologs correlation matrix from species 1 and 2 respectively</p></li>
+<li><p><strong>ec</strong> (<em>numpy.array</em>) – initialized ec score vector</p></li>
+<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>optional</em>) – maximum number of iterations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>vector with EC scores</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.worker_add_gene_pairs">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">worker_add_gene_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manyortho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_combin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.worker_add_gene_pairs" title="Link to this definition">¶</a></dt>
+<dd><p>Selects the best gene pairs (most conserved expression) for many-to-many or 1-to-many orthologs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>manyortho</strong> (<em>list</em><em> of </em><em>tuples</em>) – lits of sp1 - sp2 gene pairs that are many to many orthologs.</p></li>
+<li><p><strong>a</strong> (<em>numpy.array</em>) – gene - cluster expression matrix for the randomly selected subset
+of 1-to-1 orthologs, for sp1 and sp2 respectively.</p></li>
+<li><p><strong>b</strong> (<em>numpy.array</em>) – gene - cluster expression matrix for the randomly selected subset
+of 1-to-1 orthologs, for sp1 and sp2 respectively.</p></li>
+<li><p><strong>mat1</strong> (<em>tuple</em>) – tuple with full gene - cluster expression matrix + list of genes (rows)
+for sp1 and sp2, respectively</p></li>
+<li><p><strong>mat2</strong> (<em>tuple</em>) – tuple with full gene - cluster expression matrix + list of genes (rows)
+for sp1 and sp2, respectively</p></li>
+<li><p><strong>max_combin</strong> (<em>int</em>) – maximum accepted number or pairwise combinations, massively multigeneic
+families will be skipped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of size two, (1) tab-separated tested gene pairs (2) tab-seprated
+corresponding scores</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.write_ec_manyortho">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">write_ec_manyortho</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_many</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_skipped</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.write_ec_manyortho" title="Link to this definition">¶</a></dt>
+<dd><p>Writes scores to a tab-seprated file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>results</strong> (<em>list</em>) – list with ec scores for all pairs of many-to-many / many-to-one orthologs</p></li>
+<li><p><strong>out_many</strong> (<em>numpy.array</em>) – name of output file to write scores to</p></li>
+<li><p><strong>out_skipped</strong> (<em>int</em>) – name of output file to write skipped multigenic families</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.iterative_comparison_coexpression.write_ec_one2one">
+<span class="sig-prename descclassname"><span class="pre">pesci.iterative_comparison_coexpression.</span></span><span class="sig-name descname"><span class="pre">write_ec_one2one</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">one2one</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expr_conservation_orthologs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_ortho</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.iterative_comparison_coexpression.write_ec_one2one" title="Link to this definition">¶</a></dt>
+<dd><p>Writes scores to a tab-seprated file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ono2one</strong> (<em>list</em>) – gene names (column names of expr_conservation_orthologs)</p></li>
+<li><p><strong>expr_conservation_orthologs</strong> (<em>numpy.array</em>) – vector with EC scores for each gene, genes in
+the same order as in one2one</p></li>
+<li><p><strong>out_ortho</strong> (<em>str</em>) – name of output file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pesci.compare">
+<span id="pesci-compare-module"></span><h2>pesci.compare module<a class="headerlink" href="#module-pesci.compare" title="Link to this heading">¶</a></h2>
+<p>Module with functions to compute gene expression similarity between single-cell datasets of 2
+species, using pearson weighted correlation and pre-computed gene weights.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.compare.compare">
+<span class="sig-prename descclassname"><span class="pre">pesci.compare.</span></span><span class="sig-name descname"><span class="pre">compare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outprefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sp1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sp1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sp2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sp2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_for_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outformat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'svg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_fc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">broad_file1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">broad_file2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">many_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.compare.compare" title="Link to this definition">¶</a></dt>
+<dd><p>Compares gene expression across all pairs clusters species 1 - clusters species 2, using
+weighted pearson correlation. Resulting comparison heatmap is saved as figure and tab-delimited
+text file. Also reports co-expressed gene markers for matching clusters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>matrix_a</strong> (<em>str</em>) – path to input file with gene - cluster normalized expression
+matrices (Fold-change)</p></li>
+<li><p><strong>matrix_b</strong> (<em>str</em>) – path to input file with gene - cluster normalized expression
+matrices (Fold-change)</p></li>
+<li><p><strong>outprefix</strong> (<em>str</em>) – prefix for output files</p></li>
+<li><p><strong>sp1</strong> (<em>str</em><em>, </em><em>optional</em>) – (short)name for species 1 and species 2, respectively</p></li>
+<li><p><strong>sp2</strong> (<em>str</em><em>, </em><em>optional</em>) – (short)name for species 1 and species 2, respectively</p></li>
+<li><p><strong>random_id</strong> (<em>str</em><em>, </em><em>optional</em>) – set param to specify that orthologs have been randomized
+(results will be saved in a random_id subfolder,
+so consider setting random_id=random1 or random2,… etc)</p></li>
+<li><p><strong>threshold_for_plot</strong> (<em>str</em><em>, </em><em>optional</em>) – threshold to plot matches in comparison matrix &amp; search
+for co-expressed marker gene pairs</p></li>
+<li><p><strong>outformat</strong> (<em>str</em><em>, </em><em>optional</em>) – format for saved figure (svg, png or pdf)</p></li>
+<li><p><strong>min_fc</strong> (<em>float</em><em>, </em><em>optional</em>) – minimum fold change to be considered marker of a cluster</p></li>
+<li><p><strong>broad_file1</strong> (<em>str</em><em>, </em><em>optional</em>) – path to pickle file with dict cluster to broad
+annotations (file generated by pesci)</p></li>
+<li><p><strong>broad_file2</strong> (<em>str</em><em>, </em><em>optional</em>) – path to pickle file with dict cluster to broad
+annotations (file generated by pesci)</p></li>
+<li><p><strong>many_threshold</strong> (<em>float</em>) – if provided, instead of best pair retain all distinct pairs with
+score &gt; threshold</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.compare.filter_matrix">
+<span class="sig-prename descclassname"><span class="pre">pesci.compare.</span></span><span class="sig-name descname"><span class="pre">filter_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genedict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genes_to_keep</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.compare.filter_matrix" title="Link to this definition">¶</a></dt>
+<dd><p>Filters out expression matrix to retain only genes present in <cite>genes_to_keep</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>matrix</strong> (<em>numpy.array</em>) – expression matrix to filter</p></li>
+<li><p><strong>genedict</strong> (<em>dict</em>) – gene name (key) to matrix row indice (value)</p></li>
+<li><p><strong>genes_to_keep</strong> (<em>list</em>) – list of gene names to retain</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>filtered expression matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.compare.load_ec_ortho_1to1">
+<span class="sig-prename descclassname"><span class="pre">pesci.compare.</span></span><span class="sig-name descname"><span class="pre">load_ec_ortho_1to1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.compare.load_ec_ortho_1to1" title="Link to this definition">¶</a></dt>
+<dd><p>Loads expression conservation scores of 1-1 orthologs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_file</strong> (<em>str</em>) – path to tab-delimited input file (columns = gene sp1, gene sp2. score)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>two lists, 1) list of orthologous gene pairs and 2) list of corresponding
+co-expression conservation scores (weights).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.compare.load_ec_ortho_many">
+<span class="sig-prename descclassname"><span class="pre">pesci.compare.</span></span><span class="sig-name descname"><span class="pre">load_ec_ortho_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.compare.load_ec_ortho_many" title="Link to this definition">¶</a></dt>
+<dd><p>Loads expression conservation scores of many-to-many / many-to-one orthologs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_file</strong> (<em>str</em>) – path to input file (format = line 1 gene pairs, line 2 associated scores,
+line 3 gene pairs, line 4 scores, … etc)</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – if provided, instead of best pair retain all distinct pairs with
+score &gt; threshold</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>two lists, 1) list of orthologous gene pairs and 2) list of corresponding
+co-expression conservation scores (weights).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.compare.make_coexpressed_genes_table">
+<span class="sig-prename descclassname"><span class="pre">pesci.compare.</span></span><span class="sig-name descname"><span class="pre">make_coexpressed_genes_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_ortho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outprefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sp1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sp1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sp2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sp2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.compare.make_coexpressed_genes_table" title="Link to this definition">¶</a></dt>
+<dd><p>Searches for co-expressed marker genes for matching clusters in the pairwise cross species
+comparison.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>result</strong> (<em>numpy.array</em>) – matrix with weighted pearson correlation for gene expression
+in all pairs of clusters</p></li>
+<li><p><strong>mat1</strong> (<em>ExprMatrix2 namedtuple</em>) – expression matrix (numpy array), list of genes in rows
+and list of clusters in columns</p></li>
+<li><p><strong>mat2</strong> (<em>ExprMatrix2 namedtuple</em>) – expression matrix (numpy array), list of genes in rows
+and list of clusters in columns</p></li>
+<li><p><strong>ec</strong> (<em>numpy.array</em>) – expression conservation score vector (same order as in matrix rows)</p></li>
+<li><p><strong>idx_ortho</strong> (<em>int</em>) – index at which many-to-many orthologs start in matrix</p></li>
+<li><p><strong>outprefix</strong> (<em>str</em>) – prefix for output file</p></li>
+<li><p><strong>sp1</strong> (<em>str</em><em>, </em><em>optional</em>) – (short)name for species 1 and species 2, respectively</p></li>
+<li><p><strong>sp2</strong> (<em>str</em><em>, </em><em>optional</em>) – (short)name for species 1 and species 2, respectively</p></li>
+<li><p><strong>fc</strong> (<em>float</em><em>, </em><em>optional</em>) – minimum fold change to be considered marker of a cluster</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.compare.make_palette_for_broad">
+<span class="sig-prename descclassname"><span class="pre">pesci.compare.</span></span><span class="sig-name descname"><span class="pre">make_palette_for_broad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">broad_file1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">broad_file2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_types1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_types2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.compare.make_palette_for_broad" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a color palette for broad annotations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>broad_file1</strong> (<em>str</em>) – path to pickled dict giving cluster to broad correspondence
+for species1 and species2, respectively</p></li>
+<li><p><strong>broad_file2</strong> (<em>str</em>) – path to pickled dict giving cluster to broad correspondence
+for species1 and species2, respectively</p></li>
+<li><p><strong>cell_types1</strong> (<em>list</em>) – list of clusters in species1 and species2, giving order in
+heatmap</p></li>
+<li><p><strong>cell_types2</strong> (<em>list</em>) – list of clusters in species1 and species2, giving order in
+heatmap</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>lists of broad annotations for species1 and species2 in the same order as clusters,
+and a dict with broad to color palette</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.compare.plot_and_save_out">
+<span class="sig-prename descclassname"><span class="pre">pesci.compare.</span></span><span class="sig-name descname"><span class="pre">plot_and_save_out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_types1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_types2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outprefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sp1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sp2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_for_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outformat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'svg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">broad_file1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">broad_file2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DiagKeep'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.compare.plot_and_save_out" title="Link to this definition">¶</a></dt>
+<dd><p>Saves and plots heatmap showing expression comparisons between all clusters of sp1 and all
+clusters of sp2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>result</strong> (<em>numpy.array</em>) – matrix with weighted pearson correlation for gene expression
+in all pairs of clusters</p></li>
+<li><p><strong>cell_types1</strong> (<em>list</em>) – list of clusters in rows (species2) and columns (species2)</p></li>
+<li><p><strong>cell_types2</strong> (<em>list</em>) – list of clusters in rows (species2) and columns (species2)</p></li>
+<li><p><strong>outprefix</strong> (<em>str</em>) – prefix for output files</p></li>
+<li><p><strong>sp1</strong> (<em>str</em><em>, </em><em>optional</em>) – (short)name of species 1 and species 2 (to label axes on matrix)</p></li>
+<li><p><strong>sp2</strong> (<em>str</em><em>, </em><em>optional</em>) – (short)name of species 1 and species 2 (to label axes on matrix)</p></li>
+<li><p><strong>threshold_for_plot</strong> (<em>float</em><em>, </em><em>optional</em>) – set all result entry &lt; threshold_for_plot to 0, to
+filter out possibly spurrious match, consider using
+pesci randomization to estimate threshold</p></li>
+<li><p><strong>outformat</strong> (<em>str</em><em>, </em><em>optional</em>) – format for saved figure (svg, png or pdf)</p></li>
+<li><p><strong>broad_file1</strong> (<em>str</em><em>, </em><em>optional</em>) – path to pickle file with dict cluster to broad
+annotations (file generated by pesci)</p></li>
+<li><p><strong>broad_file2</strong> (<em>str</em><em>, </em><em>optional</em>) – path to pickle file with dict cluster to broad
+annotations (file generated by pesci)</p></li>
+<li><p><strong>reorder</strong> (<em>str</em><em>, </em><em>optional</em>) – if not using broad annotation to order the heatmap, to alternatives
+are possible: ‘Diagkeep’ will put best 1-1 match on the Diagonal,
+‘Clust’ will use the order from hierarchical
+clustering from seaborn.clustermap</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pesci.compare.plot_expression_conservation">
+<span class="sig-prename descclassname"><span class="pre">pesci.compare.</span></span><span class="sig-name descname"><span class="pre">plot_expression_conservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_ortho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outprefix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pesci.compare.plot_expression_conservation" title="Link to this definition">¶</a></dt>
+<dd><p>Plots distribution of ec scores (histogram)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ec</strong> (<em>numpy.array</em>) – vectoir with ec scores</p></li>
+<li><p><strong>n_ortho</strong> (<em>int</em>) – index at which many-to-many start in vector</p></li>
+<li><p><strong>outprefix</strong> (<em>str</em>) – prefix for output file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+</article>
+        <aside class="nftt-toc">
+          
+          <div class="mt-3 mb-1 my-lg-0 ps-xl-3 text-muted">
+            <button class="btn btn-link link-dark p-lg-0 mb-2 mb-lg-0 text-decoration-none nftt-toc-toggle d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#tocContents" aria-expanded="false" aria-controls="tocContents"
+            >On this page <i class="ms-2 bi bi-chevron-expand"></i></button>
+            <div class="title d-none d-lg-block">
+              <i class="bi bi-file-earmark-text"></i>&nbsp;&nbsp;<span class="small">On this page</span>
+            </div>
+            <div class="collapse nftt-toc-collapse" id="tocContents">
+              <nav id="TableOfContents">
+                <ul>
+<li><a class="reference internal" href="#">pesci</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pesci.normalize">pesci.normalize module</a><ul>
+<li><a class="reference internal" href="#pesci.normalize.cat_matrices"><code class="docutils literal notranslate"><span class="pre">cat_matrices()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.dt_to_sparse_high_ram"><code class="docutils literal notranslate"><span class="pre">dt_to_sparse_high_ram()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.get_open"><code class="docutils literal notranslate"><span class="pre">get_open()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.get_reorder_indexes"><code class="docutils literal notranslate"><span class="pre">get_reorder_indexes()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.iterative_dt_to_sparse"><code class="docutils literal notranslate"><span class="pre">iterative_dt_to_sparse()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.load_cell_clust"><code class="docutils literal notranslate"><span class="pre">load_cell_clust()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.load_cell_clust_and_broad"><code class="docutils literal notranslate"><span class="pre">load_cell_clust_and_broad()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.load_expr_and_clusters"><code class="docutils literal notranslate"><span class="pre">load_expr_and_clusters()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.load_matrix_tsv"><code class="docutils literal notranslate"><span class="pre">load_matrix_tsv()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.normalize"><code class="docutils literal notranslate"><span class="pre">normalize()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.normalize_geom_mean_fc"><code class="docutils literal notranslate"><span class="pre">normalize_geom_mean_fc()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.permute_sparse_matrix"><code class="docutils literal notranslate"><span class="pre">permute_sparse_matrix()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.to_expr_matrix"><code class="docutils literal notranslate"><span class="pre">to_expr_matrix()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.update_dict_of_set"><code class="docutils literal notranslate"><span class="pre">update_dict_of_set()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.normalize.validate_input_format"><code class="docutils literal notranslate"><span class="pre">validate_input_format()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pesci.iterative_comparison_coexpression">pesci.iterative_comparison_coexpression module</a><ul>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.column_wise_wcorr_einsum"><code class="docutils literal notranslate"><span class="pre">column_wise_wcorr_einsum()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.compute_expression_conservation"><code class="docutils literal notranslate"><span class="pre">compute_expression_conservation()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.icc"><code class="docutils literal notranslate"><span class="pre">icc()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.init_ec"><code class="docutils literal notranslate"><span class="pre">init_ec()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.init_ec_optimized_einsum"><code class="docutils literal notranslate"><span class="pre">init_ec_optimized_einsum()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.load_cluster_expression_matrix"><code class="docutils literal notranslate"><span class="pre">load_cluster_expression_matrix()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.load_orthologs"><code class="docutils literal notranslate"><span class="pre">load_orthologs()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.parallel_select_homologs"><code class="docutils literal notranslate"><span class="pre">parallel_select_homologs()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.update_ec"><code class="docutils literal notranslate"><span class="pre">update_ec()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.update_ec_optimized_einsum"><code class="docutils literal notranslate"><span class="pre">update_ec_optimized_einsum()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.update_ec_until_convergence"><code class="docutils literal notranslate"><span class="pre">update_ec_until_convergence()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.worker_add_gene_pairs"><code class="docutils literal notranslate"><span class="pre">worker_add_gene_pairs()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.write_ec_manyortho"><code class="docutils literal notranslate"><span class="pre">write_ec_manyortho()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.iterative_comparison_coexpression.write_ec_one2one"><code class="docutils literal notranslate"><span class="pre">write_ec_one2one()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pesci.compare">pesci.compare module</a><ul>
+<li><a class="reference internal" href="#pesci.compare.compare"><code class="docutils literal notranslate"><span class="pre">compare()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.compare.filter_matrix"><code class="docutils literal notranslate"><span class="pre">filter_matrix()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.compare.load_ec_ortho_1to1"><code class="docutils literal notranslate"><span class="pre">load_ec_ortho_1to1()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.compare.load_ec_ortho_many"><code class="docutils literal notranslate"><span class="pre">load_ec_ortho_many()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.compare.make_coexpressed_genes_table"><code class="docutils literal notranslate"><span class="pre">make_coexpressed_genes_table()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.compare.make_palette_for_broad"><code class="docutils literal notranslate"><span class="pre">make_palette_for_broad()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.compare.plot_and_save_out"><code class="docutils literal notranslate"><span class="pre">plot_and_save_out()</span></code></a></li>
+<li><a class="reference internal" href="#pesci.compare.plot_expression_conservation"><code class="docutils literal notranslate"><span class="pre">plot_expression_conservation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </nav>
+            </div>
+          </div>
+          
+        </aside>
+      </div>
+    </div>
+
+    <footer class="nftt-footer">
+      <nav id="paginator" class="py-4" aria-label="Documentation navigation">
+    <div class="container">
+      <ul class="pagination justify-content-between mb-0"><li class="page-item">
+            <a href="modules.html" class="d-flex px-5 align-items-end" rel="prev" aria-label="Previous page: API">
+              <span class="prev-page"><i class="bi bi-caret-left"></i></span>
+              <div class="d-flex flex-column">
+                <span class="text-small text-start text-muted">Previous</span>
+                <span class="underline">API</span>
+              </div>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </nav>
+
+      <div class="py-5 px-4 px-md-3">
+  <div class="container">
+    
+
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <a class="brand-text d-inline-flex align-items-center mb-2 text-decoration-none" href="/" aria-label="Nefertiti-for-Sphinx">
+          <span class="fs-6 fw-bold">pesci</span>
+        </a>
+        
+          <ul class="list-unstyled small text-muted">
+            <li>2024, Elise Parey</li>
+          </ul>
+        
+        
+        <div class="built-with pt-2">
+          Built with <a href="http://sphinx-doc.org">Sphinx 7.4.7</a> and <a href="https://github.com/danirus/sphinx-nefertiti">Nefertiti 0.4.0</a>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+    </footer>
+    <script src="_static/documentation_options.js?v=d2d97972"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+
+    <script type="text/javascript" src="_static/sphinx-nefertiti-0.4.0.min.js"></script>
+    <script type="text/javascript" src="_static/bootstrap.bundle-0.4.0.min.js"></script>
+    
+    <script type="text/javascript" src="_static/doc_versions.js"></script>
+  </body>
+</html>
