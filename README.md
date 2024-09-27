@@ -18,20 +18,20 @@ Pesci takes as input **single-cell expression count matrices** (raw count matric
 
 - With conda (local for now, will upload to bioconda at a later stage)
 
-`git clone git@github.com:eparey/pesci.git`
+	`git clone git@github.com:eparey/pesci.git`
 
-`cd pesci`
+	`cd pesci`
 
-`mamba install pesci -c ./recipe/build -c conda-forge`
+	`mamba install pesci -c ./recipe/build -c conda-forge`
 
 
 - With pip (local for now, will upload to pypi at a later stage)
 
-`git clone git@github.com:eparey/pesci.git`
+	`git clone git@github.com:eparey/pesci.git`
 
-`cd pesci`
+	`cd pesci`
 
-`pip install . -I` #local install with pip, suggest installing in an isolated env (conda or venv)
+	`pip install . -I` #local install with pip, suggest installing in an isolated env (conda or venv)
 
 
 ## Usage
