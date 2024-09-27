@@ -1,4 +1,8 @@
+- readme: add quick desciption
+          add figure without and with broad (Flatworm_larvae vs Oyster_larvae)
+
 - finish doc and then we're good to test it:
+	- random seed
 	- command-line doc in the middle with available options
 	- fig examples (with and without --broad)
 	- input types
