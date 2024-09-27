@@ -1,6 +1,11 @@
-- remove the datatable part and replace by direct loading (by line and then in batch) + sparse conversion + final sparse.vstack
-- LICENSE
-- command-line doc in the middle with available options
+- finish doc and then we're good to test it:
+	- command-line doc in the middle with available options
+	- fig examples (with and without --broad)
+	- input types
+	- resources
 
-Low priority
-- tkAgg error sometimes "ImportError: Cannot load backend 'TkAgg' which requires the 'tk' interactive framework, as 'headless' is currently running"
+- look a bit more into markers
+
+-----
+
+- LICENSE
