@@ -44,7 +44,7 @@ pesci -m1 data/Cg_matrix_EM.tsv.gz -m2 data/Pc_matrix_EM.tsv.gz -c1 data/Cragig_
 
  ![pesci fig](https://github.com/eparey/pesci/blob/main/docs/img/Oyster-larva-Flatworm-larva_correlation_scores_matrix.png)
 
-For more details on accepted input formats and available options, please see pesci --help or read the full documentation [TODO link].
+For more details on accepted input formats and available options, please refer to `pesci --help` or read the full documentation [TODO link].
 
 ## License
 
