@@ -8,9 +8,10 @@ Pesci takes as input **single-cell expression count matrices** (raw count matric
 
 
 ## Citing
-	- Najle, Grau-Bové et al. (2023). Stepwise emergence of the neuronal gene expression program in early animal evolution. Cell 
+	
+- Najle, Grau-Bové et al. Stepwise emergence of the neuronal gene expression program in early animal evolution. (2023). Cell.
 
-	- pesci application note
+- pesci application note
 
 
 ## Installation
@@ -35,16 +36,10 @@ Pesci takes as input **single-cell expression count matrices** (raw count matric
 
 ## Usage
 
-- Running pesci on provided example data:
+- Running pesci on provided example data (datasets from Piovani et al., 2023):
 
 ```
-pesci -m1 data/Cg_matrix_EM.tsv.gz -m2 data/Pc_matrix_EM.tsv.gz -c1 data/Cragig_cell_id.tsv -c2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt -c 4 -sp1 Oyster-larva -sp2 Flatworm-larva
-```
-
-- Using broad annotation to order the heatmap:
-
-```
-pesci -m1 data/Cg_matrix_EM.tsv.gz -m2 data/Pc_matrix_EM.tsv.gz -c1 data/Cragig_cell_id.tsv -c2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt -c 4 -sp1 Oyster-larva -sp2 Flatworm-larva --force --colbroad broad
+pesci -m1 data/Cg_matrix_EM.tsv.gz -m2 data/Pc_matrix_EM.tsv.gz -c1 data/Cragig_cell_id.tsv -c2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt -sp1 Oyster-larva -sp2 Flatworm-larva --colbroad broad --cores 4
 ```
 
  ![pesci fig](https://github.com/eparey/pesci/blob/main/docs/img/Oyster-larva-Flatworm-larva_correlation_scores_matrix.png)
