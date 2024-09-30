@@ -4,8 +4,6 @@
 
 Pesci is an efficient and user-friendly implementation of the Iterative Comparison of Coexpression (ICC) algorithm applied to the **comparison of single-cell datasets across two study species** ([Najle, Grau-Bové et al.](https://doi.org/10.1016%2Fj.cell.2023.08.027)).
 
-Pesci takes as input **single-cell expression count matrices** (raw count matrices, CellRanger directory and/or h5ad files), **cell cluster annotations** and **gene orthologies** files.
-
 
 ## Citing
 	
@@ -31,6 +29,8 @@ Pesci takes as input **single-cell expression count matrices** (raw count matric
 
 
 ## Usage
+
+Pesci takes as input **single-cell expression count matrices** (raw count matrices, CellRanger directory and/or h5ad files), **cell cluster annotations** and **gene orthologies** files.
 
 ```
 pesci -m1 mat_sp1.h5ad -m2 mat_sp2.tsv -c1 cell_id_sp1.tsv -c2 cell_id_sp2.tsv -g orthologs.txt 
