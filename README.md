@@ -6,10 +6,10 @@ Pesci is an efficient and user-friendly implementation of the Iterative Comparis
 
 
 ## Citing
-	
-- Najle, Grau-Bové et al. Stepwise emergence of the neuronal gene expression program in early animal evolution. (2023). Cell.
 
 - pesci application note
+
+- Najle, Grau-Bové et al. Stepwise emergence of the neuronal gene expression program in early animal evolution. (2023). Cell.
 
 
 ## Installation
