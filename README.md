@@ -36,7 +36,7 @@ Pesci takes as input **single-cell expression count matrices** (raw count matric
 pesci -m1 mat_sp1.h5ad -m2 mat_sp2.tsv -c1 cell_id_sp1.tsv -c2 cell_id_sp2.tsv -g orthologs.txt 
 ```
 
-- For a description of accepted input formats and available options, please refer to `pesci --help`.
+For a description of accepted input formats and available options, please refer to `pesci --help`.
 
 - To run pesci on provided example data (datasets from [Piovani et al., 2023](https://doi.org/10.1126/sciadv.adg6034)):
 
