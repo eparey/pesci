@@ -210,16 +210,22 @@ def load_matrix_tsv(inputfile, cores=1, fmt='tsv', open_func=open):
     with open_func(inputfile, 'rt') as infile:
         for line in infile:
             line = line.strip().split(sep)
-            if len(line) > 2:
+            lg = len(line)
+            if lg > 2:
                 column_ind = line[0].strip('"')
                 if column_ind == '':
                     column_ind = 'C0' #default name given by datatable
+                # col1type = {column_ind: dt.str32}
+                # othercolstype = {i.strip('"'): dt.int32 for i in line[1:]}
+                # colstypes = dict(col1type, **othercolstype)
+
+                colstypes = [dt.str32] + [dt.int32]*(lg-1)
             else:
                 logger.error('%s does not seem %s-delimited.', inputfile, sepname)
                 sys.exit(1)
             break
 
-    expr = dt.fread(file=inputfile, sep=sep)
+    expr = dt.fread(file=inputfile, sep=sep, columns=colstypes)
     genes = expr[column_ind].to_list()[0]
     cells = list(expr.names[1:])
 
