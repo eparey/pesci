@@ -18,7 +18,7 @@ Pesci is an efficient and user-friendly implementation of the Iterative Comparis
 
 	`git clone git@github.com:eparey/pesci.git && cd pesci`
 
-	`conda install pesci -c ./recipe/build -c conda-forge`
+	`conda install pesci -c ./recipes/build -c conda-forge`
 
 
 - With pip (local for now, will upload to pypi at a later stage)

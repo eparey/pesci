@@ -140,6 +140,7 @@ def make_palette_for_broad(broad_file1, broad_file2, cell_types1, cell_types2):
     unique_broad = sorted(list(set(broad_all)))
 
     colors = sns.color_palette("Set3", 12) + sns.color_palette("tab20", 20)
+
     palettedict = {}
 
     #hard-coding 'unknown' or 'other' to be gray and 'muscle' to be red
@@ -150,6 +151,9 @@ def make_palette_for_broad(broad_file1, broad_file2, cell_types1, cell_types2):
         else:
             palettedict['Other'] = colors[8]
             del colors[8]
+
+    if 'Meiotic' not in unique_broad: #FIXME allow to provide user-defined colors to avoid this issue
+        del colors[7]
 
     if 'Muscle' in unique_broad:
         palettedict['Muscle'] = colors[3]

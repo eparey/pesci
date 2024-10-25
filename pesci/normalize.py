@@ -141,11 +141,11 @@ def dt_to_sparse_high_ram(expr, column_ind):
     return expr
 
 
-def iterative_dt_to_sparse(dt_expr, cells_per_iter=10000):
+def iterative_dt_to_sparse(dt_expr, cells_per_iter=2000):
 
     """
     Converts a datatable Frame count matrix to a scipy sparse matrix.
-    Conversion is done in chunks of `cells_per_iter` cells (10,000 default) to decrease RAM usage.
+    Conversion is done in chunks of `cells_per_iter` cells (2,000 default) to decrease RAM usage.
 
     Args:
         expr (datatable.Frame): count matrix (with genes still in first column)
@@ -158,7 +158,7 @@ def iterative_dt_to_sparse(dt_expr, cells_per_iter=10000):
     logger.info('Converting to a sparse matrix')
     n = len(dt_expr.names)
 
-    #get first 10,000 cells (or all if nb cells<10,000)
+    #get first 10,000 cells (or all if nb cells<2,000)
     pass_iterative_fill = False
     end = cells_per_iter
     if end > n:
@@ -171,7 +171,7 @@ def iterative_dt_to_sparse(dt_expr, cells_per_iter=10000):
     #numpy array to sparse
     expr_final = sparse.csr_matrix(expr_final)
 
-    #if matrix has > 10,000 cells we convert to sparse iteratively in chunks of 10,000 cells
+    #if matrix has > 2,000 cells we convert to sparse iteratively in chunks of 2,000 cells
     if not pass_iterative_fill:
         expr_subset = [expr_final]
         for i in range(cells_per_iter, n, cells_per_iter):
@@ -215,22 +215,18 @@ def load_matrix_tsv(inputfile, cores=1, fmt='tsv', open_func=open):
                 column_ind = line[0].strip('"')
                 if column_ind == '':
                     column_ind = 'C0' #default name given by datatable
-                # col1type = {column_ind: dt.str32}
-                # othercolstype = {i.strip('"'): dt.int32 for i in line[1:]}
-                # colstypes = dict(col1type, **othercolstype)
-
-                colstypes = [dt.str32] + [dt.int32]*(lg-1)
+                # colstypes = [dt.str32] + [dt.int32]*(lg-1)
             else:
                 logger.error('%s does not seem %s-delimited.', inputfile, sepname)
                 sys.exit(1)
             break
 
-    expr = dt.fread(file=inputfile, sep=sep, columns=colstypes)
+    expr = dt.fread(file=inputfile, sep=sep) #columns=colstypes, memory_limit=10000000000
     genes = expr[column_ind].to_list()[0]
     cells = list(expr.names[1:])
 
-    #iteratively convert to sparse in chunks of 10,000 cells
-    expr = iterative_dt_to_sparse(expr, cells_per_iter=10000)
+    #iteratively convert to sparse in chunks of 2,000 cells
+    expr = iterative_dt_to_sparse(expr, cells_per_iter=2000)
 
     return expr, genes, cells
 

@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
 """
-pesci compares gene expression of single-cell clusters between two species, using one-to-one and
-many-to-many / many-to-one / one-to-many orthologes. pesci takes as input single-cell expression
-count matrices and cluster annotations and uses the icc (iterative comparison of coexpression)
-procedure to select orthologous gene pairs. Expression similarity between clusters is computed as a
-weighted correlation.
+pesci compares gene expression of single-cell clusters between two species using the ICC algorithm, leveraging one-to-one and
+many-to-many / many-to-one / one-to-many orthologous genes.
 
 Examples::
 
