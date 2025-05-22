@@ -152,7 +152,7 @@ def make_palette_for_broad(broad_file1, broad_file2, cell_types1, cell_types2):
             palettedict['Other'] = colors[8]
             del colors[8]
 
-    if 'Meiotic' not in unique_broad: #FIXME allow to provide user-defined colors to avoid this issue
+    if 'Meiotic' not in unique_broad and 'Peptidergic' in unique_broad: #FIXME allow to provide user-defined colors
         del colors[7]
 
     if 'Muscle' in unique_broad:
@@ -160,7 +160,7 @@ def make_palette_for_broad(broad_file1, broad_file2, cell_types1, cell_types2):
         del colors[3]
 
     if len(unique_broad) > len(colors):
-        logger.warning('Found over 32 broad cell type classes (%s), broad annotation will not be '
+        logger.warning('Found over 32 broad cell type classes (%s), broad annotations will not be '
                        'plotted.', len(unique_broad))
         return None
 
@@ -175,7 +175,7 @@ def make_palette_for_broad(broad_file1, broad_file2, cell_types1, cell_types2):
 
 def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='',
                       threshold_for_plot=0, outformat='svg', broad_file1=None, broad_file2=None,
-                      reorder='DiagKeep'):
+                      reorder='DiagKeep', seabcmap='BuPu'):
 
     """
     Saves and plots heatmap showing expression comparisons between all clusters of sp1 and all
@@ -273,7 +273,7 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
                        'use DiagKeep or Clust', reorder)
         sys.exit(1)
 
-    g = sns.clustermap(result, cmap='BuPu', annot=False, vmin=0, vmax=1, xticklabels=cell_types2,
+    g = sns.clustermap(result, cmap=seabcmap, annot=False, vmin=0, vmax=1, xticklabels=cell_types2,
                 yticklabels=cell_types1, cbar_kws={'label': 'weighted\ncorrelation', "shrink": 0.1},
                 row_cluster=False, col_cluster=False, dendrogram_ratio=0.01,
                 figsize=fsize, cbar_pos=(1.05, 0.8, 0.02, 0.15), row_colors=row_colors,
@@ -366,7 +366,7 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
 
 def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
             threshold_for_plot=0, outformat='svg', min_fc=1.5, broad_file1=None,
-            broad_file2=None, many_threshold=None):
+            broad_file2=None, many_threshold=None, seabcmap='BuPu'):
 
     """
     Compares gene expression across all pairs clusters species 1 - clusters species 2, using
@@ -455,7 +455,8 @@ def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
     plot_and_save_out(result, mat1.clusters, mat2.clusters,
                                outprefix+random_id+sp1+'-'+sp2+'_', sp1, sp2,
                                threshold_for_plot=threshold_for_plot, outformat=outformat,
-                               broad_file1=broad_file1, broad_file2=broad_file2)
+                               broad_file1=broad_file1, broad_file2=broad_file2,
+                               seabcmap=seabcmap)
 
     logger.info('Searching for co-expressed gene pairs')
 

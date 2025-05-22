@@ -399,7 +399,7 @@ def update_dict_of_set(mydict, key, val, filter_out_start=None, keep_only=None):
     mydict[key].add(val)
 
 
-def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, fmt='tsv', colclust='cluster_name',
+def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclust='cluster_name',
                            cores=1, filter_out_start=None, keep_only=None, broad=None,
                            open_func=open):
 
@@ -449,6 +449,7 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, fmt='tsv', colclu
         #filter out genes with no/very low expression
         logger.info('Filtering out lowly-expressed genes (total umi < %s)', min_counts)
         idx_genes_to_keep = np.where(np.sum(expr, axis=1) >= min_counts)[0]
+        # genes = [lab+'@'+genes[i] for i in idx_genes_to_keep]
         genes = [genes[i] for i in idx_genes_to_keep]
         expr = expr[idx_genes_to_keep,:]
 
@@ -470,6 +471,7 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, fmt='tsv', colclu
         #filter out genes with no/very low expression
         logger.info('Filtering out lowly-expressed genes (total umi < %s)', min_counts)
         sc.pp.filter_genes(expr, min_counts=min_counts, inplace=True)
+        # genes = [lab+'@'+g for g in expr.var.index]
         genes = expr.var.index
         cells = expr.obs.index
         expr = expr.X.T
@@ -496,6 +498,7 @@ def load_expr_and_clusters(expr_mat, clusters,  min_counts=10, fmt='tsv', colclu
         sc.pp.filter_genes(expr, min_counts=min_counts, inplace=True)
         logger.info('Filtering out lowly-expressed genes (total umi < %s)', min_counts)
 
+        # genes = [lab+'@'+g for g in expr.var.index]
         genes = expr.var.index
         cells = expr.obs.index
 
@@ -765,8 +768,8 @@ def normalize(expr_mats, cells_to_clusters, output, cores=1, filter_out_start=No
     gene expression (fold-change).
 
     Args:
-        expr_mat (list): Expression matrix (or matrices), either a tab-delimited file, cellranger
-                         directory or h5ad
+        expr_mat (list or str): Expression matrix (or matrices), either a tab-delimited file,
+                                cellranger directory or h5ad
         cells_to_clusters (str): input cluster file name or name of cluster column in h5ad
         output (str): output file for nornalized gene-cluster expression matrix
         cores (int, optional): Number of cores to use for loading
@@ -788,6 +791,8 @@ def normalize(expr_mats, cells_to_clusters, output, cores=1, filter_out_start=No
     """
 
     all_matrices = []
+    if type(expr_mats) == str:
+        expr_mats = [expr_mats]
     for expr_mat in expr_mats:
         fm, open_func = validate_input_format(expr_mat, cells_to_clusters)
         matrix, clust2broad = load_expr_and_clusters(expr_mat, cells_to_clusters, fmt=fm,
@@ -800,7 +805,7 @@ def normalize(expr_mats, cells_to_clusters, output, cores=1, filter_out_start=No
     matrix = cat_matrices(all_matrices)
 
     if broad:
-        #this assumes pesci-defined output file name
+        #FIXME this assumes pesci-defined output file name
         outpkl = output.split('_matrix_')[0] + '_clusters_to_broad.pkl'
         with open(outpkl, 'wb') as outfile:
             pickle.dump(clust2broad, outfile)

@@ -221,6 +221,8 @@ def parse_commandline():
                                                help='format for output figures',
                                                choices=['svg', 'png', 'pdf'])
 
+    oopt.add_argument('--seaborn_cmap', type=str, required=False, default="BuPu",
+                                        help='name of the seaborn colormap for the heatmap')
 
     oopt.add_argument('--plot_thresh', type=float, help="threshold to plot matches in resulting "
                                                         "comparison matrix & search for "
@@ -352,8 +354,9 @@ def main():
     cp.compare(norm_mat1, norm_mat2, args['outdir'], sp1, sp2, random_id=args['random_id'],
                threshold_for_plot=args['plot_thresh'], outformat=args['figure_format'],
                min_fc=args['min_fc'], broad_file1=broadfile1, broad_file2=broadfile2,
-               many_threshold=args['ec_threshold_many'])
+               many_threshold=args['ec_threshold_many'], seabcmap=args['seaborn_cmap'])
     logger.info('Done! Results in %s', args['outdir'])
+
 
 if __name__ == '__main__':
     main()

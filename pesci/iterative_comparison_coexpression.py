@@ -321,16 +321,26 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
 
     #load all orthologous pairs
     edges = []
+    # lab1 = list(genes_sp_a)[0].split('@')[0]
+    # lab2 = list(genes_sp_b)[0].split('@')[0]
     with open(input_file, 'r', encoding = "utf-8") as infile:
         for line in infile:
             line = line.strip().split('\t')
             if len(line) != 2:
                 continue
             g1, g2 = line
+
             if g1 in genes_sp_a and g2 in genes_sp_b:
                 edges.append((g1, g2))
             elif g2 in genes_sp_a and g1 in genes_sp_b:
                 edges.append((g2, g1))
+
+            # if lab1+'@'+g1 in genes_sp_a and lab2+'@'+g2 in genes_sp_b:
+            #     edges.append((lab1+'@'+g1, lab2+'@'+g2))
+            # elif lab1+'@'+g2 in genes_sp_a and lab2+'@'+g1 in genes_sp_b:
+            #     edges.append((lab1+'@'+g2, lab2+'@'+g1))
+
+                # edges.append((g1, 'actd'+g2)) #dirty code for comparison within same species --> TODO: use dataset + '__' as prefix anyway
 
     #transform list of orthologous pairs to graph
     homologs_graph = nx.Graph()
@@ -347,8 +357,13 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
             g1, g2 = genes
             if g1 in genes_sp_a and g2 in genes_sp_b:
                 one2one.append((g1, g2))
-            if g1 in genes_sp_b and g2 in genes_sp_a:
+            elif g1 in genes_sp_b and g2 in genes_sp_a:
                 one2one.append((g2, g1))
+
+            #dirty code for comparison within same species --> TODO: use dataset + '__' as prefix anyway
+            # if g1 in genes_sp_a and g2[4:] in genes_sp_b:
+            #one2one.append((g1.lstrip('actd'), g2.lstrip('actd')))
+
 
         else:
             tmp_genes_a = genes.intersection(genes_sp_a)
