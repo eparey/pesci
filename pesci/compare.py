@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 
 from scipy.optimize import linear_sum_assignment
+import scipy.stats as stats
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
@@ -335,12 +336,22 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
     """
 
     records = []
+    pvals = []
     for i, clus1 in enumerate(mat1.clusters):
         for j, clus2 in enumerate(mat2.clusters):
             if result[i, j] > wmin:
                 genes_clus1_sp1 = np.where(mat1.matrix[:, i] > fc)[0]
                 genes_clus2_sp2 = np.where(mat2.matrix[:, j] > fc)[0]
                 ortho_idx = set(genes_clus1_sp1).intersection(set(genes_clus2_sp2))
+
+                #perform hypergeom on intersection here
+                M = len([k for k in ec if k>0])
+                n = len([k for k in genes_clus1_sp1 if ec[k]>0])
+                N = len([k for k in genes_clus2_sp2 if ec[k]>0])
+                x = len([k for k in ortho_idx if ec[k]>0])
+
+                p = stats.hypergeom.sf(x-1, M, n, N)
+                pvals.append((sp1+'|'+clus1, sp2+'|'+clus2, x, n*N/M, p))
 
                 for k in ortho_idx:
                     g1, g2 = mat1.genes[k], mat2.genes[k]
@@ -363,6 +374,17 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
                     inplace=True)
     df.drop(columns=['tmp_score'], inplace=True)
     df.to_csv(f'{outprefix}gene_coexpression_table.csv', sep='\t', index=False)
+
+    df = pd.DataFrame.from_records(pvals, columns=[f'{sp1}_cell_cluster', f'{sp2}_cell_cluster',
+                                                     f'n.co-expressed_genes', f'n.expected',
+                                                     f'p.value'])
+    df['p.adj'] = stats.false_discovery_control(df['p.value'], method='by')
+    df.drop(columns=['p.value'], inplace=True)
+
+    df.sort_values([f'p.adj'], ascending=True, inplace=True)
+    df.to_csv(f'{outprefix}coexpression_pvals.csv', sep='\t', index=False)
+
+
 
 
 def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',

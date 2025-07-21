@@ -334,6 +334,7 @@ def main():
         os.makedirs(args['outdir']+args['random_id'], exist_ok=True)
         outprefix = args['outdir']+args['random_id']+sp1+'-'+sp2
         ec_scores = outprefix+'_1-to-1-orthologs_correlation_scores.tsv'
+        args['seed'] = None
 
 
     if os.path.exists(ec_scores) and os.path.getsize(ec_scores) > 0 and not args['force']\
