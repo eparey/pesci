@@ -298,7 +298,7 @@ def plot_expression_conservation(ec, n_ortho, outprefix):
     Plots distribution of ec scores (histogram)
 
     Args:
-        ec (numpy.array): vectoir with ec scores
+        ec (numpy.array): vector with ec scores
         n_ortho (int): index at which many-to-many start in vector
         outprefix (str): prefix for output file
     """
@@ -346,12 +346,13 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
                     g1, g2 = mat1.genes[k], mat2.genes[k]
                     fc1, fc2 = mat1.matrix[k, i], mat2.matrix[k, j]
                     ec_tmp = ec[k]
-                    score_tmp = np.exp(np.log(fc1 + fc2)) * max(ec_tmp, 0.1)
-                    o1 = 'y'
-                    if k >= idx_ortho:
-                        o1 = 'n'
-                    records.append([sp1+'|'+clus1, sp2+'|'+clus2, g1, g2, mat1.matrix[k, i],
-                                    mat2.matrix[k, j], ec[k], score_tmp, o1])
+                    if ec_tmp > 0:
+                        score_tmp = np.exp(np.log(fc1 + fc2)) * ec_tmp
+                        o1 = 'y'
+                        if k >= idx_ortho:
+                            o1 = 'n'
+                        records.append([sp1+'|'+clus1, sp2+'|'+clus2, g1, g2, mat1.matrix[k, i],
+                                        mat2.matrix[k, j], ec[k], score_tmp, o1])
 
     df = pd.DataFrame.from_records(records, columns=[f'{sp1}_cell_cluster', f'{sp2}_cell_cluster',
                                                      f'{sp1}_gene', f'{sp2}_gene',
