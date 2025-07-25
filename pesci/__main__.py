@@ -106,6 +106,9 @@ def parse_commandline():
     ropt.add_argument('--random_id', type=str, help="triggers a randomization of orthologies and "
                                                     "store results in outdir/random_id", default='')
 
+    ropt.add_argument('--no_pbar', action='store_true',
+                                   help="do not show progress bar")
+
     #Optional arguments input
     iopt = parser.add_argument_group('inputs')
 
@@ -246,6 +249,9 @@ def main():
 
     args = parse_commandline()
 
+    if args['no_pbar']:
+        tqdm.tqdm.__init__ = partialmethod(tqdm.tqdm.__init__, disable=True)
+
     logger = logging.getLogger(__name__)
     coloredlogs.install(level='INFO', logger=logger, fmt='%(asctime)s [%(levelname)s]: %(message)s',
                         field_styles={'levelname': {'color': ''}})
@@ -328,17 +334,21 @@ def main():
     if not args['random_id']:
         outprefix = args['outdir']+'files/'+sp1+'-'+sp2
         ec_scores = outprefix+'_1-to-1-orthologs_correlation_scores.tsv'
+        ec_scores_para = outprefix+'_orthologs_many_correlation_scores.txt'
 
     else:
         args['random_id'] = args['random_id'].rstrip('/') + '/'
         os.makedirs(args['outdir']+args['random_id'], exist_ok=True)
         outprefix = args['outdir']+args['random_id']+sp1+'-'+sp2
         ec_scores = outprefix+'_1-to-1-orthologs_correlation_scores.tsv'
+        ec_scores_para = outprefix+'_orthologs_many_correlation_scores.txt'
         args['seed'] = None
 
 
     if os.path.exists(ec_scores) and os.path.getsize(ec_scores) > 0 and not args['force']\
-       and not force_ec:
+       and not force_ec and\
+       ((os.path.exists(ec_scores_para) and os.path.getsize(ec_scores_para) > 0)\
+        or args['ono2one_only']):
         logger.warning('Orthologs expression conservation scores already computed %s'
                        ' and will be used. Homologs selection will not be re-run either.'
                        ' Use --force to recompute.', ec_scores)
