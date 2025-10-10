@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
 
 """
-pesci compares gene expression of single-cell clusters between two species using the ICC algorithm, leveraging one-to-one and
-many-to-many / many-to-one / one-to-many orthologous genes.
+Pesci compares gene expression of single-cell clusters between two species using the ICC algorithm,
+using one-to-one orthologues complemented with many-to-many / many-to-one / one-to-many orthologous
+genes.
 
 Examples::
 
-    $ pesci -m1 data/Cg_matrix_EM.tsv -m2 data/Pc_matrix_EM.tsv\
+    $ pesci -m1 data/Cg_matrix_EM.tsv.gz -m2 data/Pc_matrix_EM.tsv.gz\
       -c1 data/Cragig_cell_id.tsv -c2 data/Procro_cell_id.tsv\
       -g data/orthologous_pairs_Procro-Cragig.txt -c 10 -sp1 Cragig -sp2 Procro
 
-    $ pesci --matrix1 ../data/placozoa/Tadh_final_matrix.tsv\
-            --matrix2 ../data/placozoa/TrH2_final_matrix.tsv\
+    $ pesci --matrix1 ../data/placozoa/Tadh_final_matrix.tsv.gz\
+            --matrix2 ../data/placozoa/TrH2_final_matrix.tsv.gz\
             --clusters1 ../data/placozoa/Tadh.sc_annot.tsv\
             --clusters2 ../data/placozoa/TrH2.sc_annot.tsv\
             -g ../data/placozoa/orthologous_pairs_ok.txt -c 10 -sp1 Tadh -sp2 TrH2
+
 """
 
 import sys
@@ -40,8 +42,16 @@ def parse_commandline():
     """
     pesci command-line argument parser
     """
-    parser = argparse.ArgumentParser(description=__doc__,
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    parser = argparse.ArgumentParser(description="Pesci compares gene expression of single-cell "
+                                     "clusters between two species using the ICC algorithm, using "
+                                     "one-to-one orthologues complemented with many-to-many / "
+                                     "many-to-one / one-to-many orthologous genes.\n\n"
+                                     "Example usage:\npesci -m1 data/Cg_matrix_EM.tsv "
+                                     "-m2 data/Pc_matrix_EM.tsv -c1 data/Cragig_cell_id.tsv "
+                                     "-c2 data/Procro_cell_id.tsv "
+                                     "-g data/orthologous_pairs_Procro-Cragig.txt -c 10 "
+                                     "-sp1 Cragig -sp2 Procro",
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
                                      prog='pesci')
 
     parser.add_argument('-v', '--version', action='version',
@@ -98,10 +108,13 @@ def parse_commandline():
     ropt.add_argument('--ono2one_only', action='store_true', help="only use 1-to-1 orthologs")
 
 
-
     ropt.add_argument('--ec_threshold_many', type=float, help="if set, instead of only best pair "
                                              "retain all distinct pairs with score > threshold",
                                              default=None)
+
+    ropt.add_argument('--do_not_downsample', action='store_true', help="Use all 1-to-1 orthologs "
+                           "(instead of 1000 randomly chosen) for selection of best from "
+                           " the many-to-many and many-to-one orthologs (slower)")
 
     ropt.add_argument('--random_id', type=str, help="triggers a randomization of orthologies and "
                                                     "store results in outdir/random_id", default='')
@@ -355,7 +368,8 @@ def main():
     else:
         icc.icc(norm_mat1, norm_mat2, args['orthologous_gene_pairs'], outprefix, max_combin=300,
                 ncores=args['cores'], ono2one_only=args['ono2one_only'],
-                random_id=args['random_id'], seed=args['seed'])
+                random_id=args['random_id'], seed=args['seed'],
+                do_not_downsample=args['do_not_downsample'])
 
     logger.info('Computing gene expression correlation between clusters of %s and %s', sp1, sp2)
     broadfile1, broadfile2 = None, None

@@ -420,7 +420,7 @@ def __init_worker():
     """
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-def worker_add_gene_pairs(manyortho, a, b, mat1, mat2, max_combin):
+def worker_add_gene_pairs(manyortho, a, b, mat1, mat2, max_combin, northo=1000):
 
     """
     Selects the best gene pairs (most conserved expression) for many-to-many or 1-to-many orthologs.
@@ -470,7 +470,7 @@ def worker_add_gene_pairs(manyortho, a, b, mat1, mat2, max_combin):
                 expr_cons_w_manyortho_current = compute_expression_conservation(a_w_manyortho_tmp,
                                                                                 b_w_manyortho_tmp)
 
-                scores = '\t'.join([str(i) for i in expr_cons_w_manyortho_current[1000:]])
+                scores = '\t'.join([str(i) for i in expr_cons_w_manyortho_current[northo:]])
                 tmp = '\t'.join(['+'.join(comb) for comb in combin])+ '\n' + scores +'\n'
                 res.append(tmp)
 
@@ -526,7 +526,7 @@ def write_ec_manyortho(results, out_many, out_skipped):
     return nbmany, nbskipped
 
 def parallel_select_homologs(a, b, mat1, mat2, manyortho, batch_size, ncores=1, max_combin=300,
-                             bar_format=BAR_FORMAT):
+                             do_not_downsample=False, bar_format=BAR_FORMAT):
     """
     Use the ICC approach to select best pairs (i.e. most conserved expression) for
     many-to-many / many-to-one / one-to-many orthologs.
@@ -547,10 +547,12 @@ def parallel_select_homologs(a, b, mat1, mat2, manyortho, batch_size, ncores=1, 
     try:
 
         og_batches = [manyortho[i:i + batch_size] for i in range(0, len(manyortho), batch_size)]
+        northo = a.shape[0]
 
-        idx_random = np.random.choice(a.shape[0], 1000, replace=False)
-
-        a, b = a[idx_random, :], b[idx_random, :]
+        if not do_not_downsample and northo>1000:
+            idx_random = np.random.choice(northo, 1000, replace=False)
+            northo = 1000
+            a, b = a[idx_random, :], b[idx_random, :]
 
         mat1 = (mat1.matrix, mat1.genes)
         mat2 = (mat2.matrix, mat2.genes)
@@ -558,12 +560,12 @@ def parallel_select_homologs(a, b, mat1, mat2, manyortho, batch_size, ncores=1, 
         pool = multiprocessing.Pool(ncores, __init_worker)
 
         jobs = [pool.apply_async(worker_add_gene_pairs, args=(batch, a, b, mat1, mat2,
-                                                              max_combin))
+                                                              max_combin, northo))
                                                               for batch in og_batches]
         pool.close()
 
         if bar_format:
-            bar_format = bar_format.replace('task', 'Homologs selection')
+            bar_format = bar_format.replace('task', 'Best ortholog selection')
 
         prbar = tqdm.tqdm(jobs, colour='#595c79', bar_format=bar_format)
         prbar.unit = ""
@@ -585,7 +587,8 @@ def parallel_select_homologs(a, b, mat1, mat2, manyortho, batch_size, ncores=1, 
     return async_res
 
 def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300, random_id='',
-        ncores=1, batch_size=10, ono2one_only=False, seed=None, bar_format=BAR_FORMAT):
+        ncores=1, batch_size=10, ono2one_only=False, seed=None, do_not_downsample=False,
+        bar_format=BAR_FORMAT):
 
     """
     Use the ICC approach to: (i) compute expression conservation scores for 1-to-1 orthologs, (ii)
@@ -607,6 +610,9 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
         ono2one_only (bool, optional): do not select best pairs for many-to-many / one-to-many,
                                        use only one-to-one orthologs
         seed (int, optional): random seed, use for reproducible results
+        do_not_downsample (bool, optional): if set to True, all 1-1 orthologs are used for
+                                            selection of other orthologs instead of 1000 randomly
+                                            chosen
         bar_format (str, optional): tqdm bar format, use None for tqdm default
     """
 
@@ -646,7 +652,9 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
         #Select best pairs for many-many / one-many
         logger.info('Selecting best pair for many-to-many / one-to-many / many-to-one orthologs')
         async_res = parallel_select_homologs(a, b, mat1, mat2, manyortho, batch_size, ncores=ncores,
-                                             max_combin=max_combin, bar_format=bar_format)
+                                             max_combin=max_combin,
+                                             do_not_downsample=do_not_downsample,
+                                             bar_format=bar_format)
 
     else:
         async_res = []
