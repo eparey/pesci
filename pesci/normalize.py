@@ -166,7 +166,16 @@ def iterative_dt_to_sparse(dt_expr, cells_per_iter=2000):
         pass_iterative_fill = True
 
     #dt to dense numpy array
-    expr_final = dt_expr[:, 1:end].to_numpy().astype(int)
+    try:
+        expr_final = dt_expr[:, 1:end].to_numpy().astype(int)
+    except Exception as e:
+        if e.__class__.__name__=="TypeError":
+            logger.error('The matrix contains non-integer values! Expecting a count matrix, please check!')
+            sys.exit(1)
+
+        else:
+            raise
+
 
     #numpy array to sparse
     expr_final = sparse.csr_matrix(expr_final)
@@ -471,6 +480,13 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
         #filter out genes with no/very low expression
         logger.info('Filtering out lowly-expressed genes (total umi < %s)', min_counts)
         sc.pp.filter_genes(expr, min_counts=min_counts, inplace=True)
+
+        # check that values in expr matrix are integers
+        subset = expr.X[:10].tocoo().data #look at the 10 first barcodes
+        if not all([not (i%1) for i in subset]):
+            logger.error('The matrix contains non-integer values! Expecting a count matrix, please check!')
+            sys.exit(1)
+
         # genes = [lab+'@'+g for g in expr.var.index]
         genes = expr.var.index
         cells = expr.obs.index
@@ -494,13 +510,34 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
         #load matrix
         expr = sc.read(filename = expr_mat)
 
-        #TODO check it does the same as expr.sum(axis = 1) >= 10
-        sc.pp.filter_genes(expr, min_counts=min_counts, inplace=True)
+        #try to find the raw counts in the anndata
+        if "counts" in expr.layers: #TODO: could also allow for 'corrected counts' or 'raw'
+            expr.X = expr.layers["counts"]
+            logger.info('Using count data stored in the "counts" layer.')
+
+        elif expr.raw is not None:
+            tmp = expr.raw.to_adata()
+            expr.X = tmp[expr.obs_names, expr.var_names].X.copy()
+            logger.info('Using count data stored in adata.raw.X.')
+
+        else:
+            logger.warning('Pesci needs counts data, but no "counts" layer or adata.raw can be found '
+                            'in the h5ad.')
+            logger.warning('Using adata.X, but pesci will crash if these are not counts.')
+
+
         logger.info('Filtering out lowly-expressed genes (total umi < %s)', min_counts)
+        sc.pp.filter_genes(expr, min_counts=min_counts, inplace=True)
 
         # genes = [lab+'@'+g for g in expr.var.index]
         genes = expr.var.index
         cells = expr.obs.index
+
+        # check that values in expr matrix are integers
+        subset = expr.X[:10].tocoo().data #look at the 10 first barcodes
+        if not all([not (i%1) for i in subset]):
+            logger.error('The matrix contains non-integer values! Expecting a count matrix, please check!')
+            sys.exit(1)
 
         if clusters not in expr.obs:
             logger.error('%s column not found in .obs of h5ad', clusters)
