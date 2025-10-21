@@ -15,8 +15,10 @@ import pandas as pd
 from scipy.optimize import linear_sum_assignment
 import scipy.stats as stats
 
+from skimage.filters import threshold_otsu
+
 import matplotlib.pyplot as plt
-from matplotlib.patches import Patch
+from matplotlib.patches import Patch, Rectangle
 import seaborn as sns
 
 import coloredlogs
@@ -176,7 +178,7 @@ def make_palette_for_broad(broad_file1, broad_file2, cell_types1, cell_types2):
 
 def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='',
                       threshold_for_plot=0, outformat='svg', broad_file1=None, broad_file2=None,
-                      reorder='DiagKeep', seabcmap='BuPu'):
+                      reorder='DiagKeep', seabcmap='BuPu', sign=None, warn=None, use_thresh=False):
 
     """
     Saves and plots heatmap showing expression comparisons between all clusters of sp1 and all
@@ -280,13 +282,27 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
                 figsize=fsize, cbar_pos=(1.05, 0.8, 0.02, 0.15), row_colors=row_colors,
                 col_colors=col_colors, colors_ratio=cratio)
 
+    ax = g.ax_heatmap
+
+    if (sign is not None) and use_thresh:
+        for pair in zip(sign[f"{sp1}_cell_cluster"], sign[f'{sp2}_cell_cluster']):
+            idx_x = cell_types2.index(pair[1].split('|')[-1])
+            idx_y = cell_types1.index(pair[0].split('|')[-1])
+            ax.add_patch(Rectangle((idx_x, idx_y), 1, 1, fill=False, edgecolor='k', lw=1))
+
+    if warn is not None:
+        for pair in zip(warn[f"{sp1}_cell_cluster"], warn[f'{sp2}_cell_cluster']):
+            idx_x = cell_types2.index(pair[1].split('|')[-1])
+            idx_y = cell_types1.index(pair[0].split('|')[-1])
+            ax.add_patch(Rectangle((idx_x, idx_y), 1, 1, fill=False, edgecolor='red', lw=1))
+
+
     if broad_file1 and broad_file2:
         handles = [Patch(facecolor=paldict[name]) for name in sorted(list(paldict.keys()))]
         plt.legend(handles, sorted(list(paldict.keys())), title='Broad annotation',
                    bbox_to_anchor=(1.22, 0.1), bbox_transform=plt.gcf().transFigure,
                    loc='lower right')
 
-    ax = g.ax_heatmap
     ax.set_ylabel(sp1)
     ax.set_xlabel(sp2)
     plt.savefig(f'{outprefix}correlation_scores_matrix.{outformat}', bbox_inches='tight')
@@ -296,7 +312,7 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
 def plot_expression_conservation(ec, n_ortho, outprefix):
 
     """
-    Plots distribution of ec scores (histogram)
+    Plots distribution of ec scores (histogram).
 
     Args:
         ec (numpy.array): vector with ec scores
@@ -336,7 +352,7 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
     """
 
     records = []
-    pvals = []
+    coexp_number_enrich_score = []
     for i, clus1 in enumerate(mat1.clusters):
         for j, clus2 in enumerate(mat2.clusters):
             if result[i, j] > wmin:
@@ -344,14 +360,12 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
                 genes_clus2_sp2 = np.where(mat2.matrix[:, j] > fc)[0]
                 ortho_idx = set(genes_clus1_sp1).intersection(set(genes_clus2_sp2))
 
-                #perform hypergeom on intersection here
                 M = len([k for k in ec if k>0])
                 n = len([k for k in genes_clus1_sp1 if ec[k]>0])
                 N = len([k for k in genes_clus2_sp2 if ec[k]>0])
                 x = len([k for k in ortho_idx if ec[k]>0])
 
-                p = stats.hypergeom.sf(x-1, M, n, N)
-                pvals.append((sp1+'|'+clus1, sp2+'|'+clus2, x, n*N/M, p))
+                coexp_number_enrich_score.append((sp1+'|'+clus1, sp2+'|'+clus2, x, x/(n*N/M), result[i, j]))
 
                 for k in ortho_idx:
                     g1, g2 = mat1.genes[k], mat2.genes[k]
@@ -375,21 +389,41 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
     df.drop(columns=['tmp_score'], inplace=True)
     df.to_csv(f'{outprefix}gene_coexpression_table.csv', sep='\t', index=False)
 
-    df = pd.DataFrame.from_records(pvals, columns=[f'{sp1}_cell_cluster', f'{sp2}_cell_cluster',
-                                                     f'n.co-expressed_genes', f'n.expected',
-                                                     f'p.value'])
-    df['p.adj'] = stats.false_discovery_control(df['p.value'], method='by')
-    df.drop(columns=['p.value'], inplace=True)
+    df = pd.DataFrame.from_records(coexp_number_enrich_score,
+                                   columns=[f'{sp1}_cell_cluster', f'{sp2}_cell_cluster',
+                                            f'n.co-expressed_genes', f'n.enrich',
+                                            f'weighted.correlation.score'])
 
-    df.sort_values([f'p.adj'], ascending=True, inplace=True)
-    df.to_csv(f'{outprefix}coexpression_pvals.csv', sep='\t', index=False)
+
+    otsu_enrich = threshold_otsu(np.array([i[3] for i in coexp_number_enrich_score]))
+    otsu_scores = threshold_otsu(np.array([i[4] for i in coexp_number_enrich_score]))
+
+    logger.info('Automated threshold on weighted correlation scores: %s', round(otsu_scores, 3))
+
+    logger.info('Automated threshold on co-expressed markers enrichment: %s', round(otsu_enrich, 3))
+
+
+    sign = df.loc[(df[f'weighted.correlation.score'] > otsu_scores)
+                   & (df['n.co-expressed_genes'] > 10) & (df['n.enrich'] > otsu_enrich)]
+    sign = sign[[f'{sp1}_cell_cluster', f'{sp2}_cell_cluster']]
+
+    warn = df.loc[(df[f'weighted.correlation.score'] > otsu_scores) & (df['n.co-expressed_genes'] < 10)]
+    warn = warn[[f'{sp1}_cell_cluster', f'{sp2}_cell_cluster']]
+
+
+    df['automated.threshold.enrich'] = otsu_enrich
+    df['automated.threshold.weighted.correlation.score'] = otsu_scores
+    df.to_csv(f'{outprefix}coexpression_info.csv', sep='\t', index=False)
+
+    return warn, sign, otsu_scores, otsu_enrich
+
 
 
 
 
 def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
             threshold_for_plot=0, outformat='svg', min_fc=1.5, broad_file1=None,
-            broad_file2=None, many_threshold=None, seabcmap='BuPu'):
+            broad_file2=None, many_threshold=None, seabcmap='BuPu', use_thresh=False):
 
     """
     Compares gene expression across all pairs clusters species 1 - clusters species 2, using
@@ -443,15 +477,6 @@ def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
     mat1 = ExprMatrix2(mat1_ok, genes1_ok, mat1.cells)
     mat2 = ExprMatrix2(mat2_ok, genes2_ok, mat2.cells)
 
-    #TODO: remove this at the end when we are sure it's working as expected (unit tests needed)
-    # df = pd.DataFrame(data=mat1_ok[0:,0:], index=[i.split('+')[0] for i in ortho+para],
-    #                   columns=[sp1+'|'+i for i in cell_types1])
-    # df.to_csv(outprefix + 'file/' + Path(matrix_a).stem + '_orthologs.tsv', sep='\t')
-
-    # df = pd.DataFrame(data=mat2_ok[0:,0:], index=[i.split('+')[0] for i in ortho+para],
-    #                   columns=[sp2+'|'+i for i in cell_types2])
-    # df.to_csv(outprefix + 'file/' + Path(matrix_b).stem + '_orthologs.tsv', sep='\t')
-
     is_one2one = np.concatenate([np.ones(len(ortho)), np.zeros(len(para))])
     df = pd.DataFrame([genes1_ok, genes2_ok, ec, is_one2one]).T
     df.columns = ['genes sp1', 'genes sp2', 'expression conservation', 'is_one2one']
@@ -460,18 +485,11 @@ def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
     #compute weighted correlations between cell types of sp1 and cell types of sp2
     result = icc.column_wise_wcorr_einsum(mat1_ok, mat2_ok, ec)
 
-    #get best match to print info
-    maxind = np.unravel_index(result.argmax(), result.shape)
-    maxval = round(result[maxind], 3)
-    maxc1 = list(mat1.clusters.keys())[int(maxind[0])]
-    maxc2 = list(mat2.clusters.keys())[int(maxind[1])]
+    logger.info('Searching for co-expressed gene pairs')
 
-    with open(outprefix1+f'{sp1}-{sp2}_best_match.txt', 'w', encoding='utf-8') as out:
-        out.write('Max expression correlation value\tCluster sp1\tCluster sp2\n')
-        out.write('\t'.join([str(maxval), maxc1, maxc2])+'\n')
-
-    logger.info('Max expression correlation value: %s (%s|%s - %s|%s)', maxval, sp1, maxc1, sp2,
-                                                                        maxc2)
+    warn, sign, tscores, tenrich = make_coexpressed_genes_table(result, mat1, mat2, ec, len(ortho),
+                                 outprefix+random_id+sp1+'-'+sp2+'_', sp1, sp2, fc=min_fc,
+                                 wmin=threshold_for_plot)
 
     logger.info('Saving outputs and plotting correlation matrix')
 
@@ -479,13 +497,9 @@ def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
                                outprefix+random_id+sp1+'-'+sp2+'_', sp1, sp2,
                                threshold_for_plot=threshold_for_plot, outformat=outformat,
                                broad_file1=broad_file1, broad_file2=broad_file2,
-                               seabcmap=seabcmap)
+                               seabcmap=seabcmap, warn=warn, sign=sign, use_thresh=use_thresh)
 
-    logger.info('Searching for co-expressed gene pairs')
 
-    make_coexpressed_genes_table(result, mat1, mat2, ec, len(ortho),
-                                 outprefix+random_id+sp1+'-'+sp2+'_', sp1, sp2, fc=min_fc,
-                                 wmin=threshold_for_plot)
 
 
     # out_genes = outprefix+f'ortho_and_para.txt'

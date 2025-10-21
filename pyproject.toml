@@ -37,7 +37,7 @@ classifiers = [
 
 dependencies = ['coloredlogs', 'datatable', 'matplotlib', 'networkx', 'numpy>=2.0',
                 'pandas>=2.2.2', 'scikit-learn>=1.5.2', 'scanpy>=1.10.1', 'scipy',
-                'seaborn', 'tqdm']
+                'seaborn', 'tqdm', 'scikit-image']
 
 [project.scripts]
 pesci = "pesci.__main__:main"
