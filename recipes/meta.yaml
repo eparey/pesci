@@ -16,10 +16,10 @@ build:
 
 requirements:
   build:
-    - python>=3.7
+    - python>=3.7,<3.11
     - setuptools
   run:
-    - python>=3.7
+    - python>=3.7,<3.11
     - numpy>=2.0
     - matplotlib
     - coloredlogs
