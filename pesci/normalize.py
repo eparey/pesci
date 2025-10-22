@@ -170,7 +170,7 @@ def iterative_dt_to_sparse(dt_expr, cells_per_iter=2000):
         expr_final = dt_expr[:, 1:end].to_numpy().astype(int)
     except Exception as e:
         if e.__class__.__name__=="TypeError":
-            logger.error('The matrix contains non-integer values! Expecting a count matrix, please check!')
+            logger.error('The matrix contains non-integer values! Expecting counts, please check!')
             sys.exit(1)
 
         else:
@@ -484,7 +484,7 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
         # check that values in expr matrix are integers
         subset = expr.X[:10].tocoo().data #look at the 10 first barcodes
         if not all([not (i%1) for i in subset]):
-            logger.error('The matrix contains non-integer values! Expecting a count matrix, please check!')
+            logger.error('The matrix contains non-integer values! Expecting counts, please check!')
             sys.exit(1)
 
         # genes = [lab+'@'+g for g in expr.var.index]
@@ -511,7 +511,7 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
         expr = sc.read(filename = expr_mat)
 
         #try to find the raw counts in the anndata
-        if "counts" in expr.layers: #TODO: could also allow for 'corrected counts' or 'raw'
+        if "counts" in expr.layers: #FIXME: could also allow for 'corrected counts' or 'raw'
             expr.X = expr.layers["counts"]
             logger.info('Using count data stored in the "counts" layer.')
 
@@ -521,8 +521,8 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
             logger.info('Using count data stored in adata.raw.X.')
 
         else:
-            logger.warning('Pesci needs counts data, but no "counts" layer or adata.raw can be found '
-                            'in the h5ad.')
+            logger.warning('Pesci needs counts data, but no "counts" layer or adata.raw can be '
+                            'found in the h5ad.')
             logger.warning('Using adata.X, but pesci will crash if these are not counts.')
 
 
@@ -536,7 +536,7 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
         # check that values in expr matrix are integers
         subset = expr.X[:10].tocoo().data #look at the 10 first barcodes
         if not all([not (i%1) for i in subset]):
-            logger.error('The matrix contains non-integer values! Expecting a count matrix, please check!')
+            logger.error('The matrix contains non-integer values! Expecting counts, please check!')
             sys.exit(1)
 
         if clusters not in expr.obs:
@@ -828,7 +828,7 @@ def normalize(expr_mats, cells_to_clusters, output, cores=1, filter_out_start=No
     """
 
     all_matrices = []
-    if type(expr_mats) == str:
+    if isinstance(expr_mats, str):
         expr_mats = [expr_mats]
     for expr_mat in expr_mats:
         fm, open_func = validate_input_format(expr_mat, cells_to_clusters)
@@ -850,4 +850,3 @@ def normalize(expr_mats, cells_to_clusters, output, cores=1, filter_out_start=No
                                          bar_format=bar_format)
     df = pd.DataFrame(data=norm_matrix, index=matrix.genes, columns=sorted(matrix.clusters.keys()))
     df.to_csv(output, sep='\t')
-

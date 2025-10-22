@@ -13,7 +13,6 @@ import numpy as np
 import pandas as pd
 
 from scipy.optimize import linear_sum_assignment
-import scipy.stats as stats
 
 from skimage.filters import threshold_otsu
 
@@ -157,7 +156,7 @@ def make_palette_for_broad(broad_file1, broad_file2, cell_types1, cell_types2):
             del colors[8]
 
     #FIXME allow to provide user-defined colors
-    if 'Meiotic' not in unique_broad and 'Peptidergic' in unique_broad: 
+    if 'Meiotic' not in unique_broad and 'Peptidergic' in unique_broad:
         del colors[7]
 
     if 'Muscle' in unique_broad:
@@ -367,13 +366,13 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
                 genes_clus2_sp2 = np.where(mat2.matrix[:, j] > fc)[0]
                 ortho_idx = set(genes_clus1_sp1).intersection(set(genes_clus2_sp2))
 
-                M = len([k for k in ec if k>0])
-                n = len([k for k in genes_clus1_sp1 if ec[k]>0])
-                N = len([k for k in genes_clus2_sp2 if ec[k]>0])
+                tot = len([k for k in ec if k>0])
+                markers1 = len([k for k in genes_clus1_sp1 if ec[k]>0])
+                markers2 = len([k for k in genes_clus2_sp2 if ec[k]>0])
                 x = len([k for k in ortho_idx if ec[k]>0])
 
-                coexp_number_enrich_score.append((sp1+'|'+clus1, sp2+'|'+clus2, x, x/(n*N/M),
-                                                  result[i, j]))
+                coexp_number_enrich_score.append((sp1+'|'+clus1, sp2+'|'+clus2, x,
+                                                  x/(markers1*markers2/tot), result[i, j]))
 
                 for k in ortho_idx:
                     g1, g2 = mat1.genes[k], mat2.genes[k]
@@ -389,7 +388,7 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
 
     df = pd.DataFrame.from_records(records, columns=[f'{sp1}_cell_cluster', f'{sp2}_cell_cluster',
                                                      f'{sp1}_gene', f'{sp2}_gene',
-                                                     f'{sp1}_Expression (Fold-change)', 
+                                                     f'{sp1}_Expression (Fold-change)',
                                                      f'{sp2}_Expression (Fold-change)', 'EC_score',
                                                      'tmp_score', 'One-to-one-ortholog (yes/no)'])
     df.sort_values([f'{sp1}_cell_cluster', f'{sp2}_cell_cluster', 'tmp_score'], ascending=False,
@@ -411,11 +410,11 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
     logger.info('Automated threshold on co-expressed markers enrichment: %s', round(otsu_enrich, 3))
 
 
-    sign = df.loc[(df[f'weighted.correlation.score'] > otsu_scores)
+    sign = df.loc[(df['weighted.correlation.score'] > otsu_scores)
                    & (df['n.co-expressed_genes'] > 10) & (df['n.enrich'] > otsu_enrich)]
     sign = sign[[f'{sp1}_cell_cluster', f'{sp2}_cell_cluster']]
 
-    warn = df.loc[(df[f'weighted.correlation.score'] > otsu_scores) 
+    warn = df.loc[(df['weighted.correlation.score'] > otsu_scores)
                    & (df['n.co-expressed_genes'] < 10)]
 
     warn = warn[[f'{sp1}_cell_cluster', f'{sp2}_cell_cluster']]
@@ -495,7 +494,7 @@ def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
 
     logger.info('Searching for co-expressed gene pairs')
 
-    warn, sign, tscores, tenrich = make_coexpressed_genes_table(result, mat1, mat2, ec, len(ortho),
+    warn, sign, _, _ = make_coexpressed_genes_table(result, mat1, mat2, ec, len(ortho),
                                    outprefix+random_id+sp1+'-'+sp2+'_', sp1, sp2, fc=min_fc)
 
     if not plot_warn:
