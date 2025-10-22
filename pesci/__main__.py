@@ -237,18 +237,22 @@ def parse_commandline():
                                                help='format for output figures',
                                                choices=['svg', 'png', 'pdf'])
 
-    oopt.add_argument('--seaborn_cmap', type=str, required=False, default="BuPu",
-                                        help='name of the seaborn colormap for the heatmap')
-
-    oopt.add_argument('--plot_thresh', type=float, help="threshold to plot matches in resulting "
-                                                        "comparison matrix & search for "
-                                                        "co-expressed marker gene pairs",
-                                       default=0)
-
     oopt.add_argument('--min_fc', type=float, help="minimum fold-change to be considered marker of "
                                                    "a cluster - only used for the co-expressed "
                                                    "marker gene table (to set in conjunction with "
                                                    "--marker_specificity)", default=1.5)
+
+
+    oopt.add_argument('--seaborn_cmap', type=str, required=False, default="BuPu",
+                                        help='name of the seaborn colormap for the heatmap')
+
+    oopt.add_argument('--show_auto_threshold', action='store_true', help="experimental option to "
+                                                                        "highlight matches above "
+                                                                        "thresholds on the "
+                                                                        "heatmap plot")
+    oopt.add_argument('--do_not_plot_warn', action='store_false', help="do not plot warning on"
+                                                                        "heatmap for matches "
+                                                                        "driven by < 10 genes ")
 
     args = vars(parser.parse_args())
 
@@ -376,10 +380,13 @@ def main():
     if args['colbroad'] or (args['colbroad1'] and args['colbroad2']):
         broadfile1 = norm_mat1.split('_matrix_')[0] + '_clusters_to_broad.pkl'
         broadfile2 = norm_mat2.split('_matrix_')[0] + '_clusters_to_broad.pkl'
+
     cp.compare(norm_mat1, norm_mat2, args['outdir'], sp1, sp2, random_id=args['random_id'],
-               threshold_for_plot=args['plot_thresh'], outformat=args['figure_format'],
-               min_fc=args['min_fc'], broad_file1=broadfile1, broad_file2=broadfile2,
-               many_threshold=args['ec_threshold_many'], seabcmap=args['seaborn_cmap'])
+               outformat=args['figure_format'], min_fc=args['min_fc'], broad_file1=broadfile1,
+               broad_file2=broadfile2, many_threshold=args['ec_threshold_many'], 
+               seabcmap=args['seaborn_cmap'], use_thresh=args['show_auto_threshold'],
+               plot_warn=args['do_not_plot_warn'])
+
     logger.info('Done! Results in %s', args['outdir'])
 
 
