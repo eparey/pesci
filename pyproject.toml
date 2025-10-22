@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pesci"
 dynamic = ["version"]
-requires-python = ">=3.7, <3.11"
+requires-python = ">=3.7, <3.13"
 
 license = { file = "LICENSE" }
 

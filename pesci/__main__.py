@@ -229,6 +229,16 @@ def parse_commandline():
                                                   help='name of species1 (label for plots & '
                                                        'outputs)')
 
+    oopt.add_argument('-r', '--reorder', type=str, required=False, default="DiagKeep",
+                                                  help='how to order cell clusters on the heatmap: '
+                                                  'DiagKeep (default): try to maximise matches on'
+                                                  'the diagonal, keeping input order as much as possible; '
+                                                  'Clust: use hierarchical clustering of rows and columns '
+                                                  '(average linkage, euclidean distance) or None: '
+                                                  'keep input order. Note that this option is ignored if '
+                                                  'providing brad annotations.',
+                                                  choices=['DiagKeep','Clust', 'None'])
+
     oopt.add_argument('-sp2', '--label_species2', type=str, required=False, default="sp2",
                                                   help='name of species2 (label for plots & '
                                                        'outputs)')
@@ -385,7 +395,7 @@ def main():
                outformat=args['figure_format'], min_fc=args['min_fc'], broad_file1=broadfile1,
                broad_file2=broadfile2, many_threshold=args['ec_threshold_many'], 
                seabcmap=args['seaborn_cmap'], use_thresh=args['show_auto_threshold'],
-               plot_warn=args['do_not_plot_warn'])
+               plot_warn=args['do_not_plot_warn'], reorder=args['reorder'])
 
     logger.info('Done! Results in %s', args['outdir'])
 

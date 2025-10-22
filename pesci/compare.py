@@ -275,6 +275,10 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
                        'use DiagKeep or Clust', reorder)
         sys.exit(1)
 
+    else:
+        cell_types2 = list(cell_types2.keys())
+        cell_types1 = list(cell_types1.keys())
+
     g = sns.clustermap(result, cmap=seabcmap, annot=False, vmin=0, vmax=1, xticklabels=cell_types2,
                 yticklabels=cell_types1, cbar_kws={'label': 'weighted\ncorrelation', "shrink": 0.1},
                 row_cluster=False, col_cluster=False, dendrogram_ratio=0.01,
@@ -429,7 +433,7 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
 def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
             outformat='svg', min_fc=1.5, broad_file1=None,
             broad_file2=None, many_threshold=None, seabcmap='BuPu', use_thresh=False,
-            plot_warn=True):
+            plot_warn=True, reorder='DiagKeep'):
 
     """
     Compares gene expression across all pairs clusters species 1 - clusters species 2, using
@@ -506,4 +510,4 @@ def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
                                outprefix+random_id+sp1+'-'+sp2+'_', sp1, sp2,
                                outformat=outformat,
                                broad_file1=broad_file1, broad_file2=broad_file2,
-                               seabcmap=seabcmap, warn=warn, sign=sign)
+                               seabcmap=seabcmap, warn=warn, sign=sign, reorder=reorder)
