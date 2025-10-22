@@ -46,8 +46,38 @@ pesci -m1 data/Cg_matrix_EM.tsv.gz -m2 data/Pc_matrix_EM.tsv.gz -c1 data/Cragig_
 
 ![pesci fig](https://github.com/eparey/pesci/blob/main/docs/img/Oyster-larva-Flatworm-larva_correlation_scores_matrix.png)
 
-NOTES TODO: important in data preperation to have same gene id in the orthology and matrix files AND that gene ids are unique for each species (recommend adding prefix with sp name)
 
 ## License
 
 ## Contacts
+
+## TODO: make a more complete doc with Gihtub Pages and link to it
+
+For instance, one way to format from seurat:
+
+```
+library(Matrix)
+library(R.utils)
+library(data.table)
+library(tidyverse)
+
+counts <- mySeuratObj@assays$RNA@counts
+# Output counts matrix
+writeMM(counts, paste0(data_dir, 'matrix.mtx'))
+gzip(paste0(data_dir, 'matrix.mtx'))
+
+# Output cell barcodes
+barcodes <- colnames(counts)
+write_delim(as.data.frame(barcodes), paste0(data_dir, 'barcodes.tsv'),
+           col_names = FALSE)
+gzip(paste0(data_dir, 'barcodes.tsv'))
+
+# Output feature names
+gene_names <- rownames(counts)
+features <- data.frame("gene_id" = gene_names,"gene_name" = gene_names,type = "Gene Expression")
+write_delim(as.data.frame(features),delim = "\t", paste0(data_dir, 'features.tsv'),
+           col_names = FALSE)
+gzip(paste0(data_dir, 'features.tsv'))
+```
+
+NOTES TODO: important in data preperation to have same gene id in the orthology and matrix files AND that gene ids are unique for each species (recommend adding prefix with sp name)
