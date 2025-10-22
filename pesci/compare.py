@@ -19,6 +19,7 @@ from skimage.filters import threshold_otsu
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch, Rectangle
+import matplotlib.patheffects as pe
 import seaborn as sns
 
 import coloredlogs
@@ -294,8 +295,10 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
         for pair in zip(warn[f"{sp1}_cell_cluster"], warn[f'{sp2}_cell_cluster']):
             idx_x = cell_types2.index(pair[1].split('|')[-1])
             idx_y = cell_types1.index(pair[0].split('|')[-1])
-            ax.add_patch(Rectangle((idx_x, idx_y), 1, 1, fill=False, edgecolor='red', lw=1))
+            ax.text(idx_x + 0.5, idx_y + 0.6, '!', color='black', path_effects=[pe.withStroke(linewidth=1, foreground="white")],
+                     size=7, ha='center', va='center')
 
+        ax.text(1.02, 0.7, '!: high score driven by\n< 10 genes', size=8, transform = plt.gcf().transFigure)
 
     if broad_file1 and broad_file2:
         handles = [Patch(facecolor=paldict[name]) for name in sorted(list(paldict.keys()))]
