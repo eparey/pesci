@@ -1,8 +1,8 @@
 # pesci - Pretty Easy Single-cell Comparisons using ICC
 
-[![python](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
+![Static Badge](https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10%7C3.11%7C3.12-blue?logo=python)
 
-Pesci is an efficient and user-friendly implementation of the Iterative Comparison of Coexpression (ICC) algorithm applied to the **comparison of single-cell gene expression datasets across two study species** ([Najle, Grau-Bové et al.](https://doi.org/10.1016%2Fj.cell.2023.08.027)).
+Pesci is an efficient and user-friendly implementation of the Iterative Comparison of Coexpression (ICC) algorithm applied to the **comparison of single-cell gene expression datasets across two study species**, first proposed by ([Najle, Grau-Bové et al.](https://doi.org/10.1016%2Fj.cell.2023.08.027)).
 
 
 ## Citing
