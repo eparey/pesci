@@ -656,3 +656,8 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
     logger.info('Added %s many-to-many / one-to-many / many-to-one, %s multigenic families skipped.'
                 ' Total retained genes for cross-species comparison: %s genes.', nmany, nskip,
                  nmany+len(one2one_a))
+
+    if nmany+len(one2one_a) < 5000:
+        logger.warning('WARNING: The number of retained orthologs for cross-species single-cell comparison is '
+                       'low (%s)! Expression correlation scores will likely be low, '
+                       'you may need to check your orthology file.', nmany+len(one2one_a))
