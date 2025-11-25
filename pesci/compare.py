@@ -371,13 +371,10 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
                 markers2 = len([k for k in genes_clus2_sp2 if ec[k]>0])
                 x = len([k for k in ortho_idx if ec[k]>0])
 
-                logger.info('%s-%s score = %s', sp1+'|'+clus1, sp2+'|'+clus2, result[i, j])
-
-                logger.info('Tot nb orthologs with ec>0: %s', tot)
-
-                logger.info('Nb Markers Sp1: %s', markers1)
-
-                logger.info('Nb Markers Sp2: %s', markers2)
+                # logger.info('%s-%s score = %s', sp1+'|'+clus1, sp2+'|'+clus2, result[i, j])
+                # logger.info('Tot nb orthologs with ec>0: %s', tot)
+                # logger.info('Nb Markers Sp1: %s', markers1)
+                # logger.info('Nb Markers Sp2: %s', markers2)
 
                 enr = 0
                 if markers1 != 0 and markers2 != 0:
