@@ -125,7 +125,7 @@ def parse_commandline():
     #Optional arguments input
     iopt = parser.add_argument_group('inputs')
 
-    iopt.add_argument('--min_umi', type=int, help="Minimum total umi for a gene to be retained for "
+    iopt.add_argument('--min_umi', type=int, help="minimum total umi for a gene to be retained for "
                                                   "comparison", default=10)
 
     iopt.add_argument('--colclust', type=str, help="name of the column corresponding to clusters "
@@ -135,9 +135,9 @@ def parse_commandline():
                                                    "if not set, will use column `cluster_name`, "
                                                    "if it does not exist, will attempt to use the "
                                                    "2nd column \n"
-                                                   "use --colclust1 & --colclust2 to "
-                                                   "specify different column names for species1 & "
-                                                   "species2.",
+                                                   "use --colclust1 or --colclust2 to "
+                                                   "specify different column names for species1 or"
+                                                   " species2.",
                                     default='cluster_name')
 
     iopt.add_argument('--colclust1', type=str, help="name of the column corresponding to clusters "
@@ -163,9 +163,9 @@ def parse_commandline():
                                                     "file or h5ad - if not set, will not use "
                                                     "broad annotations (this is for the heatmap "
                                                     "plot only) \n"
-                                                    "use --colbroad1 & --colbroad2 "
+                                                    "use --colbroad1 or --colbroad2 "
                                                     "to specify different column names for species1"
-                                                    " & species2.",
+                                                    " or species2.",
                                     default=None)
 
     iopt.add_argument('--colbroad1', type=str, help="name of the column corresponding to broad "
@@ -229,16 +229,6 @@ def parse_commandline():
                                                   help='name of species1 (label for plots & '
                                                        'outputs)')
 
-    oopt.add_argument('-r', '--reorder', type=str, required=False, default="DiagKeep",
-                                                  help='how to order cell clusters on the heatmap: '
-                                                  'DiagKeep (default): try to maximise matches on'
-                                                  'the diagonal, keeping input order as much as '
-                                                  'possible; '
-                                                  'Clust: use hierarchical clustering of rows and '
-                                                  'columns (average linkage, euclidean distance) '
-                                                  'or None: keep input order. This option '
-                                                   'is ignored if providing brad annotations.',
-                                                  choices=['DiagKeep','Clust', 'None'])
 
     oopt.add_argument('-sp2', '--label_species2', type=str, required=False, default="sp2",
                                                   help='name of species2 (label for plots & '
@@ -248,22 +238,33 @@ def parse_commandline():
                                                help='format for output figures',
                                                choices=['svg', 'png', 'pdf'])
 
+    oopt.add_argument('-r', '--reorder', type=str, required=False, default="DiagKeep",
+                                                  help='how to order cell clusters on the heatmap: '
+                                                  'DiagKeep (default): try to maximise matches on '
+                                                  'the diagonal, keeping input order as much as '
+                                                  'possible; '
+                                                  'Clust: use hierarchical clustering of rows and '
+                                                  'columns (average linkage, euclidean distance) '
+                                                  'or None: keep input order. This option '
+                                                   'is ignored if providing broad annotations.',
+                                                  choices=['DiagKeep','Clust', 'None'])
+
     oopt.add_argument('--min_fc', type=float, help="minimum fold-change to be considered marker of "
                                                    "a cluster - only used for the co-expressed "
-                                                   "marker gene table (to set in conjunction with "
-                                                   "--marker_specificity)", default=1.5)
+                                                   "marker genes table (to set in conjunction with "
+                                                   "--marker_specificity).", default=1.5)
 
 
     oopt.add_argument('--seaborn_cmap', type=str, required=False, default="BuPu",
-                                        help='name of the seaborn colormap for the heatmap')
+                                        help='name of the seaborn colormap for the heatmap.')
 
     oopt.add_argument('--show_auto_threshold', action='store_true', help="experimental option to "
                                                                         "highlight matches above "
                                                                         "thresholds on the "
-                                                                        "heatmap plot")
-    oopt.add_argument('--do_not_plot_warn', action='store_false', help="do not plot warning on"
-                                                                        "heatmap for matches "
-                                                                        "driven by < 10 genes ")
+                                                                        "heatmap plot.")
+    oopt.add_argument('--do_not_plot_warn', action='store_false', help="do not plot warning on "
+                                                                        "the heatmap for matches "
+                                                                        "driven by < 10 genes.")
 
     args = vars(parser.parse_args())
 
