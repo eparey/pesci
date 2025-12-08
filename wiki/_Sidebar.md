@@ -1,0 +1,5 @@
+* [Home](https://github.com/eparey/pesci/wiki)
+* [How-to-Run](https://github.com/eparey/pesci/wiki/How-to-Run)
+* [Input-files](https://github.com/eparey/pesci/wiki/Input-files)
+* [Outputs](https://github.com/eparey/pesci/wiki/Outputs)
+* [Examples](https://github.com/eparey/pesci/wiki/Examples)
