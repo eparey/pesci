@@ -27,7 +27,9 @@ from functools import partialmethod
 
 import argparse
 
+import traceback
 import coloredlogs
+
 
 import tqdm
 
@@ -271,6 +273,33 @@ def parse_commandline():
     return args
 
 
+def configure_logs(outdir):
+    """
+    pesci logs
+    """
+    logger = logging.getLogger()
+    file_handler = logging.FileHandler(outdir + 'pesci.log')
+    file_handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s [%(levelname)s]: %(message)s', "%Y-%m-%d %H:%M:%S")
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    def log_uncaught_exc(etype, evalue, tb):
+        logging.error(''.join(traceback.format_tb(tb)))
+        logging.error('%s: %s', etype, evalue)
+
+    sys.excepthook = log_uncaught_exc
+
+    with open(outdir + 'pesci.log', 'a', encoding="utf-8") as logfile:
+        logfile.write('# '+" ".join(sys.argv)+'\n')
+        logfile.write('# '+'pesci ' + version.__version__+'\n')
+
+    coloredlogs.install(level='INFO', logger=logger, fmt='%(asctime)s [%(levelname)s]: %(message)s',
+                        field_styles={'levelname': {'color': ''}})
+
+    return logger
+
+
 def main():
     """
     pesci cli main
@@ -281,13 +310,12 @@ def main():
     if args['no_pbar']:
         tqdm.tqdm.__init__ = partialmethod(tqdm.tqdm.__init__, disable=True)
 
-    logger = logging.getLogger(__name__)
-    coloredlogs.install(level='INFO', logger=logger, fmt='%(asctime)s [%(levelname)s]: %(message)s',
-                        field_styles={'levelname': {'color': ''}})
-
     # Create output dir
     args['outdir'] = args['outdir'].rstrip('/') + '/'
     os.makedirs(args['outdir']+ 'files', exist_ok=True)
+    outdir = args['outdir']
+
+    logger = configure_logs(outdir)
 
     sp1 = args["label_species1"]
     sp2 = args["label_species2"]
