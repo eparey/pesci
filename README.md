@@ -45,7 +45,7 @@ For a description of accepted input formats and available options, please refer 
 - To run pesci on provided example data (datasets from [Piovani et al., 2023](https://doi.org/10.1126/sciadv.adg6034)):
 
 ```
-pesci -m1 data/Cg_matrix_EM.tsv.gz -m2 data/Procro_matrix_EM.tsv.gz -c1 data/Cragig_matrix_EM.tsv.gz -c2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt -sp1 Oyster-larva -sp2 Flatworm-larva --colbroad broad --cores 4
+pesci -m1 data/Cragig_matrix_EM.tsv.gz -m2 data/Procro_matrix_EM.tsv.gz -c1 data/Cragig_cell_id.tsv -c2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt -sp1 Oyster-larva -sp2 Flatworm-larva --colbroad broad --cores 4
 ```
 
 ![pesci fig](https://github.com/eparey/pesci/blob/main/docs/img/Oyster-larva-Flatworm-larva_correlation_scores_matrix.png)
