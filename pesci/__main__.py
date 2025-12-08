@@ -7,7 +7,7 @@ genes.
 
 Examples::
 
-    $ pesci -m1 data/Cg_matrix_EM.tsv.gz -m2 data/Pc_matrix_EM.tsv.gz\
+    $ pesci -m1 data/Cragig_matrix_EM.tsv.gz -m2 data/Procro_matrix_EM.tsv.gz\
       -c1 data/Cragig_cell_id.tsv -c2 data/Procro_cell_id.tsv\
       -g data/orthologous_pairs_Procro-Cragig.txt -c 10 -sp1 Cragig -sp2 Procro
 
