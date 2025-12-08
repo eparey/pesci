@@ -170,7 +170,7 @@ All available options are described below and can be printed using `pesci --help
   -f FIGURE_FORMAT, --figure_format FIGURE_FORMAT
                         {svg,png,pdf} format for output figures (default: pdf)
 
-  -r REORDER, --reorder REORDER {DiagKeep,Clust,None}
+  -r REORDER, --reorder REORDER
                         method for ordering cell clusters on the heatmap: DiagKeep (default): try to maximise matches on the diagonal, keeping input order as much as possible; Clust: use hierarchical clustering of rows and columns (average linkage, euclidean distance) or None: keep input order. This option is ignored if providing broad annotations. (default: DiagKeep)
 
   --min_fc MIN_FC       
