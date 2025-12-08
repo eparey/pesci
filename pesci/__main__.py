@@ -53,7 +53,7 @@ def parse_commandline():
                                      "-c2 data/Procro_cell_id.tsv "
                                      "-g data/orthologous_pairs_Procro-Cragig.txt -c 10 "
                                      "-sp1 Cragig -sp2 Procro",
-                                     formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                      prog='pesci')
 
     parser.add_argument('-v', '--version', action='version',
@@ -65,13 +65,15 @@ def parse_commandline():
                                               help="gene expression per cell for species 1 "
                                               "(raw count matrix), either: a dense matrix text file"
                                               " (can be .gz), a cellranger directory or an h5ad "
-                                              "file; several inputs can be specified")
+                                              "file; several inputs can be specified "
+                                              "if multiple libraries")
 
     required.add_argument('-m2', '--matrix2', type=str, nargs='+', required=True,
                                               help="gene expression per cell for species 2 "
                                               "(raw count matrix), either: a dense matrix text file"
                                               " (can be .gz), a cellranger directory or an h5ad "
-                                              "file; several inputs can be specified")
+                                              "file; several inputs can be specified "
+                                              "if multiple libraries")
 
     required.add_argument('-c1', '--clusters1', type=str, required=True,
                                               help="cell-to-clusters table for species 1 "
@@ -85,6 +87,21 @@ def parse_commandline():
                                                           help="gene orthologies file "
                                                           "(tab-delimited, 1 pair per line)")
 
+    #Recommended optional arguments
+    raopt = parser.add_argument_group('recommended arguments')
+    raopt.add_argument('-o', '--outdir', type=str, required=False, default="output_pesci/",
+                                        help='name of output directory (will be created if does '
+                                             'not exist)')
+
+    raopt.add_argument('-sp1', '--label_species1', type=str, required=False, default="sp1",
+                                                  help='name of species1 (label for plots & '
+                                                       'outputs)')
+
+
+    raopt.add_argument('-sp2', '--label_species2', type=str, required=False, default="sp2",
+                                                  help='name of species2 (label for plots & '
+                                                       'outputs)')
+
     #Optional arguments resources
     resources = parser.add_argument_group('resources')
     resources.add_argument('-c', '--cores', help='number of cores to use for parallel operations',
@@ -95,8 +112,8 @@ def parse_commandline():
     ropt = parser.add_argument_group('running')
 
     ropt.add_argument('--force', action='store_true',
-                                   help="recompute the per cluster normalized gene expression and "
-                                        "ec scores even if output already exists")
+                                   help="recompute all intermediary files (per cluster normalized "
+                                   "gene expression and ec scores) even if outputs already exist")
 
     ropt.add_argument('--seed', type=int, help="set random seed", default=123)
 
@@ -107,19 +124,22 @@ def parse_commandline():
                                     "change in cluster 'a' vs 75 expression percentile across "
                                     "clusters (3rd quartile)", default=0.5)
 
-    ropt.add_argument('--ono2one_only', action='store_true', help="only use 1-to-1 orthologs")
+    ropt.add_argument('--ono2one_only', action='store_true', help="use 1-to-1 orthologs only")
 
-
-    ropt.add_argument('--ec_threshold_many', type=float, help="if set, instead of only best pair "
+    ropt.add_argument('--ec_threshold_many', type=float, help="if set, instead of using only "
+                                             "the best pair for many-to-many and "
+                                             "many-to-one orthologs, "
                                              "retain all distinct pairs with score > threshold",
                                              default=None)
 
-    ropt.add_argument('--do_not_downsample', action='store_true', help="Use all 1-to-1 orthologs "
-                           "(instead of 1000 randomly chosen) for selection of best from "
+    ropt.add_argument('--do_not_downsample', action='store_true', help="use all 1-to-1 orthologs "
+                           "(instead of 1000 randomly chosen) for selection of best pairs for "
                            " the many-to-many and many-to-one orthologs (slower)")
 
-    ropt.add_argument('--random_id', type=str, help="triggers a randomization of orthologies and "
-                                                    "store results in outdir/random_id", default='')
+    ropt.add_argument('--random_id', type=str, help="triggers a randomization of orthologies "
+                                                    "to run pesci on randomized orthologs; "
+                                                    "stores results in outdir/random_id", 
+                                                    default='')
 
     ropt.add_argument('--no_pbar', action='store_true',
                                    help="do not show progress bar")
@@ -223,28 +243,15 @@ def parse_commandline():
     #Optional arguments output
     oopt = parser.add_argument_group('outputs')
 
-    oopt.add_argument('-o', '--outdir', type=str, required=False, default="output_pesci/",
-                                        help='name of output directory (will be created if does '
-                                             'not exist)')
-
-    oopt.add_argument('-sp1', '--label_species1', type=str, required=False, default="sp1",
-                                                  help='name of species1 (label for plots & '
-                                                       'outputs)')
-
-
-    oopt.add_argument('-sp2', '--label_species2', type=str, required=False, default="sp2",
-                                                  help='name of species2 (label for plots & '
-                                                       'outputs)')
-
-    oopt.add_argument('-f', '--figure_format', type=str, required=False, default="svg",
+    oopt.add_argument('-f', '--figure_format', type=str, required=False, default="pdf",
                                                help='format for output figures',
                                                choices=['svg', 'png', 'pdf'])
 
     oopt.add_argument('-r', '--reorder', type=str, required=False, default="DiagKeep",
-                                                  help='how to order cell clusters on the heatmap: '
-                                                  'DiagKeep (default): try to maximise matches on '
-                                                  'the diagonal, keeping input order as much as '
-                                                  'possible; '
+                                                  help='method for ordering cell clusters on the '
+                                                  'heatmap: DiagKeep (default): try to maximise '
+                                                  ' matches on the diagonal, keeping input order '
+                                                  'as much as possible; '
                                                   'Clust: use hierarchical clustering of rows and '
                                                   'columns (average linkage, euclidean distance) '
                                                   'or None: keep input order. This option '
