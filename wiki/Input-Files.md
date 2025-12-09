@@ -17,45 +17,43 @@ Different accepted input formats, and can be different for each of the two study
 
 For instance, one way to format from a Seurat object:
 
-```
+```R
 library(Matrix)
 library(R.utils)
 library(data.table)
-library(tidyverse)
+library(Seurat)
 
-data_dir <- 'scdata_folder/'
+# Load the Seurat object
+mySeuratObj <- readRDS("Cragig_seurat_object.rds")
 
-Preferred: 
-counts <- GetAssayData(mySeuratObj, assay="RNA", slot='counts')
+# Set and create the output directory (to store the sparse matrix files)
+data_dir <- 'Cragig_sparse_matrix/'
+dir.create(data_dir)
 
-OR
+# Get the counts matrix from the Seurat object
+counts <- GetAssayData(mySeuratObj, assay="RNA", slot='counts') #seurat v4 and v5
+#counts <- mySeuratObj@assays$RNA@counts #seurat v3 and v4 only
+#counts <- mySeuratObj[["RNA"]]$counts  #seurat v5 only
 
-counts <- mySeuratObj@assays$RNA@counts
-
-OR 
-
-counts <- mySeuratObj[["RNA"]]$counts
-
-# Write counts matrix
+# Write the counts matrix
 writeMM(counts, paste0(data_dir, 'matrix.mtx'))
 gzip(paste0(data_dir, 'matrix.mtx'))
 
-# Write cell barcodes
+# Write the cell barcodes
 barcodes <- colnames(counts)
 write_delim(as.data.frame(barcodes), paste0(data_dir, 'barcodes.tsv'),
            col_names = FALSE)
 gzip(paste0(data_dir, 'barcodes.tsv'))
 
-# Write feature names
+# Write the feature names
 gene_names <- rownames(counts)
 features <- data.frame("gene_id" = gene_names,"gene_name" = gene_names,type = "Gene Expression")
 write_delim(as.data.frame(features),delim = "\t", paste0(data_dir, 'features.tsv'),
            col_names = FALSE)
 gzip(paste0(data_dir, 'features.tsv'))
 
-# Write cell to cluster
-write.table(mySeuratObj$Cluster_labels, file = "/path/to/Cluster.tsv", sep = "\t", row.names=TRUE, col.names=FALSE, quote=FALSE)
-
+# Write the cell-to-cluster annotation (replacing 'cluster_labels' by the name of the meta.data column containing clusters info if different, e.g 'seurat_clusters')
+write.table(mySeuratObj$cluster_labels, file = "Cragig_cell_clusters.tsv", sep = "\t", row.names=TRUE, col.names=FALSE, quote=FALSE)
 ```
 
 2 - Scanpy H5ad file
@@ -63,34 +61,41 @@ write.table(mySeuratObj$Cluster_labels, file = "/path/to/Cluster.tsv", sep = "\t
 
 same as 1. but after running 1 do an extra-step in python:
 
+```python
 import scanpy as sc
 import pandas as pd
-import numpy as np
 
-fwdata = sc.read('Lvar.counts.mtx').transpose()
-cellnames = pd.read_csv('Lvar.col.txt', header=None, index_col=0)
-genenames = pd.read_csv('Lvar.row.txt', header=None, index_col=0)
-cellnames.index.name = 'index'
-genenames.index.name = 'index'
-fwdata.obs = cellnames
-fwdata.var = genenames
+data = sc.read_10x_mtx('Cragig_sparse_matrix/')
+data.layers['counts'] = data.X.copy()
 
-cluster_assignments = pd.read_csv('Lvar.tsv', header=None, sep='\t', index_col=0, names=['cluster id'])
-cluster_assignments.index.name = 'index'
+cluster_assignments = pd.read_csv('data/Cragig_cell_id.tsv', sep='\t', index_col=0, usecols=[0, 1])
+data.obs = data.obs.merge(cluster_assignments, how='left', left_index=True, right_index=True)
 
-fwdata.obs=fwdata.obs.merge(cluster_assignments, how='left', left_index=True, right_index=True)
-
-fwdata.write_h5ad('Lvar.h5ad')
+data.write_h5ad('data/Cragig_matrix.h5ad')
+```
 
 
 3 - Dense count matrix and cell to cluster annotation
 -------------------------------------------------------
+no code, less optimal (if seurat object recommend making a sparse matrix). Only supported to easily load GEO datasets.
 
 
 
 
+> [!NOTE]
+> Useful information that users should know, even when skimming content.
 
+> [!TIP]
+> Helpful advice for doing things better or more easily.
 
+> [!IMPORTANT]
+> Key information users need to know to achieve their goal.
+
+> [!WARNING]
+> Urgent info that needs immediate user attention to avoid problems.
+
+> [!CAUTION]
+> Advises about risks or negative outcomes of certain actions.
 
 
 Optional input files

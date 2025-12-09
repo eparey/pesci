@@ -1,7 +1,7 @@
 List of available options
 ==========================
 
-This page provides a description of all available options when running pesci. For more details on input and output files, including R code to prepare input files, please see [] and []. For examples use cases with specific options, please see [].
+This page provides a description of all available options when running pesci. For more details on input and output files, including R code to prepare input files from Seurat objects, please see [] and []. For example use cases with specific options, please see [].
 
 
 Minimal command-line examples
@@ -9,25 +9,32 @@ Minimal command-line examples
 
 Below are minimal examples to run pesci, each showcasing different accepted formats for input single-cell expression datasets. The corresponding data files are available as examples in the data/ directory.
 
-Example 1 with data for both species provided as sparse count matrices (same format as a cellranger directory) 
-
-Example 2 with data for both species provided as dense count matrices
+*Example 1*: data for both species provided as dense count matrices (least optimal format)
 
 .. code-block:: sh
 
-	pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz -clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
+  pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
 
-*Note: files can be .gz or not.*
+*Example 2*: species 1 data as a sparse count matrix (same format as a cellranger directory) and species 2 data as a scanpy .h5ad
 
-Example 3 with data for both species as scanpy h5ad
+.. code-block:: sh
 
-Example 4 with different input formats for each study species (species 1 data as h5ad and species 2 data as sparse count matrices)
+  pesci --matrix1 data/Cragig_sparse/ --matrix2 data/Procro_matrix_EM.h5ad --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
 
+
+*Example 3*: data for both species provided as dense count matrices, but with species 2 data from 3 different libraries with counts respectively saved in 3 different files
+
+.. code-block:: sh
+
+  pesci --matrix1 data/Cg_matrix_EM_part1.tsv data/Cg_matrix_EM_part2.tsv data/Cg_matrix_EM_part3.tsv --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
+
+*Note*: files can be .gz or not. Any combination of valid input formats for species 1 and 2 is accepted.
+
+*important* note somewhere: if running different comparisons use sp. labels and/or different output directory, otherwise with warning will reuse saying already computed
 
 
 Usage
 ------
-*important* note somewhere: if running different comparisons use sp. labels and/or different output directory, otherwise with warning will reuse saying already computed
 
 All available options are described below and can be printed using `pesci --help`. Note that flags (--force, --ono2one_only, --do_not_plot_warn, --show_auto_threshold, --no_pbar) do not require any arguments to be set, for instance `` will effectively force recomputation of all intermediary files.
 
