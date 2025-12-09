@@ -293,7 +293,10 @@ def configure_logs(outdir):
 
     def log_uncaught_exc(etype, evalue, tb):
         logging.error(''.join(traceback.format_tb(tb)))
-        logging.error('%s: %s', etype, evalue)
+        if str(evalue):
+            logging.error('%s: %s', etype.__name__, evalue)
+        else:
+            logging.error('%s', etype.__name__)
 
     sys.excepthook = log_uncaught_exc
 

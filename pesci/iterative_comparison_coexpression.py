@@ -570,7 +570,7 @@ def parallel_select_homologs(a, b, mat1, mat2, manyortho, batch_size, ncores=1, 
         logger.info("Caught KeyboardInterrupt, terminating workers")
         pool.terminate()
         pool.join()
-        sys.exit(1)
+        raise
 
     return async_res
 
@@ -625,8 +625,7 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
 
     if len(one2one_a) < 1000:
         logger.error('Too few one-to-one orthologs, please check your orthology file.')
-        traceback.print_exc()
-        sys.exit(1)
+        raise Exception("Too few orthologs")
 
     # Compute 1-1 orthologs co-expression conservation
     logger.info('Computing co-expression conservation for one-to-one orthologs')

@@ -272,7 +272,7 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
     elif reorder != 'None':
         logger.error('%s is not a valid argument for the reorder parameter, '
                        'use DiagKeep or Clust', reorder)
-        sys.exit(1)
+        raise Exception("Argument Error")
 
     else:
         cell_types2 = list(cell_types2.keys())
