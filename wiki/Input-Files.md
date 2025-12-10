@@ -8,12 +8,15 @@ Important in data preperation to have same gene id in the orthology and matrix f
 
 Same for all
 
+> [!WARNING]
+> Potentially most tricky = get gene names the same in matrix and orthology (maybe give a few pointer codes)
+
 ### Single-cell expression data
 
 Different accepted input formats, and can be different for each of the two study species
 
 > [!TIP]
-> All input files, to the exception of scanpy's .h5ad files can be compressed in .gz and will be properly read by pesci (whether compressed or not).
+> All input files, to the exception of scanpy's .h5ad files, can be compressed in .gz and will be properly read by pesci (whether compressed or not).
 
 **1. Sparse count matrix and cell to cluster annotation table**
 
@@ -80,23 +83,6 @@ data.write_h5ad('data/Cragig_matrix.h5ad')
 **3 - Dense count matrix and cell to cluster annotation table**
 no code, less optimal (if seurat object recommend making a sparse matrix). Only supported to easily load GEO datasets.
 
-
-
-
-> [!NOTE]
-> Useful information that users should know, even when skimming content.
-
-> [!TIP]
-> Helpful advice for doing things better or more easily.
-
-> [!IMPORTANT]
-> Key information users need to know to achieve their goal.
-
-> [!WARNING]
-> Urgent info that needs immediate user attention to avoid problems.
-
-> [!CAUTION]
-> Advises about risks or negative outcomes of certain actions.
 
 
 ## Optional Input Files
