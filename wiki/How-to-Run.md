@@ -1,10 +1,10 @@
-# List of available options
+# Pesci Command-line Options
 
 
 This page provides a description of all available options when running pesci. For more details on input and output files, including R code to prepare input files from Seurat objects, please see [Help With Input Files](https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md) and [Understanding Output files](https://github.com/eparey/pesci/blob/main/wiki/Outputss.md). For example use cases with specific options, please see [Pesci Examples](https://github.com/eparey/pesci/blob/main/wiki/Examples.md).
 
 
-## Minimal command-line examples
+## Minimal Command-line Examples
 
 Below are minimal examples to run pesci, each showcasing different accepted formats for input single-cell expression datasets. The corresponding data files are available as examples in the `data/` directory.
 
@@ -26,10 +26,11 @@ Below are minimal examples to run pesci, each showcasing different accepted form
 ```
 
 > [!IMPORTANT]
-> if running different comparisons use sp. labels and/or different output directory, otherwise with warning will reuse saying already computed 
+> To make pesci runs and outputs more easily tractable, it is recommended to also set the `--label_species1`, `--label_species2` and `--outdir` arguments (see the command-line example below). 
 > ```sh
-> pesci --matrix1 data/Cg_matrix_EM_part1.tsv data/Cg_matrix_EM_part2.tsv data/Cg_matrix_EM_part3.tsv --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
+> pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt -sp1 Oyster-larva -sp2 Flatworm-larva --outdir pesci_larvae
 > ```
+>  Note that if intermediate files with the same "label_species" already exist in the output folder, pesci will display a warning and will not re-compute intermediate files them even if different input files are used. To force recomputation use `--force` (see also below).
 
 
 
