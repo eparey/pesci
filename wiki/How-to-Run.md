@@ -42,7 +42,7 @@ All available options are described below and can be printed using `pesci --help
 
 
 > [!NOTE]
-> Note that some flags (`--force`, `--ono2one_only`, `--do_not_plot_warn`, `--show_auto_threshold`, `--no_pbar`) do not require any arguments to be set, for instance just adding `--force` will effectively force recomputation of all intermediary files.
+> Note that some flags (`--force`, `--ono2one_only`, `--do_not_plot_warn`, `--show_auto_threshold`, `--no_pbar`) do not require any arguments to be set, for instance just adding `--force` will effectively force recomputation of all intermediate files.
 
 
 
