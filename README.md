@@ -36,16 +36,16 @@ Pesci is an efficient and user-friendly implementation of the Iterative Comparis
 
 Pesci takes as input **single-cell expression count matrices** (raw count matrices, CellRanger directory and/or h5ad files), **cell cluster annotations** and **gene orthologies** files.
 
-```
-pesci -m1 mat_sp1.h5ad -m2 mat_sp2.tsv -c1 cell_id_sp1.tsv -c2 cell_id_sp2.tsv -g orthologs.txt 
+```sh
+pesci --matrix1 mat_sp1.h5ad --matrix2 mat_sp2.tsv --clusters1 cell_id_sp1.tsv --clusters2 cell_id_sp2.tsv --ortho_pairs orthologs.txt 
 ```
 
 For a description of accepted input formats and available options, please refer to `pesci --help`.
 
 - To run pesci on provided example data (datasets from [Piovani et al., 2023](https://doi.org/10.1126/sciadv.adg6034)):
 
-```
-pesci -m1 data/Cragig_matrix_EM.tsv.gz -m2 data/Procro_matrix_EM.tsv.gz -c1 data/Cragig_cell_id.tsv -c2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt -sp1 Oyster-larva -sp2 Flatworm-larva --colbroad broad --cores 4
+```sh
+pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt -sp1 Oyster-larva -sp2 Flatworm-larva --colbroad broad --cores 4
 ```
 
 ![pesci fig](https://github.com/eparey/pesci/blob/main/docs/img/Oyster-larva-Flatworm-larva_correlation_scores_matrix.png)

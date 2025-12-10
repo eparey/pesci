@@ -11,24 +11,24 @@ Below are minimal examples to run pesci, each showcasing different accepted form
 - **Example 1**: species 1 data as a sparse count matrix (same format as a cellranger directory) and species 2 provided as a dense count matrix (least optimal format)
 
 ```sh
-  pesci --matrix1 data/Cragig_sparse_data/  --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
+  pesci --matrix1 data/Cragig_sparse_data/  --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
 ```
 
 - **Example 2**: species 1 data as a scanpy h5ad and species 2 provided as a dense count matrix (least optimal format) - note that here 'cluster_name' is the name of the column with cluster annotation in the h5ad
 
 ```sh
-  pesci --matrix1 data/Cragig_matrix.h5ad  --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 'cluster_name' --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
+  pesci --matrix1 data/Cragig_matrix.h5ad  --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 'cluster_name' --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
 ```
 - **Example 3**: data for both species provided as dense count matrices, but with species 1 data from 3 different libraries with counts respectively saved in 3 different files
 
 ```sh
-  pesci --matrix1 data/Cg_matrix_EM_part1.tsv data/Cg_matrix_EM_part2.tsv data/Cg_matrix_EM_part3.tsv --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
+  pesci --matrix1 data/Cg_matrix_EM_part1.tsv data/Cg_matrix_EM_part2.tsv data/Cg_matrix_EM_part3.tsv --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
 ```
 
 > [!IMPORTANT]
 > if running different comparisons use sp. labels and/or different output directory, otherwise with warning will reuse saying already computed 
 > ```sh
-> pesci --matrix1 data/Cg_matrix_EM_part1.tsv data/Cg_matrix_EM_part2.tsv data/Cg_matrix_EM_part3.tsv --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
+> pesci --matrix1 data/Cg_matrix_EM_part1.tsv data/Cg_matrix_EM_part2.tsv data/Cg_matrix_EM_part3.tsv --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
 > ```
 
 
@@ -56,11 +56,11 @@ All available options are described below and can be printed using `pesci --help
 ## **Required Arguments**
 | Flags | Argument | Description |
 |-------|----------|-------------|
-| `--matrix1` | `MATRIX1` | Gene expression per cell for species 1 (raw count matrix). Accepts: dense matrix (optionally `.gz`), sparse matrix (CellRanger-like), or scanpy `.h5ad`. Multiple inputs allowed. |
-| `--matrix2` | `MATRIX2` | Gene expression per cell for species 2. Same format options as `--matrix1`. Multiple inputs allowed. |
-| `--clusters1` | `CLUSTERS1` | Cell-to-clusters table for species 1, or cluster column name in `.h5ad`. |
-| `--clusters2` | `CLUSTERS2` | Cell-to-clusters table for species 2, or cluster column name in `.h5ad`. |
-| `--ortho_pairs` | `ORTHO_PAIRS` | Tab-delimited gene orthology file (one pair per line). |
+| `-m1`,`--matrix1` | `MATRIX1` | Gene expression per cell for species 1 (raw count matrix). Accepts: dense matrix (optionally `.gz`), sparse matrix (CellRanger-like), or scanpy `.h5ad`. Multiple inputs allowed. |
+| `-m2`, `--matrix2` | `MATRIX2` | Gene expression per cell for species 2. Same format options as `--matrix1`. Multiple inputs allowed. |
+| `-c1`, `--clusters1` | `CLUSTERS1` | Cell-to-clusters table for species 1, or cluster column name in `.h5ad`. |
+| `-c2`, `--clusters2` | `CLUSTERS2` | Cell-to-clusters table for species 2, or cluster column name in `.h5ad`. |
+| `-g`, `--ortho_pairs` | `ORTHO_PAIRS` | Tab-delimited gene orthology file (one pair per line). |
 ---
 
 ## **Recommended Arguments**
