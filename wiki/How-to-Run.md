@@ -56,8 +56,8 @@ All available options are described below and can be printed using `pesci --help
 ## **Required Arguments**
 | Flags | Argument | Description |
 |-------|----------|-------------|
-| `--matrix1` | `MATRIX1` | Gene expression per cell for species 1 (raw count matrix). Accepts: dense matrix (optionally `.gz`), sparse matrix (CellRanger-like), or scanpy `.h5ad`. Multiple inputs allowed. |
-| `--matrix2` | `MATRIX2` | Gene expression per cell for species 2. Same format options as `--matrix1`. Multiple inputs allowed. |
+| `--matrix1` | `MATRIX1` | Gene expression per cell for species 1 (raw count matrix). Accepts: dense matrix (can be `.gz`), sparse matrix (CellRanger-like), or scanpy `.h5ad`. Multiple files allowed if several libraries.|
+| `--matrix2` | `MATRIX2` | Gene expression per cell for species 2. Same format options as `--matrix1`.|
 | `--clusters1` | `CLUSTERS1` | Cell-to-clusters table for species 1, or cluster column name in `.h5ad`. |
 | `--clusters2` | `CLUSTERS2` | Cell-to-clusters table for species 2, or cluster column name in `.h5ad`. |
 | `--ortho_pairs` | `ORTHO_PAIRS` | Tab-delimited gene orthology file (one pair per line). |
