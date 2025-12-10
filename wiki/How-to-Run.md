@@ -45,133 +45,80 @@ All available options are described below and can be printed using `pesci --help
 
 
 
-## Options
+## **Options**
+| Flags | Argument | Description |
+|-------|----------|-------------|
+| `-h`, `--help` |  | Show help message and exit. |
+| `-v`, `--version` | | Show program version and exit. |
 
-- `-h, --help`  
-  Show help message and exit.
+---
 
-- `-v, --version`  
-  Show program version and exit.
+## **Required Arguments**
+| Flags | Argument | Description |
+|-------|----------|-------------|
+| `--matrix1` | `MATRIX1` | Gene expression per cell for species 1 (raw count matrix). Accepts: dense text (optionally `.gz`), Cell Ranger directory, or `.h5ad`. Multiple inputs allowed. |
+| `--matrix2` | `MATRIX2` | Gene expression per cell for species 2. Same format options as `--matrix1`. Multiple inputs allowed. |
+| `--clusters1` | `CLUSTERS1` | Cell-to-clusters table for species 1, or cluster column name in `.h5ad`. |
+| `--clusters2` | `CLUSTERS2` | Cell-to-clusters table for species 2, or cluster column name in `.h5ad`. |
+| `-g, --ortholog_pairs` | `ORTHOLOG_PAIRS` | Tab-delimited gene orthology file (one pair per line). |
+---
 
-## Required Arguments
+## **Recommended Arguments**
+| Flags | Argument | Description |
+|-------|----------|-------------|
+| `-o`, `--outdir` | `OUTDIR` | Output directory (created if missing). **Default:** `output_pesci/` |
+| `--label_species1` | `LABEL_SPECIES1` | Species 1 name used in plots/outputs. **Default:** `sp1` |
+| `--label_species2` | `LABEL_SPECIES2` | Species 2 name used in plots/outputs. **Default:** `sp2` |
 
-- `--matrix1` `MATRIX1`  
-  Gene expression per cell for species 1 (raw count matrix). Accepts dense text file (.gz), Cell Ranger directory, or .h5ad. Multiple inputs allowed.
+---
 
-- `--matrix2` `MATRIX2`  
-  Gene expression per cell for species 2. Same formats as `--matrix1`. Multiple inputs allowed.
+## **Resources**
+| Flags | Argument | Description |
+|-------|----------|-------------|
+| `-c`, `--cores` | `CORES` | Number of CPU cores for parallel operations. **Default:** `1` |
 
-- `--clusters1` `CLUSTERS1`  
-  Cell-to-clusters table for species 1, or cluster column name in `.h5ad`.
+---
 
-- `--clusters2` `CLUSTERS2`  
-  Cell-to-clusters table for species 2, or cluster column name in `.h5ad`.
+## **Running**
+| Flags | Argument | Description |
+|-------|----------|-------------|
+| `--force` |  | Recompute all intermediates even if they exist. **Default:** `False` |
+| `--seed` | `SEED` | Random seed. **Default:** `123` |
+| `--marker_specificity` | `MARKER_SPECIFICITY` | Marker specificity (0.5–0.95). Controls how fold change is computed (median vs percentile). **Default:** `0.5` |
+| `--ono2one_only` |  | Use only 1-to-1 orthologs. **Default:** `False` |
+| `--ec_threshold_many` | `EC_THRESHOLD_MANY` | Retain all distinct high-score pairs (> threshold) for many-to-many and many-to-one orthologs. **Default:** `None` |
+| `--do_not_downsample` |  | Use all 1-to-1 orthologs (no random subsampling). **Default:** `False` |
+| `--random_id` | `RANDOM_ID` | Randomizes orthologies and stores results under `outdir/random_id`. **Default:** blank |
+| `--no_pbar` |  | Disable progress bar. **Default:** `False` |
 
-- `-g, --orthologous_gene_pairs` `ORTHOLOGOUS_GENE_PAIRS`  
-  Tab-delimited orthology file (one pair per line).
+---
 
-## Recommended Arguments
+## **Inputs**
+| Flags | Argument | Description |
+|-------|----------|-------------|
+| `--min_umi` | `MIN_UMI` | Minimum total UMI per gene to retain. **Default:** `10` |
+| `--colclust` | `COLCLUST` | Column containing cluster labels (ignored for `.h5ad`). Defaults to `cluster_name`, else second column. |
+| `--colclust1` | `COLCLUST1` | Same as `--colclust` but for species 1. **Default:** `None` |
+| `--colclust2` | `COLCLUST2` | Same as `--colclust` but for species 2. **Default:** `None` |
+| `--colbroad` | `COLBROAD` | Column for broad annotations; used only for heatmap. **Default:** `None` |
+| `--colbroad1` | `COLBROAD1` | Broad annotations column for species 1. **Default:** `None` |
+| `--colbroad2` | `COLBROAD2` | Broad annotations column for species 2. **Default:** `None` |
+| `--filter_out` | `FILTER_OUT` | Remove clusters starting with given prefixes (comma-separated). Applies to both species. |
+| `--filter_out1` | `FILTER_OUT1` | Same as above, species 1 only. |
+| `--filter_out2` | `FILTER_OUT2` | Same as above, species 2 only. |
+| `--keep_only` | `KEEP_ONLY` | Keep only clusters matching given prefixes (comma-separated). Applies to both species. |
+| `--keep_only1` | `KEEP_ONLY1` | Same as above, species 1 only. |
+| `--keep_only2` | `KEEP_ONLY2` | Same as above, species 2 only. |
 
-- `-o, --outdir` `OUTDIR`  
-  Output directory (created if missing). Default: `output_pesci/`.
+---
 
-- `--label_species1` `LABEL_SPECIES1`  
-  Species 1 label for plots and outputs. Default: `sp1`.
-
-- `--label_species2` `LABEL_SPECIES2`  
-  Species 2 label for plots and outputs. Default: `sp2`.
-
-## Resources
-
-- `-c, --cores` `CORES`  
-  Number of CPU cores for parallel operations. Default: 1.
-
-## Running
-
-- `--force`  
-  Recompute all intermediates even if outputs exist. Default: `False`.
-
-- `--seed` `SEED`  
-  Random seed. Default: 123.
-
-- `--marker_specificity` `MARKER_SPECIFICITY`  
-  Marker specificity (0.5–0.95) for fold-change computation. Default: 0.5.
-
-- `--ono2one_only`  
-  Use only 1-to-1 orthologs. Default: `False`.
-
-- `--ec_threshold_many` `EC_THRESHOLD_MANY`  
-  Retain all distinct pairs with score above threshold for many-to-many / many-to-one orthologs.
-
-- `--do_not_downsample`  
-  Use all 1-to-1 orthologs (slower). Default: `False`.
-
-- `--random_id` `RANDOM_ID`  
-  Randomize orthologies and store results in `outdir/random_id`.
-
-- `--no_pbar`  
-  Disable progress bar. Default: `False`.
-
-## Inputs
-
-- `--min_umi` `MIN_UMI`  
-  Minimum total UMI for a gene to be retained. Default: 10.
-
-- `--colclust` `COLCLUST`  
-  Column corresponding to clusters in cell-to-cluster annotation (ignored for `.h5ad`).
-
-- `--colclust1` `COLCLUST1`  
-  Species 1 cluster column.
-
-- `--colclust2` `COLCLUST2`  
-  Species 2 cluster column.
-
-- `--colbroad` `COLBROAD`  
-  Column for broad annotations.
-
-- `--colbroad1` `COLBROAD1`  
-  Species 1 broad annotations.
-
-- `--colbroad2` `COLBROAD2`  
-  Species 2 broad annotations.
-
-- `--filter_out` `FILTER_OUT`  
-  Discard clusters starting with specified strings (comma-separated).
-
-- `--filter_out1` `FILTER_OUT1`  
-  Species 1 only.
-
-- `--filter_out2` `FILTER_OUT2`  
-  Species 2 only.
-
-- `--keep_only` `KEEP_ONLY`  
-  Keep only clusters starting with specified strings (comma-separated).
-
-- `--keep_only1` `KEEP_ONLY1`  
-  Species 1 only.
-
-- `--keep_only2` `KEEP_ONLY2`  
-  Species 2 only.
-
-## Outputs
-
-- `-l, --logfile` `LOGFILE`  
-  Log file path (overwrites default if specified).
-
-- `-f, --figure_format` `FIGURE_FORMAT`  
-  Output figure format (`svg`, `png`, `pdf`). Default: `pdf`.
-
-- `-r, --reorder` `REORDER`  
-  Cluster ordering for heatmap: `DiagKeep` (default), `Clust`, or `None`.
-
-- `--min_fc` `MIN_FC`  
-  Minimum fold change to consider a cluster marker. Default: 1.5.
-
-- `--seaborn_cmap` `SEABORN_CMAP`  
-  Seaborn colormap for heatmap. Default: `BuPu`.
-
-- `--show_auto_threshold`  
-  Highlight matches above thresholds in heatmap. Default: `False`.
-
-- `--do_not_plot_warn`  
-  Suppress warnings on the heatmap for matches driven by <10 genes. Default: `True`.
+## **Outputs**
+| Flags | Argument | Description |
+|-------|----------|-------------|
+| `-l`, `--logfile` | `LOGFILE` | Write log to this file instead of default (`pesci.log`). |
+| `-f`, `--figure_format` | `FIGURE_FORMAT` | Output figure format: `svg`, `png`, `pdf`. **Default:** `pdf` |
+| `-r`, `--reorder` | `REORDER` | Ordering method for heatmap clusters: `DiagKeep`, `Clust`, or `None`. Ignored with broad annotations. **Default:** `DiagKeep` |
+| `--min_fc` | `MIN_FC` | Minimum fold change to count a marker gene (used for co-expressed marker table). **Default:** `1.5` |
+| `--seaborn_cmap` | `SEABORN_CMAP` | Seaborn colormap for heatmaps. **Default:** `BuPu` |
+| `--show_auto_threshold` |  | Highlight matches above thresholds on heatmap. **Default:** `False` |
+| `--do_not_plot_warn` |  | Do not display heatmap warning for matches supported by <10 genes. **Default:** `True` |
