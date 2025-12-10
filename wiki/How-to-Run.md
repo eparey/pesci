@@ -60,8 +60,7 @@ All available options are described below and can be printed using `pesci --help
 | `--matrix2` | `MATRIX2` | Gene expression per cell for species 2. Same format options as `--matrix1`. Multiple inputs allowed. |
 | `--clusters1` | `CLUSTERS1` | Cell-to-clusters table for species 1, or cluster column name in `.h5ad`. |
 | `--clusters2` | `CLUSTERS2` | Cell-to-clusters table for species 2, or cluster column name in `.h5ad`. |
-| `-g`,`--orthologous_gene_pairs` | `ORTHOLOGOUS_GENE_PAIRS` | Tab-delimited orthology file (one gene pair per line). |
-
+| `-g,⁠--orthologous_gene_pairs` | `ORTHOLOGOUS_GENE_PAIRS` | Tab-delimited orthology file (one gene pair per line). |
 ---
 
 ## **Recommended Arguments**
