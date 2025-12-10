@@ -1,7 +1,7 @@
 List of available options
 ==========================
 
-This page provides a description of all available options when running pesci. For more details on input and output files, including R code to prepare input files from Seurat objects, please see [Help-With-Input-Files](https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md)  and []. For example use cases with specific options, please see [].
+This page provides a description of all available options when running pesci. For more details on input and output files, including R code to prepare input files from Seurat objects, please see `Help With Input Files <https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md>`_ and []. For example use cases with specific options, please see [].
 
 
 Minimal command-line examples
