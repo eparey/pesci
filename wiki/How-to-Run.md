@@ -66,7 +66,7 @@ All available options are described below and can be printed using `pesci --help
 ## **Recommended Arguments**
 | Flags | Argument | Description |
 |-------|----------|-------------|
-| `-o`, `--outdir` | `OUTDIR` | Output directory (created if missing). **Default:** `output_pesci/` |
+| `--outdir` | `OUTDIR` | Output directory (created if missing). **Default:** `output_pesci/` |
 | `--label_species1` | `LABEL_SPECIES1` | Species 1 name used in plots/outputs. **Default:** `sp1` |
 | `--label_species2` | `LABEL_SPECIES2` | Species 2 name used in plots/outputs. **Default:** `sp2` |
 
@@ -75,7 +75,7 @@ All available options are described below and can be printed using `pesci --help
 ## **Resources**
 | Flags | Argument | Description |
 |-------|----------|-------------|
-| `-c`, `--cores` | `CORES` | Number of CPU cores for parallel operations. **Default:** `1` |
+| `--cores` | `CORES` | Number of CPU cores for parallel operations. **Default:** `1` |
 
 ---
 
