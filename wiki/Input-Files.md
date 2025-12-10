@@ -1,6 +1,6 @@
-# Help With Inout Files
+# Help With Input Files
 
-## Required input files
+## Required Input Files
 
 Important in data preperation to have same gene id in the orthology and matrix files AND that gene ids are unique for each species (recommend adding prefix with sp name). go to how to run for command line arguments to use.
 
@@ -13,11 +13,12 @@ Same for all
 Different accepted input formats, and can be different for each of the two study species
 
 > [!NOTE]
-> files can be compressed in .gz or not.
+> All files, to the exception of scanpy .h5ad can be compressed in .gz and will be properly read by pesci (whether compressed or not).
 
-**1. Sparse count matrix and cell to cluster annotation**
+**1. Sparse count matrix and cell to cluster annotation table**
 
-For instance, one way to format from a Seurat object:
+Explain (would it remove cells not in clusters?, i.e. if giving the cellrnager dir)
+The following R code is provided as an example to format a Seurat Object into a Sparse Matrix for pesci. It creates a CellRanger-like directory (hereafter named "Cragig_sparse_matrix/") that can be directly provided as argument to --matrix1 or --matrix2 in pesci.
 
 ```R
 library(Matrix)
@@ -60,7 +61,7 @@ write.table(mySeuratObj$cluster_labels, file = "Cragig_cell_clusters.tsv", sep =
 
 **2. Scanpy h5ad file**
 
-same as 1. but after running 1 do an extra-step in python:
+Alternatively, for datasets processed with scanpy, pesci can 
 
 ```python
 import scanpy as sc
@@ -76,7 +77,7 @@ data.write_h5ad('data/Cragig_matrix.h5ad')
 ```
 
 
-**3 - Dense count matrix and cell to cluster annotation**
+**3 - Dense count matrix and cell to cluster annotation table**
 no code, less optimal (if seurat object recommend making a sparse matrix). Only supported to easily load GEO datasets.
 
 
@@ -98,4 +99,6 @@ no code, less optimal (if seurat object recommend making a sparse matrix). Only 
 > Advises about risks or negative outcomes of certain actions.
 
 
-## Optional input files
+## Optional Input Files
+
+Broad annotations (additional column in the cluster file or h5ad)
