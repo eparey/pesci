@@ -57,10 +57,10 @@ All available options are described below and can be printed using `pesci --help
 | Flags | Argument | Description |
 |-------|----------|-------------|
 | `-m1`,`--matrix1` | `MATRIX1` | Gene expression per cell for species 1 (raw count matrix). Accepts: dense matrix (optionally `.gz`), sparse matrix (CellRanger-like), or scanpy `.h5ad`. Multiple inputs allowed. |
-| `-m2`, `--matrix2` | `MATRIX2` | Gene expression per cell for species 2. Same format options as `--matrix1`. Multiple inputs allowed. |
-| `-c1`, `--clusters1` | `CLUSTERS1` | Cell-to-clusters table for species 1, or cluster column name in `.h5ad`. |
-| `-c2`, `--clusters2` | `CLUSTERS2` | Cell-to-clusters table for species 2, or cluster column name in `.h5ad`. |
-| `-g`, `--ortho_pairs` | `ORTHO_PAIRS` | Tab-delimited gene orthology file (one pair per line). |
+| `-m2`,`--matrix2` | `MATRIX2` | Gene expression per cell for species 2. Same format options as `--matrix1`. Multiple inputs allowed. |
+| `-c1`,`--clusters1` | `CLUSTERS1` | Cell-to-clusters table for species 1, or cluster column name in `.h5ad`. |
+| `-c2`,`--clusters2` | `CLUSTERS2` | Cell-to-clusters table for species 2, or cluster column name in `.h5ad`. |
+| `-g`,`--ortho_pairs` | `ORTHO_PAIRS` | Tab-delimited gene orthology file (one pair per line). |
 ---
 
 ## **Recommended Arguments**
@@ -115,9 +115,9 @@ All available options are described below and can be printed using `pesci --help
 ## **Outputs**
 | Flags | Argument | Description |
 |-------|----------|-------------|
-| `-l`, `--logfile` | `LOGFILE` | Write log to this file instead of default (`pesci.log`). |
-| `-f`, `--figure_format` | `FIGURE_FORMAT` | Output figure format: `svg`, `png`, `pdf`. **Default:** `pdf` |
-| `-r`, `--reorder` | `REORDER` | Ordering method for heatmap clusters: `DiagKeep`, `Clust`, or `None`. Ignored with broad annotations. **Default:** `DiagKeep` |
+| `-l`,`--logfile` | `LOGFILE` | Write log to this file instead of default (`pesci.log`). |
+| `-f`,`--figure_format` | `FIGURE_FORMAT` | Output figure format: `svg`, `png`, `pdf`. **Default:** `pdf` |
+| `-r`,`--reorder` | `REORDER` | Ordering method for heatmap clusters: `DiagKeep`, `Clust`, or `None`. Ignored with broad annotations. **Default:** `DiagKeep` |
 | `--min_fc` | `MIN_FC` | Minimum fold change to count a marker gene (used for co-expressed marker table). **Default:** `1.5` |
 | `--seaborn_cmap` | `SEABORN_CMAP` | Seaborn colormap for heatmaps. **Default:** `BuPu` |
 | `--show_auto_threshold` |  | Highlight matches above thresholds on heatmap. **Default:** `False` |
