@@ -12,8 +12,8 @@ Same for all
 
 Different accepted input formats, and can be different for each of the two study species
 
-> [!NOTE]
-> All files, to the exception of scanpy .h5ad can be compressed in .gz and will be properly read by pesci (whether compressed or not).
+> [!TIP]
+> All input files, to the exception of scanpy's .h5ad files can be compressed in .gz and will be properly read by pesci (whether compressed or not).
 
 **1. Sparse count matrix and cell to cluster annotation table**
 
