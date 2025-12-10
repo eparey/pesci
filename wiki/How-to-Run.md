@@ -14,9 +14,6 @@ Below are minimal examples to run pesci, each showcasing different accepted form
   pesci --matrix1 data/Cragig_sparse_data/  --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
 ```
 
-> [!NOTE]
-> files can be compressed in .gz or not.
-
 - **Example 2**: species 1 data as a scanpy h5ad and species 2 provided as a dense count matrix (least optimal format) - note that here 'cluster_name' is the name of the column with cluster annotation in the h5ad
 
 ```sh
@@ -28,19 +25,22 @@ Below are minimal examples to run pesci, each showcasing different accepted form
   pesci --matrix1 data/Cg_matrix_EM_part1.tsv data/Cg_matrix_EM_part2.tsv data/Cg_matrix_EM_part3.tsv --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
 ```
 
+> [!IMPORTANT]
+> if running different comparisons use sp. labels and/or different output directory, otherwise with warning will reuse saying already computed ```sh
+  pesci --matrix1 data/Cg_matrix_EM_part1.tsv data/Cg_matrix_EM_part2.tsv data/Cg_matrix_EM_part3.tsv --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
+```
 
-*important* note somewhere: if running different comparisons use sp. labels and/or different output directory, otherwise with warning will reuse saying already computed
 
 
-Usage
-------
+
+
+## Detailed Usage
 
 All available options are described below and can be printed using `pesci --help`. 
 
 
 > [!NOTE]
 > Note that some flags (`--force`, `--ono2one_only`, `--do_not_plot_warn`, `--show_auto_threshold`, `--no_pbar`) do not require any arguments to be set, for instance just adding `--force` will effectively force recomputation of all intermediary files.
-
 
 
 
