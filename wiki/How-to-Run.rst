@@ -1,13 +1,13 @@
 List of available options
 ==========================
 
-This page provides a description of all available options when running pesci. For more details on input and output files, including R code to prepare input files from Seurat objects, please see `Help With Input Files <https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md>`_ and `Understanding Output files <https://github.com/eparey/pesci/blob/main/wiki/Outputss.md>`_ . For example use cases with specific options, please see `Pesci Examples <https://github.com/eparey/pesci/blob/main/wiki/Examples.md>`_.
+This page provides a description of all available options when running pesci. For more details on input and output files, including R code to prepare input files from Seurat objects, please see `Help With Input Files <https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md>`_ and `Understanding Output files <https://github.com/eparey/pesci/blob/main/wiki/Outputss.md>`_. For example use cases with specific options, please see `Pesci Examples <https://github.com/eparey/pesci/blob/main/wiki/Examples.md>`_.
 
 
 Minimal command-line examples
 -----------------------------
 
-Below are minimal examples to run pesci, each showcasing different accepted formats for input single-cell expression datasets. The corresponding data files are available as examples in the data/ directory.
+Below are minimal examples to run pesci, each showcasing different accepted formats for input single-cell expression datasets. The corresponding data files are available as examples in the `data/` directory.
 
 - **Example 1**: species 1 data as a sparse count matrix (same format as a cellranger directory) and species 2 provided as a dense count matrix (least optimal format)
 
@@ -15,7 +15,7 @@ Below are minimal examples to run pesci, each showcasing different accepted form
 
   pesci --matrix1 data/Cragig_sparse_data/  --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
 
-- **Example 2**: species 1 data as a scanpy h5ad and species 2 provided as a dense count matrix (least optimal format) - note that here 'cluster_name' refers to the name of the column with cluster annotation in the h5ad
+- **Example 2**: species 1 data as a scanpy h5ad and species 2 provided as a dense count matrix (least optimal format) - note that here 'cluster_name' is the name of the column with cluster annotation in the h5ad
 
 .. code-block:: sh
 
@@ -27,7 +27,9 @@ Below are minimal examples to run pesci, each showcasing different accepted form
 
   pesci --matrix1 data/Cg_matrix_EM_part1.tsv data/Cg_matrix_EM_part2.tsv data/Cg_matrix_EM_part3.tsv --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
 
-*Note*: files can be .gz or not.
+
+> [!NOTE]
+> files can be .gz or not.
 
 *important* note somewhere: if running different comparisons use sp. labels and/or different output directory, otherwise with warning will reuse saying already computed
 
