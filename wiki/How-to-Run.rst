@@ -28,8 +28,10 @@ Below are minimal examples to run pesci, each showcasing different accepted form
   pesci --matrix1 data/Cg_matrix_EM_part1.tsv data/Cg_matrix_EM_part2.tsv data/Cg_matrix_EM_part3.tsv --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv -g data/orthologous_pairs_Procro-Cragig.txt
 
 
-> [!NOTE]
-> files can be .gz or not.
+
+note 
+
+files can be compressed in .gz or not.
 
 *important* note somewhere: if running different comparisons use sp. labels and/or different output directory, otherwise with warning will reuse saying already computed
 
