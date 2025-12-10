@@ -1,5 +1,0 @@
-sphinx>=5
-sphinx-nefertiti>=0.4
-sphinx-prompt
-Jinja2<3.1
-sphinx-argparse
