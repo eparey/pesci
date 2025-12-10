@@ -1,19 +1,21 @@
-Required input files
-=====================
+# Help With Inout Files
+
+## Required input files
 
 Important in data preperation to have same gene id in the orthology and matrix files AND that gene ids are unique for each species (recommend adding prefix with sp name). go to how to run for command line arguments to use.
 
-Orthology file
---------------
+### Orthology file
+
 Same for all
 
-Single-cell expression data
-----------------------------
+### Single-cell expression data
 
 Different accepted input formats, and can be different for each of the two study species
 
-1 - Sparse count matrix and cell to cluster annotation
--------------------------------------------------------
+> [!NOTE]
+> files can be compressed in .gz or not.
+
+**1. Sparse count matrix and cell to cluster annotation**
 
 For instance, one way to format from a Seurat object:
 
@@ -56,8 +58,7 @@ gzip(paste0(data_dir, 'features.tsv'))
 write.table(mySeuratObj$cluster_labels, file = "Cragig_cell_clusters.tsv", sep = "\t", row.names=TRUE, col.names=FALSE, quote=FALSE)
 ```
 
-2 - Scanpy H5ad file
-----------------------
+**2. Scanpy h5ad file**
 
 same as 1. but after running 1 do an extra-step in python:
 
@@ -75,8 +76,7 @@ data.write_h5ad('data/Cragig_matrix.h5ad')
 ```
 
 
-3 - Dense count matrix and cell to cluster annotation
--------------------------------------------------------
+**3 - Dense count matrix and cell to cluster annotation**
 no code, less optimal (if seurat object recommend making a sparse matrix). Only supported to easily load GEO datasets.
 
 
@@ -98,5 +98,4 @@ no code, less optimal (if seurat object recommend making a sparse matrix). Only 
 > Advises about risks or negative outcomes of certain actions.
 
 
-Optional input files
-=====================
+## Optional input files
