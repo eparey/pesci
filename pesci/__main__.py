@@ -243,6 +243,11 @@ def parse_commandline():
     #Optional arguments output
     oopt = parser.add_argument_group('outputs')
 
+    oopt.add_argument('-l', '--logfile', type=str, required=False, default="",
+                                               help='logfile, if specified this will overwrite'
+                                               ' the default (i.e. pesci.log in the specified'
+                                               ' output folder)')
+
     oopt.add_argument('-f', '--figure_format', type=str, required=False, default="pdf",
                                                help='format for output figures',
                                                choices=['svg', 'png', 'pdf'])
@@ -280,12 +285,14 @@ def parse_commandline():
     return args
 
 
-def configure_logs(outdir):
+def configure_logs(outdir, logfile=None):
     """
     pesci logs
     """
     logger = logging.getLogger()
-    file_handler = logging.FileHandler(outdir + 'pesci.log')
+    if not logfile:
+        logfile = outdir + 'pesci.log'
+    file_handler = logging.FileHandler(logfile)
     file_handler.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s [%(levelname)s]: %(message)s', "%Y-%m-%d %H:%M:%S")
     file_handler.setFormatter(formatter)
@@ -325,7 +332,7 @@ def main():
     os.makedirs(args['outdir']+ 'files', exist_ok=True)
     outdir = args['outdir']
 
-    logger = configure_logs(outdir)
+    logger = configure_logs(outdir, args['logfile'])
 
     sp1 = args["label_species1"]
     sp2 = args["label_species2"]
