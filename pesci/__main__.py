@@ -63,17 +63,14 @@ def parse_commandline():
     required = parser.add_argument_group('required arguments')
     required.add_argument('-m1', '--matrix1', type=str, nargs='+', required=True,
                                               help="gene expression per cell for species 1 "
-                                              "(raw count matrix), either: a dense matrix text file"
-                                              " (can be .gz), a cellranger directory or an h5ad "
-                                              "file; several inputs can be specified "
-                                              "if multiple libraries")
+                                              "(raw count matrix), accepts: dense matrix (can "
+                                              "be .gz), sparse matrix (CellRanger-like), or "
+                                              "scanpy `.h5ad`. Multiple files allowed if "
+                                              "several libraries.")
 
     required.add_argument('-m2', '--matrix2', type=str, nargs='+', required=True,
-                                              help="gene expression per cell for species 2 "
-                                              "(raw count matrix), either: a dense matrix text file"
-                                              " (can be .gz), a cellranger directory or an h5ad "
-                                              "file; several inputs can be specified "
-                                              "if multiple libraries")
+                                              help="gene expression per cell for species 2, "
+                                                   "same format options as --matrix1")
 
     required.add_argument('-c1', '--clusters1', type=str, required=True,
                                               help="cell-to-clusters table for species 1 "
@@ -83,9 +80,9 @@ def parse_commandline():
                                               help="cell-to-clusters table for species 2 "
                                                    "or name of cluster column in h5ad")
 
-    required.add_argument('-g', '--orthologous_gene_pairs', type=str, required=True,
-                                                          help="gene orthologies file "
-                                                          "(tab-delimited, 1 pair per line)")
+    required.add_argument('-g', '--ortho_pairs', type=str, required=True,
+                                                           help="tab-delimited gene orthology"
+                                                           " file (one pair per line).")
 
     #Recommended optional arguments
     raopt = parser.add_argument_group('recommended arguments')
