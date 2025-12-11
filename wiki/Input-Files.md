@@ -2,8 +2,7 @@
 
 ## Required Input Files
 
-Pesci requires 3 main inputs: the **single-cell gene expression data** for each of the two species being compared and a **gene orthology file** listing all orthologous gene pairs across these two species. Single-cell gene expression data can be provided in any of the following format: a **scanpy h5ad** file, a **sparse expression matrix** (CellRanger-like directory) or a **dense expression matrix** (as found in some NCBI GEO datasets). We provide example codes below to convert a **Seurat object** into these accepted format. Depending on the input format of the provided single-cell gene expression data, an additional file giving the **cell barcode to cell cluster correspondence** might be necessary.
-
+Pesci requires 3 main inputs: the **single-cell gene expression data** for each of the two species being compared and a **gene orthology file** listing all orthologous gene pairs across these two species. Single-cell gene expression data can be provided in any of the following formats: (1) a **sparse expression matrix** (CellRanger-like directory), (2) a **scanpy h5ad** file or (3) a **dense expression matrix**. On this page, we provide example code showing how to convert a **Seurat object** into one of these accepted formats. Depending on input format, an additional file giving the **cell barcode to cell cluster correspondence** might be necessary.
 
 > [!WARNING]
 > Two important aspects of data preparation for pesci are to ensure (i) that **gene ids** (or gene names) are the **same across the provided gene expression matrix and gene orthology file** and (ii) that gene ids are **unique to each species** (if unsure, we recommend adding a species prefix to gene names, i.e. for instance Procro_TTN and Cragig_TTN).
@@ -15,15 +14,12 @@ Tab or comma delimiter gz or not
 Could be from biomart 
 Could be from broccoli or orthofinder (give file names)
 
-
 ### Single-cell expression data
 
-Different accepted input formats, and can be different for each of the two study species
+In this section, we describe the different accepted input formats and how they can be generated from a Seurat Object.
 
 > [!TIP]
 > To the exception of scanpy's .h5ad, all input files (single-cell data, orthology file, cell-to-cluster files) can be compressed in .gz or .gz2: whether compressed or uncompressed these will be successfully loaded by pesci.
-
-Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
 
 **1. Sparse count matrix and cell to cluster annotation table**
 
@@ -71,6 +67,8 @@ gzip(paste0(data_dir, 'features.tsv'))
 write.table(mySeuratObj$cluster_labels, file = "Cragig_cell_clusters.tsv", sep = "\t", row.names=TRUE, col.names=FALSE, quote=FALSE)
 ```
 
+Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
+
 **2. Scanpy h5ad file**
 
 Alternatively, for datasets processed with scanpy, pesci can directly work with h5ad (but needs the raw counts, if no layer 'counts' will check the data.X but will error if not integers)
@@ -88,10 +86,14 @@ data.obs = data.obs.merge(cluster_assignments, how='left', left_index=True, righ
 data.write_h5ad('data/Cragig_matrix.h5ad')
 ```
 
+Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
+
 
 **3 - Dense count matrix and cell to cluster annotation table**
 no code, less optimal (if Seurat object recommend making a sparse matrix or h5ad). Only supported to easily load GEO datasets.
 import to use.csv is comma-sep and .tsv for tab-sep
+
+Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
 
 
 ## Optional Input Files
