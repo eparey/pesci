@@ -2,15 +2,16 @@
 
 ## Required Input Files
 
-Important in data preparation to have same gene id in the orthology and matrix files AND that gene ids are unique for each species (recommend adding prefix with sp name if unsure). go to how to run for command line arguments to use.
+Pesci requires 3 main inputs: the single-cell gene expression data for each of the two species being compared and a gene orthology file listing all orthologous gene pairs across these two species. Single-cell gene expression data can be provided in any of the following format: a scanpy h5ad file, a sparse expression matrix (CellRanger-like directory) or a dense expression matrix (as found in some NCBI GEO datasets). We provide example codes below to convert a Seurat object into these accepted format. Depending on the input format of the provided single-cell gene expression data, an additional file giving the cell barcode to cell cluster correspondence might be necessary.
+
 
 > [!WARNING]
-> Potentially most tricky = get gene names the same in matrix and orthology (maybe give a few pointer codes)
+> Two important aspects of data preparation for pesci are to ensure (i) that gene ids (or gene names) are the same across the provided gene expression matrix and gene orthology file and (ii) that gene ids are unique for each species (if unsure, we recommend adding a species prefix to gene names, i.e. for instance Procro_TTN and Cragig_TTN).
 
 ### Orthology file
 
 Same for all
-Has to be tab delimited (we could make it more flexible here, accept tab or comma like cell to cluster and matrix)
+Tab or comma delimiter gz or not 
 Could be from biomart 
 Could be from broccoli or orthofinder (give file names)
 
@@ -20,7 +21,9 @@ Could be from broccoli or orthofinder (give file names)
 Different accepted input formats, and can be different for each of the two study species
 
 > [!TIP]
-> All input files, to the exception of scanpy's .h5ad files, can be compressed in .gz and still be properly loaded by pesci (whether compressed or not).
+> To the exception of scanpy's .h5ad, all input files (single-cell data, orthology file, cell-to-cluster files) can be compressed in .gz or .gz2: whether compressed or uncompressed these will be successfully loaded by pesci.
+
+Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
 
 **1. Sparse count matrix and cell to cluster annotation table**
 
@@ -28,7 +31,6 @@ Explain (would it remove cells not in clusters?, i.e. if giving the CellRanger d
 The following R code is provided as an example to format a Seurat Object into a Sparse Matrix for pesci. It creates a CellRanger-like directory (hereafter named "Cragig_sparse_matrix/") that can be directly provided as argument to --matrix1 or --matrix2 in pesci.
 Cell to cluster separator can be tab or comma (automatically detected)
 
-Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
 
 ```R
 library(Matrix)
@@ -44,9 +46,9 @@ data_dir <- 'Cragig_sparse_matrix/'
 dir.create(data_dir)
 
 # Get the counts matrix from the Seurat object
-counts <- GetAssayData(mySeuratObj, assay="RNA", slot='counts') #seurat v4 and v5
-#counts <- mySeuratObj@assays$RNA@counts #seurat v3 and v4 only
-#counts <- mySeuratObj[["RNA"]]$counts  #seurat v5 only
+counts <- GetAssayData(mySeuratObj, assay="RNA", slot='counts') #Seurat v4 and v5
+#counts <- mySeuratObj@assays$RNA@counts #Seurat v3 and v4 only
+#counts <- mySeuratObj[["RNA"]]$counts  #Seurat v5 only
 
 # Write the counts matrix
 writeMM(counts, paste0(data_dir, 'matrix.mtx'))
@@ -88,8 +90,8 @@ data.write_h5ad('data/Cragig_matrix.h5ad')
 
 
 **3 - Dense count matrix and cell to cluster annotation table**
-no code, less optimal (if seurat object recommend making a sparse matrix). Only supported to easily load GEO datasets.
-
+no code, less optimal (if Seurat object recommend making a sparse matrix or h5ad). Only supported to easily load GEO datasets.
+import to use.csv is comma-sep and .tsv for tab-sep
 
 
 ## Optional Input Files

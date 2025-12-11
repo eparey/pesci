@@ -28,7 +28,7 @@ Below are minimal examples to run pesci, each showcasing different accepted form
 > [!IMPORTANT]
 > To make pesci runs and outputs more easily tractable, it is recommended to also set the `--label_species1`, `--label_species2` and `--outdir` arguments (see the command-line example below). 
 > ```sh
-> pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt -sp1 Oyster-larva -sp2 Flatworm-larva --outdir pesci_larvae
+> pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --label_species1 Oyster-larva --label_species2 Flatworm-larva --outdir pesci_larvae
 > ```
 >  Note that if intermediate files with the same "label_species" already exist in the output folder, pesci will display a warning and will not re-compute intermediate files them even if different input files are used. To force re-computation use `--force` (see also below).
 

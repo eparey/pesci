@@ -590,7 +590,13 @@ def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=
     clust = {}
     force = False
     sep = '\t'
-    with open(cells_to_clusters, 'r', encoding='utf-8') as infile:
+
+    open_func = open
+    _, ext = os.path.splitext(cells_to_clusters)
+    if ext in ['.gz', '.gz2']:
+        open_func = get_open(ext)
+
+    with open_func(cells_to_clusters, 'rt', encoding='utf-8') as infile:
         for i, line in enumerate(infile):
             if i == 0:
                 line_tmp = [i.strip('"') for i in line.strip().split(sep)]
@@ -662,7 +668,13 @@ def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
     clust2broad = {}
     force_clust, force_broad = False, False
     sep = '\t'
-    with open(cells_to_clusters, 'r', encoding='utf-8') as infile:
+
+    open_func = open
+    _, ext = os.path.splitext(cells_to_clusters)
+    if ext in ['.gz', '.gz2']:
+        open_func = get_open(ext)
+
+    with open_func(cells_to_clusters, 'rt', encoding='utf-8') as infile:
         for i, line in enumerate(infile):
             if i == 0:
                 line_tmp = [i.strip('"') for i in line.strip().split(sep)]

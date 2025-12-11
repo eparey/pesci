@@ -4,6 +4,7 @@ scRNA-seq datasets in two species, using the ICC procedure. Also selects best ge
 for many-to-many or 1-to-many orthologs (pair with the highest co-expression conservation).
 """
 
+import os
 import logging
 
 import random
@@ -318,16 +319,36 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
         this.
     """
 
+    if not os.path.isfile(input_file):
+        logger.error('%s does not exist.', input_file)
+        raise ValueError("Input Error")
+
     #load all orthologous pairs
     edges = []
     # lab1 = list(genes_sp_a)[0].split('@')[0]
     # lab2 = list(genes_sp_b)[0].split('@')[0]
-    with open(input_file, 'r', encoding = "utf-8") as infile:
-        for line in infile:
-            line = line.strip().split('\t')
-            if len(line) != 2:
-                continue
-            g1, g2 = line
+
+    open_func = open
+    _, ext = os.path.splitext(input_file)
+    if ext in ['.gz', '.gz2']:
+        open_func = nm.get_open(ext)
+
+    sep = '\t'
+    with open_func(input_file, 'rt', encoding = "utf-8") as infile:
+        for i, line in enumerate(infile):
+            linesplit = [i.strip('"') for i in line.strip().split(sep)]
+
+            if len(linesplit) != 2:
+                sep = ','
+                linesplit = [i.strip('"') for i in line.strip().split(',')]
+
+                if len(linesplit) != 2:
+                    logger.error('Malformed gene orthology file %s. Line %s: %s. '
+                                 'Expected one comma- or tab-separated gene pair per line.', 
+                                  input_file, i+1, line.strip('\n'))
+                    raise ValueError("Input Error")
+
+            g1, g2 = linesplit
 
             if g1 in genes_sp_a and g2 in genes_sp_b:
                 edges.append((g1, g2))
