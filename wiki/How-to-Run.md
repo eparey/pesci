@@ -8,7 +8,7 @@ This page provides a description of all available options when running pesci. Fo
 
 Below are minimal examples to run pesci, each showcasing different accepted formats for input single-cell expression datasets. The corresponding data files are available as examples in the `data/` directory.
 
-- **Example 1**: species 1 data as a sparse count matrix (same format as a cellranger directory) and species 2 provided as a dense count matrix (least optimal format)
+- **Example 1**: species 1 data as a sparse count matrix (same format as a CellRanger directory) and species 2 provided as a dense count matrix (least optimal format)
 
 ```sh
   pesci --matrix1 data/Cragig_sparse_data/  --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
@@ -30,7 +30,7 @@ Below are minimal examples to run pesci, each showcasing different accepted form
 > ```sh
 > pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt -sp1 Oyster-larva -sp2 Flatworm-larva --outdir pesci_larvae
 > ```
->  Note that if intermediate files with the same "label_species" already exist in the output folder, pesci will display a warning and will not re-compute intermediate files them even if different input files are used. To force recomputation use `--force` (see also below).
+>  Note that if intermediate files with the same "label_species" already exist in the output folder, pesci will display a warning and will not re-compute intermediate files them even if different input files are used. To force re-computation use `--force` (see also below).
 
 
 
@@ -42,7 +42,7 @@ All available options are described below and can be printed using `pesci --help
 
 
 > [!NOTE]
-> Note that some flags (`--force`, `--ono2one_only`, `--do_not_plot_warn`, `--show_auto_threshold`, `--no_pbar`) do not require any arguments to be set, for instance just adding `--force` will effectively force recomputation of all intermediate files.
+> Note that some flags (`--force`, `--ono2one_only`, `--do_not_plot_warn`, `--show_auto_threshold`, `--no_pbar`) do not require any arguments to be set, for instance just adding `--force` will effectively force re-computation of all intermediate files.
 
 
 
@@ -88,7 +88,7 @@ All available options are described below and can be printed using `pesci --help
 | `--marker_specificity` | `MARKER_SPECIFICITY` | Marker specificity (0.5–0.95). Controls how fold change is computed (median vs percentile). **Default:** `0.5` |
 | `--ono2one_only` |  | Use only 1-to-1 orthologs. **Default:** `False` |
 | `--ec_threshold_many` | `EC_THRESHOLD_MANY` | Retain all distinct high-score pairs (> threshold) for many-to-many and many-to-one orthologs. **Default:** `None` |
-| `--do_not_downsample` |  | Use all 1-to-1 orthologs (no random subsampling). **Default:** `False` |
+| `--do_not_downsample` |  | Use all 1-to-1 orthologs (instead of 1000 randomly chosen) for selection of best pairs for the many-to-many and many-to-one orthologs (slower)". **Default:** `False` |
 | `--random_id` | `RANDOM_ID` | Randomizes orthologies and stores results under `outdir/random_id`. **Default:** blank |
 | `--no_pbar` |  | Disable progress bar. **Default:** `False` |
 

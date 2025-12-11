@@ -2,26 +2,33 @@
 
 ## Required Input Files
 
-Important in data preperation to have same gene id in the orthology and matrix files AND that gene ids are unique for each species (recommend adding prefix with sp name). go to how to run for command line arguments to use.
+Important in data preparation to have same gene id in the orthology and matrix files AND that gene ids are unique for each species (recommend adding prefix with sp name if unsure). go to how to run for command line arguments to use.
+
+> [!WARNING]
+> Potentially most tricky = get gene names the same in matrix and orthology (maybe give a few pointer codes)
 
 ### Orthology file
 
 Same for all
+Has to be tab delimited (we could make it more flexible here, accept tab or comma like cell to cluster and matrix)
+Could be from biomart 
+Could be from broccoli or orthofinder (give file names)
 
-> [!WARNING]
-> Potentially most tricky = get gene names the same in matrix and orthology (maybe give a few pointer codes)
 
 ### Single-cell expression data
 
 Different accepted input formats, and can be different for each of the two study species
 
 > [!TIP]
-> All input files, to the exception of scanpy's .h5ad files, can be compressed in .gz and will be properly read by pesci (whether compressed or not).
+> All input files, to the exception of scanpy's .h5ad files, can be compressed in .gz and still be properly loaded by pesci (whether compressed or not).
 
 **1. Sparse count matrix and cell to cluster annotation table**
 
-Explain (would it remove cells not in clusters?, i.e. if giving the cellrnager dir)
+Explain (would it remove cells not in clusters?, i.e. if giving the CellRanger dir)
 The following R code is provided as an example to format a Seurat Object into a Sparse Matrix for pesci. It creates a CellRanger-like directory (hereafter named "Cragig_sparse_matrix/") that can be directly provided as argument to --matrix1 or --matrix2 in pesci.
+Cell to cluster separator can be tab or comma (automatically detected)
+
+Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
 
 ```R
 library(Matrix)
@@ -64,7 +71,7 @@ write.table(mySeuratObj$cluster_labels, file = "Cragig_cell_clusters.tsv", sep =
 
 **2. Scanpy h5ad file**
 
-Alternatively, for datasets processed with scanpy, pesci can 
+Alternatively, for datasets processed with scanpy, pesci can directly work with h5ad (but needs the raw counts, if no layer 'counts' will check the data.X but will error if not integers)
 
 ```python
 import scanpy as sc
@@ -87,4 +94,5 @@ no code, less optimal (if seurat object recommend making a sparse matrix). Only 
 
 ## Optional Input Files
 
+Optionally, 
 Broad annotations (additional column in the cluster file or h5ad)
