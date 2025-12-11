@@ -2,11 +2,11 @@
 
 ## Required Input Files
 
-Pesci requires 3 main inputs: the single-cell gene expression data for each of the two species being compared and a gene orthology file listing all orthologous gene pairs across these two species. Single-cell gene expression data can be provided in any of the following format: a scanpy h5ad file, a sparse expression matrix (CellRanger-like directory) or a dense expression matrix (as found in some NCBI GEO datasets). We provide example codes below to convert a Seurat object into these accepted format. Depending on the input format of the provided single-cell gene expression data, an additional file giving the cell barcode to cell cluster correspondence might be necessary.
+Pesci requires 3 main inputs: the **single-cell gene expression data** for each of the two species being compared and a **gene orthology file** listing all orthologous gene pairs across these two species. Single-cell gene expression data can be provided in any of the following format: a **scanpy h5ad** file, a **sparse expression matrix** (CellRanger-like directory) or a **dense expression matrix** (as found in some NCBI GEO datasets). We provide example codes below to convert a **Seurat object** into these accepted format. Depending on the input format of the provided single-cell gene expression data, an additional file giving the **cell barcode to cell cluster correspondence** might be necessary.
 
 
 > [!WARNING]
-> Two important aspects of data preparation for pesci are to ensure (i) that gene ids (or gene names) are the same across the provided gene expression matrix and gene orthology file and (ii) that gene ids are unique for each species (if unsure, we recommend adding a species prefix to gene names, i.e. for instance Procro_TTN and Cragig_TTN).
+> Two important aspects of data preparation for pesci are to ensure (i) that **gene ids** (or gene names) are the **same across the provided gene expression matrix and gene orthology file** and (ii) that gene ids are **unique to each species** (if unsure, we recommend adding a species prefix to gene names, i.e. for instance Procro_TTN and Cragig_TTN).
 
 ### Orthology file
 
