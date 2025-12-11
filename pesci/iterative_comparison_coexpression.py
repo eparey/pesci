@@ -4,7 +4,6 @@ scRNA-seq datasets in two species, using the ICC procedure. Also selects best ge
 for many-to-many or 1-to-many orthologs (pair with the highest co-expression conservation).
 """
 
-import sys
 import logging
 
 import random
@@ -625,7 +624,7 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
 
     if len(one2one_a) < 1000:
         logger.error('Too few one-to-one orthologs, please check your orthology file.')
-        raise Exception("Too few orthologs")
+        raise ValueError("Too few orthologs")
 
     # Compute 1-1 orthologs co-expression conservation
     logger.info('Computing co-expression conservation for one-to-one orthologs')

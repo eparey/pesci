@@ -304,9 +304,9 @@ def configure_logs(outdir, logfile=None):
 
     sys.excepthook = log_uncaught_exc
 
-    with open(outdir + 'pesci.log', 'a', encoding="utf-8") as logfile:
-        logfile.write('# '+" ".join(sys.argv)+'\n')
-        logfile.write('# '+'pesci ' + version.__version__+'\n')
+    with open(outdir + 'pesci.log', 'a', encoding="utf-8") as outlogfile:
+        outlogfile.write('# '+" ".join(sys.argv)+'\n')
+        outlogfile.write('# '+'pesci ' + version.__version__+'\n')
 
     coloredlogs.install(level='INFO', logger=logger, fmt='%(asctime)s [%(levelname)s]: %(message)s',
                         field_styles={'levelname': {'color': ''}})
