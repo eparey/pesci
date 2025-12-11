@@ -267,6 +267,11 @@ def to_expr_matrix(matrix, genes, cells, clusters):
 
     genes = {gene: idx for idx, gene in enumerate(genes)}
     cells = {cell: idx for idx, cell in enumerate(cells)}
+
+    if clusters:
+        logger.info('%s cells associated with a cluster label.',
+                     len({i for clust in clusters for i in clusters[clust] if i in cells}))
+
     clusters = {clust: {cells[i] for i in clusters[clust] if i in cells} for clust in clusters}
     clusters = {clust:clusters[clust] for clust in clusters if clusters[clust]} #remove empty clust
     ExprMatrix = collections.namedtuple('ExprMatrix', ['matrix', 'genes', 'cells', 'clusters'])
