@@ -2,23 +2,25 @@
 
 ## Required Input Files
 
-Pesci requires 3 main inputs: a **gene orthology file** listing all orthologous gene pairs (1-to-1 and many-to-many) between the two species under comparison and the **single-cell gene expression count data** for each of these two species.
+Pesci requires 3 main inputs: a **gene orthology file** listing all orthologous gene pairs (one-to-one and many-to-many) between the two species under comparison and the **single-cell gene expression count data** for each of these two species.
 
-Single-cell gene expression counts can be provided in any of the following formats: (1) a **sparse expression matrix** (a CellRanger-like directory), (2) a **scanpy h5ad** file **OR** (3) a **dense expression matrix**. It is also possible to provide several input files for a single species, for instance in cases where several libraries were sequenced and stored in distinct files (please see example run in [Pesci Examples](https://github.com/eparey/pesci/blob/main/wiki/Examples.md)). Depending on input format, an additional file giving the **cell barcode to cell cluster correspondence** might be necessary.
+Single-cell gene expression counts can be provided in any of the following formats: a **sparse expression matrix** (a CellRanger-like directory), a **scanpy h5ad** file **OR**  a **dense expression matrix**. Several input files for a single species can be provided, for instance in cases where several libraries were sequenced and stored in distinct files (please see example run in [Pesci Examples](https://github.com/eparey/pesci/blob/main/wiki/Examples.md)). Depending on input format, an additional file giving the **cell barcode to cell cluster correspondence** might be necessary.
 
 On this page, we describe all accepted input formats and provide example code to convert **Seurat Objects** into these formats. 
 
 
 > [!WARNING]
-> Two important aspects of data preparation for pesci are to ensure (i) that **gene ids** (or gene names) are the **same across the provided gene expression matrix and gene orthology file** and (ii) that these gene ids are **unique to each species** (if unsure, we recommend adding a species prefix to gene names, *i.e.* for instance Procro_TTN and Cragig_TTN for the gene encoding TTN).
+> Two important aspects of data preparation for pesci are to ensure (i) that **gene ids** (or gene names) are the **same across the provided gene expression matrix and gene orthology file** and (ii) that these gene ids are **unique to each species** (if unsure, we recommend adding a species prefix to gene names, *i.e.* for instance Procro_TTN and Cragig_TTN for the gene encoding TTN, see below for formatting help).
 
 ### Orthology file
 
 The gene orthology file is a **two-columns** file, either **tab- (.tsv)** or **comma-separated (.csv)**. It can be compressed (.gz or .gz2) or uncompressed. Apart from these two rules, the expected format is flexible, accommodating inputs from different sources.
 
-The easiest way to generate this file is to use pre-computed orthologies, provided the two species under comparisons are available in comparative genomics databases (for instance [Ensembl](www.ensembl.org/)). Alternatively, tools like [OrthoFinder](https://github.com/davidemms/OrthoFinder) and [Broccoli](https://github.com/rderelle/Broccoli) can produce orthologs for user-specific datasets.
+The easiest way to generate this file is to use pre-computed orthologies, provided the two species under comparisons are available in existing comparative genomics databases (for instance [Ensembl](www.ensembl.org/)). Alternatively, tools like [OrthoFinder](https://github.com/davidemms/OrthoFinder) and [Broccoli](https://github.com/rderelle/Broccoli) can infer orthologs on user-specific datasets.
 
-Pesci accepts "simple" .csv or .tsv files, .tsv generated from [Ensembl bioMart](www.ensembl.org/info/data/biomart/index.html), files in [Broccoli](https://github.com/rderelle/Broccoli) format, or in [OrthoFinder](https://github.com/davidemms/OrthoFinder) format (more details in examples below). A real example (Oyster-larvae vs Flatworm-larvae comparison, in [Broccoli](https://github.com/rderelle/Broccoli)) is provided in the [data folder](https://github.com/eparey/pesci/blob/main/data/orthologous_pairs_Procro-Cragig.txt).
+Pesci accepts: "simple" .csv or .tsv files, .tsv generated from [Ensembl bioMart](www.ensembl.org/info/data/biomart/index.html), files in [Broccoli](https://github.com/rderelle/Broccoli) format, or in [OrthoFinder](https://github.com/davidemms/OrthoFinder) format (more details in examples below).
+
+A real example (Oyster-larvae vs Flatworm-larvae comparison, in [Broccoli](https://github.com/rderelle/Broccoli)) is provided in the [data folder](https://github.com/eparey/pesci/blob/main/data/orthologous_pairs_Procro-Cragig.txt).
 
 - **Example 1:** simple .csv or .tsv
 
