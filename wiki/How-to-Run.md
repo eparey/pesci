@@ -1,8 +1,9 @@
-# Pesci Command-line Options
+# Quick Start: Pesci Command-line Options
 
 
-This page provides a description of all available options when running pesci. For more details on input and output files, including R code to prepare input files from Seurat objects, please see [Help With Input Files](https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md) and [Understanding Output files](https://github.com/eparey/pesci/blob/main/wiki/Outputss.md). For example use cases with specific options, please see [Pesci Examples](https://github.com/eparey/pesci/blob/main/wiki/Examples.md).
+This page provides installation instructions and a description of all available options when running pesci. For more details on input and output files, including R code to prepare input files from Seurat objects, please see [Help With Input Files](https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md) and [Understanding Output files](https://github.com/eparey/pesci/blob/main/wiki/Outputss.md). For example use cases with specific options, please see [Pesci Examples](https://github.com/eparey/pesci/blob/main/wiki/Examples.md).
 
+## Installation
 
 ## Minimal Command-line Examples
 
