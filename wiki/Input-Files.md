@@ -14,10 +14,68 @@ On this page, we describe input formats and provide example code showing how to 
 
 ### Orthology file
 
-Same for all
-Tab or comma delimiter gz or not 
-Could be from biomart 
-Could be from broccoli or orthofinder (give file names)
+The gene orthology file should be a two-columns file, either tab- or comma-separated. It can be compressed (.gz or .gz2) or uncompressed. The expected format for this file is flexible, accommodating inputs from different sources: simple csv or tsv, broccoli, ensembl biomart or orthofinder (see examples below). Also see real example in #filelinktodo.
+
+- **Example 1:** simple csv or tsv
+
+csv
+
+```
+Procro_TTN,Cragig_TTN
+Procro_g1332,Cragig_g145
+Procro_g1332,Cragig_g146
+Procro_g1335,Cragig_g5587
+Procro_g1336,Cragig_g5587
+```
+
+
+tsv
+```
+Procro_TTN  Cragig_TTN
+Procro_g1332    Cragig_g145
+Procro_g1332    Cragig_g146
+Procro_g1335    Cragig_g5587
+Procro_g1336    Cragig_g5587
+```
+
+- **Example 2:** (typical broccoli format, found in dir_step4/orthologous_gene_pairs.txt):
+but genes from other species can be present in the file and species do not have to stick to being in the same column
+
+```
+Cragig_TTN  Procro_TTN
+Procro_g1332    Cragig_g145
+Procro_g1332    Cragig_g146
+Pecmax_TTN1 Procro_TTN
+Procro_g1335    Cragig_g5587
+Procro_g1336    Cragig_g5587
+```
+
+
+- **Example 3:**  (typical pairwise ensembl biomart format ):
+Tab separated + possible empty col2
+
+```
+Procro_TTN  Cragig_TTN
+Procro_g1332    Cragig_g145
+Procro_g1332    Cragig_g146
+Procro_g1333    
+Procro_g1334    
+Procro_g1335    Cragig_g5587
+Procro_g1336    Cragig_g5587
+```
+
+- **Example 4:**  (typical orthofinder orthologue):
+
+need to remove the first column in the orthofinder orthologue file:
+`cut -f 2,3 orthofinder_orthologues_sp1-sp2.csv > orthofinder_orthologues_sp1-sp2_ok.tsv`
+Tab separated + single gene or a comma-separated list of genes (from the same species!) can be present in col2
+```
+Procro_TTN  Cragig_TTN
+Procro_g1332    Cragig_g145, Cragig_g146
+Procro_g1335, Procro_g1336    Cragig_g5587
+```
+
+Mix of these formats would be accepted (for instance species column swap and/or more species present in an orthofinder / biomart -like files. Main rules are: exactly two columns, gene ids are the same as in the single cell count matrices and unique to each species (even if it contains more species).
 
 ### Single-cell expression data
 
@@ -127,6 +185,8 @@ no code, less optimal (if Seurat object recommend making a sparse matrix or h5ad
 import to use.csv is comma-sep and .tsv for tab-sep
 
 Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
+ same as 1 Cell to cluster separator can be tab or comma (automatically detected) + second column or any name provided with colclust
+--> can also retain only a subset of clusters filter_out and keep_only args (see options (Inputs arg) and examples)
 
 
 ## Optional Input Files

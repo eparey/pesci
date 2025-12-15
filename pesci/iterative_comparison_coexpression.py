@@ -336,11 +336,11 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
     sep = '\t'
     with open_func(input_file, 'rt', encoding = "utf-8") as infile:
         for i, line in enumerate(infile):
-            linesplit = [i.strip('"') for i in line.strip().split(sep)]
+            linesplit = [i.strip('"') for i in line.split(sep)]
 
             if len(linesplit) != 2:
                 sep = ','
-                linesplit = [i.strip('"') for i in line.strip().split(',')]
+                linesplit = [i.strip('"') for i in line.split(',')]
 
                 if len(linesplit) != 2:
                     logger.error('Malformed gene orthology file %s. Line %s: %s. '
@@ -348,12 +348,31 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
                                   input_file, i+1, line.strip('\n'))
                     raise ValueError("Input Error")
 
-            g1, g2 = linesplit
+            genes1, genes2 = linesplit
+            
+            #for potential ensembl biomart format 
+            genes2 = genes2.strip()
+            if not genes2:
+                continue
 
-            if g1 in genes_sp_a and g2 in genes_sp_b:
-                edges.append((g1, g2))
-            elif g2 in genes_sp_a and g1 in genes_sp_b:
-                edges.append((g2, g1))
+            #for potential orthofinder format 
+            if ',' in genes1:
+                genes1 = [g.strip().strip('"') for g in genes1.split(',')]
+            else:
+                genes1 = [genes1]
+
+            if ',' in genes2:
+                genes2 = [g.strip().strip('"') for g in genes2.split(',')]
+            else:
+                genes2 = [genes2]
+
+            #get all orthologous pairs
+            for g1 in genes1:
+                for g2 in genes2:
+                    if g1 in genes_sp_a and g2 in genes_sp_b:
+                        edges.append((g1, g2))
+                    elif g2 in genes_sp_a and g1 in genes_sp_b: #for potential broccoli format
+                        edges.append((g2, g1))
 
     #transform list of orthologous pairs to graph
     homologs_graph = nx.Graph()
@@ -363,7 +382,7 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
     components = nx.connected_components(homologs_graph)
     one2one, many_ortho = [], []
 
-    #go through connected component to extract one-to-on and many-to-many / many-to-one
+    #go through connected component to extract one-to-one and many-to-many / many-to-one
     for component in components:
         genes = set(component)
         if len(component) == 2:

@@ -90,8 +90,8 @@ def validate_input_format(expr_mat, clusters):
                     break
 
             if not os.path.isfile(clusters):
-                logger.error('Count matrix provided as csv/tsv but expected cluster file %s '
-                              'is not an existing file.', clusters)
+                logger.error('Count matrix provided as csv/tsv but provided cluster file %s '
+                              'does not exist.', clusters)
                 raise ValueError("Input Error")
 
         elif ext == '.h5ad':
@@ -106,8 +106,8 @@ def validate_input_format(expr_mat, clusters):
     elif os.path.isdir(expr_mat):
         fmt = 'cellranger'
         if not os.path.isfile(clusters):
-            logger.error('Count matrix cellranger directory but expected cluster file %s '
-                         'is not an existing file.', clusters)
+            logger.error('Count matrix cellranger directory but provided cluster file %s '
+                         'does not an exist.', clusters)
             raise ValueError("Input Error")
 
     else:
