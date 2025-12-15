@@ -6,20 +6,19 @@ Pesci requires 3 main inputs: a **gene orthology file** listing all orthologous 
 
 Single-cell gene expression counts can be provided in any of the following formats: (1) a **sparse expression matrix** (a CellRanger-like directory), (2) a **scanpy h5ad** file **OR** (3) a **dense expression matrix**. It is also possible to provide several input files for a single species, for instance in cases where several libraries were sequenced and stored in distinct files (please see the examples page #linktodo). Depending on input format, an additional file giving the **cell barcode to cell cluster correspondence** might be necessary.
 
-On this page, we describe input formats and provide example code showing how to convert a **Seurat object** into accepted formats. 
+On this page, we describe all accepted input formats and provide example code to convert **Seurat Objects** into these formats. 
 
 
 > [!WARNING]
-> Two important aspects of data preparation for pesci are to ensure (i) that **gene ids** (or gene names) are the **same across the provided gene expression matrix and gene orthology file** and (ii) that gene ids are **unique to each species** (if unsure, we recommend adding a species prefix to gene names, i.e. for instance Procro_TTN and Cragig_TTN).
+> Two important aspects of data preparation for pesci are to ensure (i) that **gene ids** (or gene names) are the **same across the provided gene expression matrix and gene orthology file** and (ii) that these gene ids are **unique to each species** (if unsure, we recommend adding a species prefix to gene names, *i.e.* for instance Procro_TTN and Cragig_TTN for the gene encoding TTN).
 
 ### Orthology file
 
-The gene orthology file should be a two-columns file, either tab- or comma-separated. It can be compressed (.gz or .gz2) or uncompressed. Apart from this, the expected format is flexible, accommodating inputs from different sources: simple csv or tsv, broccoli, ensembl biomart or orthofinder (see examples below). Also see real example in #filelinktodo.
+The gene orthology file is a **two-columns** file, either **tab- (.tsv)** or **comma-separated (.csv)**. It can be compressed (.gz or .gz2) or uncompressed. Apart from this two rules, the expected format is flexible, accommodating inputs from different sources: simple .csv or .tsv files, broccoli, ensembl biomart or orthofinder (see examples below). A real example (Oyster-larvae vs Flatworm-larvae comparison) can also be found in #linktodo.
 
-- **Example 1:** simple csv or tsv
+- **Example 1:** simple .csv or .tsv
 
     csv
-
     ```
     Procro_TTN,Cragig_TTN
     Procro_g1332,Cragig_g145
@@ -79,10 +78,10 @@ Mix of these formats would be accepted (for instance species column swap and/or 
 
 ### Single-cell expression data
 
-In this section, we describe the different accepted single-cell expression data formats and how they can be generated from a Seurat Object.
+In this section, we describe the different accepted single-cell expression data formats and how they can be generated from Seurat Objects.
 
 > [!TIP]
-> To the exception of scanpy's .h5ad, all input files (single-cell data, orthology file, cell-to-cluster files) can be compressed in .gz or .gz2 or left uncompressed. Similarly, where applicable (i.e. not h5ad or sparse single-cell data), both tab and comma-separated formats are accepted.
+> To the exception of scanpy's .h5ad, all input files (single-cell data, orthology file, cell-to-cluster files) can be compressed in .gz or .gz2 or left uncompressed. Similarly, where applicable (i.e. not h5ad or sparse single-cell data), both tab (.tsv) and comma-separated (.csv) formats are accepted.
 
 **1. Sparse count matrix and cell to cluster annotation table**
 
@@ -134,11 +133,16 @@ gzip(paste0(data_dir, 'features.tsv'))
 write.table(mySeuratObj$cluster_labels, file="Cragig_cell_clusters.tsv", sep="\t", row.names=TRUE, col.names=FALSE, quote=FALSE)
 ```
 
+#optional: add a species prefix to gene names
+
+
 
 Add code to add prefix species (if in orthology file) 
 
 gene_names <- paste("prefix_", gene_names, sep = "")
 
+
+#optional: substitute gene names using a conversion table
 and/or to substitute gene names using a table
 
 > library(hashmap)
