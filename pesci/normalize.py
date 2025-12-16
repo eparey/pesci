@@ -526,13 +526,16 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
                             'found in the h5ad.')
             logger.warning('Using adata.X, but pesci will crash if these are not counts.')
 
-
         logger.info('Filtering out lowly-expressed genes (total umi < %s)', min_counts)
         sc.pp.filter_genes(expr, min_counts=min_counts, inplace=True)
 
         # genes = [lab+'@'+g for g in expr.var.index]
         genes = expr.var.index
         cells = expr.obs.index
+
+        #check that expression matrix is sparse, it not convert to sparse
+        if not sparse.issparse(expr.X):
+            expr.X = sparse.csr_matrix(expr.X)
 
         # check that values in expr matrix are integers
         subset = expr.X[:10].tocoo().data #look at the 10 first barcodes
