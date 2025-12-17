@@ -113,9 +113,9 @@ In this section, we describe the different accepted single-cell expression data 
 
 Pesci accepts sparse count matrices formatted as a directory containing: the count matrix (matrix.mtx), the barcodes i.e. column names (barcodes.tsv) and the gene names i.e. row names (features.tsv). This is the exact same format as a CellRanger output directory, and can also be easily generated from a Seurat Object (see below). The directory can be provided as argument to the --matrix1 (or --matrix2 for species 2) argument.
 
-In addition, a file giving the cell barcode to cluster correspondence is also required (--clusters1 or --clusters2 argument). This file can either be a comma-separated (.csv) or tab-separated (.tsv) file, with any number of columns, with cell barcodes in the first column and cluster annotation in any of the other columns. By default, pesci uses the second column as cluster annotation, but this behaviiour can be overriden by providing a column name to the option --colclust1 (or colclust2). Note that any cell barcode not found in the cell-to-cluster file will be ignored. Additional arguments can be specified in order to use only a subset of the cluster annotations, if necessary ( filter_out and keep_only args (see options (Inputs arg) and examples). 
+In addition, a file giving the cell barcode to cluster correspondence is also required (--clusters1 or --clusters2 argument). This file can either be a comma-separated (.csv) or tab-separated (.tsv) file, with any number of columns, with cell barcodes in the first column and cluster annotation in any of the other columns. By default, pesci uses the second column as cluster annotation, but this behaviour can be overruled by providing a column name to the option --colclust1 (or colclust2). Note that any cell barcode that is not found in the cell-to-cluster file will be ignored. Additional arguments can be specified in order to use only a subset of the cluster annotations, if necessary (see --filter_out and --keep_only in [Pesci Usage](https://github.com/eparey/pesci/blob/main/wiki/How-to-run.md) and [Pesci Examples](https://github.com/eparey/pesci/blob/main/wiki/Examples.md)). 
 
-The following R code is provided as an example to format a Seurat Object into a Sparse Matrix for pesci. It creates a CellRanger-like directory (hereafter named "Cragig_sparse_matrix/") that can be directly provided as argument to --matrix1 (or --matrix2) along with the corresponding barcode-to-cluster file for --clusters1 (or --cluster2).
+The following R code shows how to format a Seurat Object into a sparse matrix for pesci. It creates a CellRanger-like directory (hereafter named "Cragig_sparse_matrix/") that can be directly provided as argument to --matrix1 (or --matrix2) along with the corresponding barcode-to-cluster file for --clusters1 (or --clusters2).
 
 ```R
 library(Matrix)
@@ -183,9 +183,9 @@ add check that all elements are in the dict
 
 **2. Scanpy h5ad file**
 
-Alternatively, for datasets processed with scanpy, pesci can directly work with h5ad files, provided the raw counts are stored in the object.  (but needs the raw counts, if no layer 'counts' will check the data.X but will throw InputError if not integers)
+Alternatively, for datasets processed with scanpy, pesci can directly work with .h5ad files, provided the raw counts are stored in the object. In practice, pesci will first check for the presence of a 'counts' layer, then for data.raw.X, and if none of these are found in the object pesci will check that the data.X contains integer count values, if yes pesci will use it, otherwise an error will be returned.
 
-The following code snippet shows how to generate and h5ad from a CellRanger(-like) directory (as generated in the previous section (link) or as CellRanger). Not-necessary if already done 1, just an alternative!!
+The following code snippet shows how to generate an .h5ad file from a CellRanger(-like) directory (as generated in the previous section or as produced by CellRanger), as an alternative accepted format.
 
 ```python
 import scanpy as sc
@@ -193,7 +193,7 @@ import pandas as pd
 
 #load CellRanger(-like) directory in scanpy
 data = sc.read_10x_mtx('Cragig_sparse_matrix/')
-data.layers['counts'] = data.X.copy() #in this case we know for sure that data.X are raw counts, so we store it in the count layer
+data.layers['counts'] = data.X.copy() #in this case we know that data.X are the raw counts, we store it in the counts layer
 
 #load cluster annotations and add to the object
 cluster_assignments = pd.read_csv('data/Cragig_cell_id.tsv', sep='\t', index_col=0, usecols=[0, 1])
@@ -209,7 +209,8 @@ data.write_h5ad('data/Cragig_matrix.h5ad')
 
 
 **3 - Dense count matrix and cell to cluster annotation table**
-no code, less optimal (if Seurat object recommend making a sparse matrix or h5ad). Only supported to easily load GEO datasets.
+
+THis format is the least optimal format for pesci, but allows for instance to easily use raw dense matrices as found in GEO datasets.
 import to use.csv is comma-sep and .tsv for tab-sep
 
 Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
@@ -225,8 +226,12 @@ Broad annotations (additional column in the cluster file or h5ad)
 
 ## References
 
-Broccoli
+- Broccoli
 
-OrthoFinder
+- OrthoFinder
 
-Ensembl BioMart
+- Ensembl BioMart
+
+- Seurat 
+
+- Scanpy

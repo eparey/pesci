@@ -27,7 +27,7 @@ Pesci is an efficient and user-friendly implementation of the Iterative Comparis
 
 	`git clone git@github.com:eparey/pesci.git && cd pesci`
 
-	`conda create -n pesci_env python=3.12 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv) [may need python 3.9 to install llvmlite dependency on macos... OR running brew install cmake first]
+	`conda create -n pesci_env python=3.12 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv) [may need python 3.9 to install llvmlite dependency on macos...]
 
 	`pip install . -I`
 
