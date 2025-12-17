@@ -20,7 +20,7 @@ Single-cell gene expression counts can be provided in any of the following forma
 On this page, we describe all accepted input formats and present example code to convert **Seurat Objects** into these formats. 
 
 
-> [!WARNING]
+> [!IMPORTANT]
 > Two important aspects of data preparation for pesci are to ensure (i) that **gene ids** (or gene names) are the **same across the provided gene expression matrix and gene orthology file** and (ii) that these gene ids are **unique to each species** (if unsure, we recommend adding a species prefix to gene names, *i.e.* for instance Procro_TTN and Cragig_TTN for the gene encoding TTN, see below for formatting help).
 
 ### Orthology file
@@ -107,92 +107,93 @@ Pesci accepts: "simple" .csv or .tsv files, .tsv generated from [Ensembl bioMart
 In this section, we describe the different accepted single-cell expression data formats and how they can be generated from Seurat Objects. Note that several input files for a single species can be provided, for cases where several libraries were sequenced and stored in distinct files (please see an example run in [Pesci Examples](https://github.com/eparey/pesci/blob/main/wiki/Examples.md)).
 
 > [!TIP]
-> To the exception of scanpy's .h5ad, all input files (single-cell data, orthology file, cell-to-cluster files) can be compressed in .gz or .gz2 or left uncompressed. Similarly, where applicable (i.e. not h5ad or sparse single-cell data), both tab (.tsv) and comma-separated (.csv) formats are accepted.
+> To the exception of scanpy's .h5ad, all input files (single-cell data, orthology file, cell-to-cluster files) can be compressed in .gz or .gz2 or left uncompressed. Similarly, where applicable (i.e. not .h5ad or sparse single-cell data), both tab- (.tsv) and comma-separated (.csv) formats are accepted.
 
-**1. Sparse count matrix and cell to cluster annotation table**
+- **1. Sparse count matrix and cell to cluster annotation table**
 
-Pesci accepts sparse count matrices formatted as a directory containing: the count matrix (matrix.mtx), the barcodes i.e. column names (barcodes.tsv) and the gene names i.e. row names (features.tsv). This is the exact same format as a CellRanger output directory, and can also be easily generated from a Seurat Object (see below). The directory can be provided as argument to the --matrix1 (or --matrix2 for species 2) argument.
+    Pesci accepts sparse count matrices formatted as a directory containing: the count matrix (matrix.mtx), the barcodes i.e. column names (barcodes.tsv) and the gene names i.e. row names (features.tsv). This is the exact same format as a CellRanger output directory, and can also be easily generated from a Seurat Object (see below). The directory can be provided as argument to the --matrix1 (or --matrix2 for species 2) argument.
 
-In addition, a file giving the cell barcode to cluster correspondence is also required (--clusters1 or --clusters2 argument). This file can either be a comma-separated (.csv) or tab-separated (.tsv) file, with any number of columns, with cell barcodes in the first column and cluster annotation in any of the other columns. By default, pesci uses the second column as cluster annotation, but this behaviour can be overruled by providing a column name to the option --colclust1 (or --colclust2). Note that any cell barcode that is not found in the cell-to-cluster file will be ignored. Additional arguments can be specified in order to use only a subset of the cluster annotations, if necessary (see --filter_out and --keep_only in [Pesci Usage](https://github.com/eparey/pesci/blob/main/wiki/How-to-run.md) and [Pesci Examples](https://github.com/eparey/pesci/blob/main/wiki/Examples.md)). 
+    In addition, a file giving the cell barcode to cluster correspondence is also required (--clusters1 or --clusters2 argument). This file can either be a comma-separated (.csv) or tab-separated (.tsv) file, with any number of columns, with cell barcodes in the first column and cluster annotation in any of the other columns. By default, pesci uses the second column as cluster annotation, but this behaviour can be overruled by providing a column name to the option --colclust1 (or --colclust2). Note that any cell barcode that is not found in the cell-to-cluster file will be ignored. Additional arguments can be specified in order to use only a subset of the cluster annotations, if necessary (see --filter_out and --keep_only in [Pesci Usage](https://github.com/eparey/pesci/blob/main/wiki/How-to-run.md) and [Pesci Examples](https://github.com/eparey/pesci/blob/main/wiki/Examples.md)). 
 
-The following R code shows how to format a Seurat Object into a sparse matrix for pesci. It creates a CellRanger-like directory (hereafter named "Cragig_sparse_matrix/") that can be directly provided as argument to --matrix1 (or --matrix2) along with the corresponding barcode-to-cluster file for --clusters1 (or --clusters2).
+    The following R code shows how to format a Seurat Object into a sparse matrix for pesci. It creates a CellRanger-like directory (hereafter named "Cragig_sparse_matrix/") that can be directly provided as argument to --matrix1 (or --matrix2) along with the corresponding barcode-to-cluster file for --clusters1 (or --clusters2).
 
-```R
-library(Matrix)
-library(R.utils)
-library(data.table)
-library(Seurat)
-library(readr)
+    ```R
+    library(Matrix)
+    library(R.utils)
+    library(data.table)
+    library(Seurat)
+    library(readr)
 
-# Load the Seurat object
-mySeuratObj <- readRDS("Cragig_seurat_object.rds")
+    # Load the Seurat object
+    mySeuratObj <- readRDS("Cragig_seurat_object.rds")
 
-# Set and create the output directory (to store the sparse matrix files)
-data_dir <- 'Cragig_sparse_matrix/'
-dir.create(data_dir)
+    # Set and create the output directory (to store the sparse matrix files)
+    data_dir <- 'Cragig_sparse_matrix/'
+    dir.create(data_dir)
 
-# Get the counts matrix from the Seurat object
-counts <- GetAssayData(mySeuratObj, assay="RNA", slot='counts') #Seurat v4 and v5
-#counts <- mySeuratObj@assays$RNA@counts #Seurat v3 and v4 only
-#counts <- mySeuratObj[["RNA"]]$counts  #Seurat v5 only, may need to JoinLayers before if several 
+    # Get the counts matrix from the Seurat object
+    counts <- GetAssayData(mySeuratObj, assay="RNA", slot='counts') #Seurat v4 and v5
+    #counts <- mySeuratObj@assays$RNA@counts #Seurat v3 and v4 only
+    #counts <- mySeuratObj[["RNA"]]$counts  #Seurat v5 only, may need to JoinLayers before if several 
 
-# Write the counts matrix
-writeMM(counts, paste0(data_dir, 'matrix.mtx'))
-gzip(paste0(data_dir, 'matrix.mtx'))
+    # Write the counts matrix
+    writeMM(counts, paste0(data_dir, 'matrix.mtx'))
+    gzip(paste0(data_dir, 'matrix.mtx'))
 
-# Write the cell barcodes
-barcodes <- colnames(counts)
-write_delim(as.data.frame(barcodes), paste0(data_dir, 'barcodes.tsv'),
-           col_names = FALSE)
-gzip(paste0(data_dir, 'barcodes.tsv'))
+    # Write the cell barcodes
+    barcodes <- colnames(counts)
+    write_delim(as.data.frame(barcodes), paste0(data_dir, 'barcodes.tsv'),
+               col_names = FALSE)
+    gzip(paste0(data_dir, 'barcodes.tsv'))
 
-# Write the feature names
-gene_names <- rownames(counts)
-features <- data.frame("gene_id" = gene_names, "gene_name" = gene_names, type = "Gene Expression")
-write_delim(as.data.frame(features),delim = "\t", paste0(data_dir, 'features.tsv'),
-           col_names = FALSE)
-gzip(paste0(data_dir, 'features.tsv'))
+    # Write the feature names
+    gene_names <- rownames(counts)
+    features <- data.frame("gene_id" = gene_names, "gene_name" = gene_names, type = "Gene Expression")
+    write_delim(as.data.frame(features),delim = "\t", paste0(data_dir, 'features.tsv'),
+               col_names = FALSE)
+    gzip(paste0(data_dir, 'features.tsv'))
 
-# Write the cell-to-cluster annotation (replacing 'cluster_labels' by the name of the meta.data column containing clusters info if different, e.g 'seurat_clusters')
-write.table(mySeuratObj$cluster_labels, file="Cragig_cell_clusters.tsv", sep="\t", row.names=TRUE, col.names=FALSE, quote=FALSE)
-```
+    # Write the cell-to-cluster annotation 
+    #(replacing 'cluster_labels' by the name of the meta.data column containing clusters info if different, e.g 'seurat_clusters')
+    write.table(mySeuratObj$cluster_labels, file="Cragig_cell_clusters.tsv", sep="\t", row.names=TRUE, col.names=FALSE, quote=FALSE)
+    ```
 
-Optional alternative (gene names), to rename genes with a species prefix if necessary for uniqueness and/or consistency with the orthology file:
+    Optional alternative (gene names), to rename genes with a species prefix if necessary for uniqueness and/or consistency with the orthology file:
 
-```R
-#optional: add a species prefix to gene names
-gene_names <- rownames(counts)
-gene_names <- paste("Musmus_", gene_names, sep = "")
-features <- data.frame("gene_id" = gene_names, "gene_name" = gene_names, type = "Gene Expression")
-write_delim(as.data.frame(features),delim = "\t", paste0(data_dir, 'features.tsv'),
-           col_names = FALSE)
-gzip(paste0(data_dir, 'features.tsv'))
-```
+    ```R
+    #optional: add a species prefix to gene names
+    gene_names <- rownames(counts)
+    gene_names <- paste("Cragig_", gene_names, sep = "")
+    features <- data.frame("gene_id" = gene_names, "gene_name" = gene_names, type = "Gene Expression")
+    write_delim(as.data.frame(features),delim = "\t", paste0(data_dir, 'features.tsv'),
+               col_names = FALSE)
+    gzip(paste0(data_dir, 'features.tsv'))
+    ```
 
-Optional alternative 2 (gene names), to rename genes using a conversion table if necessary for uniqueness and/or consistency with the orthology file:
+    Optional alternative 2 (gene names), to rename genes using a conversion table if necessary for uniqueness and/or consistency with the orthology file:
 
-```R
-#optional: substitute gene names using a conversion table
-library(hashmap)
+    ```R
+    library(hashmap)
 
-gene_names <- rownames(counts)
+    gene_names <- rownames(counts)
 
-read.table stringsAsFactors = FALSE
-keys = c("a", "b", "c", "d")
-values = c("A", "B", "C", "D")
-my_dict <- hashmap(keys, values)
-my_vect <- c("b", "c", "c") 
-add check that all elements are in the dict
-translated <- my_dict$find(my_vect)
-translated
-[1] "B" "C" "C"
-```
+    #optional: substitute gene names using a conversion table
+    read.table stringsAsFactors = FALSE
+    keys = c("a", "b", "c", "d")
+    values = c("A", "B", "C", "D")
+    my_dict <- hashmap(keys, values)
+    my_vect <- c("b", "c", "c")
+
+    translated <- my_dict$find(my_vect)
+    translated
+    [1] "B" "C" "C"
+    ```
 
 **2. Scanpy h5ad file**
 
 Alternatively, for datasets processed with scanpy, pesci can directly work with .h5ad files, provided the raw counts are stored in the object. In practice, pesci will first check for the presence of a 'counts' layer, then for data.raw.X, and if none of these are found in the object pesci will check that the data.X contains integer count values, if yes pesci will use it, otherwise an error will be returned.
 
-cluster annotations
+Cluster annotations are expected to be stored in the scanpy AnnData object saved as .h5ad, so no additional file is necessary - simply specify the name of the annotation column within the object to --clusters1 (or --clusters2). 
 
 The following code snippet shows how to generate an .h5ad file from a CellRanger(-like) directory (as generated in the previous section or as produced by CellRanger), as an alternative accepted format.
 
@@ -204,11 +205,13 @@ import pandas as pd
 data = sc.read_10x_mtx('Cragig_sparse_matrix/')
 data.layers['counts'] = data.X.copy() #in this case we know that data.X are the raw counts, we store it in the counts layer
 
-#load cluster annotations and add to the object
+#load cluster annotations and add to the AnnData object
 cluster_assignments = pd.read_csv('data/Cragig_cell_id.tsv', sep='\t', index_col=0, usecols=[0, 1])
 data.obs = data.obs.merge(cluster_assignments, how='left', left_index=True, right_index=True)
+#print(data.obs) #check newly-added column 'cluster_name'
 
 #optional: add a species prefix to gene names
+data.var.index = 'Cragig_' + data.var.index.astype(str)
 
 #optional: substitute gene names using a conversion table
 
@@ -223,10 +226,36 @@ This format is the least optimal format for pesci, but allows to more easily use
 
 Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
 
+Such a count matrix **can be provided to pesci as is**. The code below is only useful for cases where it is necessary to rename genes with a species prefix or a conversion table. The code requires pesci to be installed and saves the matrix with corrected gene names as an .h5ad file (more optimal with pesci).
+
+```python
+import scanpy as sc
+import pandas as pd
+from pesci import normalize as pnm
+
+expr_mat = 'data/Cragig_matrix_EM.tsv' #dense matrix file
+cores = 4 #number of threads to use for loading
+fmt = 'tsv' #change to csv if file is comma-separated
+
+expr, genes, cells = pnm.load_matrix_dense(expr_mat, cores, fmt) #if the file is .gz, add the argument open_func=gzip.open
+
+#Optional: add a species prefix to gene names
+genes = ['Cragig_'+i for i in genes]
+
+#OR use a conversion table to rename genes
+#
+
+data = sc.AnnData(expr.T, pd.DataFrame(index=cells), pd.DataFrame(index=genes))
+
+clusters = pd.read_csv('data/Cragig_cell_id.tsv', sep='\t', index_col=0, usecols=[0, 1])
+data.obs = data.obs.merge(clusters, how='left', left_index=True, right_index=True)
+
+data.write_h5ad('data/Cragig_matrix_raw.h5ad')
+```
 
 ## Optional Input Files
 
-Optionally, broad annotations can be provided on top of cluster annotations and are used to order the output single-cell comparison heatmap. These can be given as an additional column in the cell-to-cluster file or in the .h5ad (in both case, the name of the column is to be specified with --colbroad).
+Optionally, broad annotations can be provided on top of cluster annotations and are used to order the output single-cell comparison heatmap. These can be given as an additional column in the cell-to-cluster file or in the AnnData object saved as .h5ad (in both case, the name of the column is to be specified with --colbroad).
 
 
 ## References
