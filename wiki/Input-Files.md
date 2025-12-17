@@ -109,13 +109,13 @@ In this section, we describe the different accepted single-cell expression data 
 > [!TIP]
 > To the exception of scanpy's .h5ad, all input files (single-cell data, orthology file, cell-to-cluster files) can be compressed in .gz or .gz2 or left uncompressed. Similarly, where applicable (i.e. not .h5ad or sparse single-cell data), both tab- (.tsv) and comma-separated (.csv) formats are accepted.
 
-- **1. Sparse count matrix and cell to cluster annotation table**
+- **Accepted format 1: Sparse count matrix and cell to cluster annotation table**
 
-    Pesci accepts sparse count matrices formatted as a directory containing: the count matrix (matrix.mtx), the barcodes i.e. column names (barcodes.tsv) and the gene names i.e. row names (features.tsv). This is the exact same format as a CellRanger output directory, and can also be easily generated from a Seurat Object (see below). The directory can be provided as argument to the --matrix1 (or --matrix2 for species 2) argument.
+    Pesci accepts sparse count matrices formatted as a directory containing: the **count matrix (matrix.mtx)**, the **barcodes** i.e. column names **(barcodes.tsv)** and the **gene names** i.e. row names **(features.tsv)**. This is the exact same format as a CellRanger output directory, and can also be easily generated from a Seurat Object (see below). The directory can be provided as argument to the --matrix1 (or --matrix2 for species 2) argument.
 
-    In addition, a file giving the cell barcode to cluster correspondence is also required (--clusters1 or --clusters2 argument). This file can either be a comma-separated (.csv) or tab-separated (.tsv) file, with any number of columns, with cell barcodes in the first column and cluster annotation in any of the other columns. By default, pesci uses the second column as cluster annotation, but this behaviour can be overruled by providing a column name to the option --colclust1 (or --colclust2). Note that any cell barcode that is not found in the cell-to-cluster file will be ignored. Additional arguments can be specified in order to use only a subset of the cluster annotations, if necessary (see --filter_out and --keep_only in [Pesci Usage](https://github.com/eparey/pesci/blob/main/wiki/How-to-run.md) and [Pesci Examples](https://github.com/eparey/pesci/blob/main/wiki/Examples.md)). 
+    In addition, a file giving the **cell barcode to cluster correspondence** is also required (--clusters1 or --clusters2 argument). This file can either be a **comma-separated (.csv)** or **tab-separated (.tsv)** file, with any number of columns, with cell barcodes in the first column and cluster annotation in any of the other columns. By default, pesci uses the second column as cluster annotation, but this behaviour can be overruled by providing a column name to the option --colclust1 (or --colclust2). Note that any cell barcode that is not found in the cell-to-cluster file will be ignored. Additional arguments can be specified in order to use only a subset of the cluster annotations, if necessary (see --filter_out and --keep_only in [Pesci Usage](https://github.com/eparey/pesci/blob/main/wiki/How-to-run.md) and [Pesci Examples](https://github.com/eparey/pesci/blob/main/wiki/Examples.md)). 
 
-    The following R code shows how to format a Seurat Object into a sparse matrix for pesci. It creates a CellRanger-like directory (hereafter named "Cragig_sparse_matrix/") that can be directly provided as argument to --matrix1 (or --matrix2) along with the corresponding barcode-to-cluster file for --clusters1 (or --clusters2).
+    The following R code shows **how to format a Seurat Object into a sparse matrix for pesci**. It creates a CellRanger-like directory (hereafter named "Cragig_sparse_matrix/") that can be directly provided as argument to --matrix1 (or --matrix2) along with the corresponding barcode-to-cluster file for --clusters1 (or --clusters2).
 
     ```R
     library(Matrix)
@@ -177,6 +177,7 @@ In this section, we describe the different accepted single-cell expression data 
 
         gene_names <- rownames(counts)
 
+        ###TODO TEST IN MY hash conda env!!!
         #optional: substitute gene names using a conversion table
         read.table stringsAsFactors = FALSE
         keys = c("a", "b", "c", "d")
@@ -189,11 +190,11 @@ In this section, we describe the different accepted single-cell expression data 
         [1] "B" "C" "C"
         ```
 
-- **2. Scanpy h5ad file**
+- **Accepted format 2: Scanpy h5ad file**
 
-    Alternatively, for datasets processed with scanpy, pesci can directly work with .h5ad files, provided the raw counts are stored in the object. In practice, pesci will first check for the presence of a 'counts' layer, then for data.raw.X, and if none of these are found in the object pesci will check that the data.X contains integer count values, if yes pesci will use it, otherwise an error will be returned.
+    Alternatively, for datasets processed with scanpy, **pesci can directly work with .h5ad files**, provided the **raw counts** are stored in the object. In practice, pesci will first check for the presence of a 'counts' layer, then for data.raw.X, and if none of these are found in the scanpy AnnData object pesci will check that the data.X contains integer count values, if yes pesci will use it, otherwise an error will be returned.
 
-    Cluster annotations are expected to be stored in the scanpy AnnData object saved as .h5ad, so no additional file is necessary - simply specify the name of the annotation column within the object to --clusters1 (or --clusters2). 
+    Cluster annotations are expected to be stored in the scanpy AnnData object saved as .h5ad, hence no additional file is necessary - simply specify the **name of the annotation column** (i.e. in data.obs) within the object to --clusters1 (or --clusters2). 
 
     The following code snippet shows how to generate an .h5ad file from a CellRanger(-like) directory (as generated in the previous section or as produced by CellRanger), as an alternative accepted format.
 
@@ -206,25 +207,26 @@ In this section, we describe the different accepted single-cell expression data 
     data.layers['counts'] = data.X.copy() #in this case we know that data.X are the raw counts, we store it in the counts layer
 
     #load cluster annotations and add to the AnnData object
+    #the new column will have the same name as in the 'data/Cragig_cell_id.tsv' ('cluster_name')
     cluster_assignments = pd.read_csv('data/Cragig_cell_id.tsv', sep='\t', index_col=0, usecols=[0, 1])
     data.obs = data.obs.merge(cluster_assignments, how='left', left_index=True, right_index=True)
     #print(data.obs) #check newly-added column 'cluster_name'
 
     #optional: add a species prefix to gene names
-    data.var.index = 'Cragig_' + data.var.index.astype(str)
+    #data.var.index = 'Cragig_' + data.var.index.astype(str)
 
     #optional: substitute gene names using a conversion table
+    # table = pd.read_csv('data/table_genes.tsv', sep='\t', index_col=0, usecols=[0, 1], header=None)
+    # data.var.index = data.var.index.map(table[1])
 
     data.write_h5ad('data/Cragig_matrix.h5ad')
     ```
 
 
 
-- **3. Dense count matrix and cell to cluster annotation table**
+- **Accepted format 3: Dense count matrix and cell to cluster annotation table**
 
-    This format is the least optimal format for pesci, but allows to more easily use raw dense matrices as found in GEO datasets. The matrix file can be tab- (.tsv) or comma (.csv) separated, with genes in rows and cell barcodes in columns (first column contains the gene names and first row the cell barcodes). A real example is shown in the [data folder](https://github.com/eparey/pesci/blob/main/data/Cragig_matrix_EM.tsv.gz). An additional cell to cluster annotation file is also required, see 1. on sparse matrix above for details.
-
-    Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
+    This format is the least optimal format for pesci, but allows to more easily use **raw dense matrices as found in GEO datasets**. The matrix file can be tab- (.tsv) or comma (.csv) separated, with genes in rows and cell barcodes in columns (first column contains the gene names and first row the cell barcodes). A real example is shown in the [data folder](https://github.com/eparey/pesci/blob/main/data/Cragig_matrix_EM.tsv.gz). An additional cell to cluster annotation file is also required, see format 1 above (sparse matrix) for details.
 
     Such a count matrix **can be provided to pesci as is**. The code below is only useful for cases where it is necessary to rename genes with a species prefix or a conversion table. The code requires pesci to be installed and saves the matrix with corrected gene names as an .h5ad file (more optimal with pesci).
 
@@ -242,8 +244,9 @@ In this section, we describe the different accepted single-cell expression data 
     #Optional: add a species prefix to gene names
     genes = ['Cragig_'+i for i in genes]
 
-    #OR use a conversion table to rename genes
-    #
+    #OR (optional) use a conversion table to rename genes
+    # table = pd.read_csv('data/table_genes.tsv', sep='\t', index_col=0, usecols=[0, 1], header=None)
+    # genes = pd.DataFrame(index=genes).index.map(table[1]).tolist()
 
     data = sc.AnnData(expr.T, pd.DataFrame(index=cells), pd.DataFrame(index=genes))
 
