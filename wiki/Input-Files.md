@@ -52,7 +52,7 @@ Pesci accepts: "simple" .csv or .tsv files, .tsv generated from [Ensembl bioMart
     Procro_g1336    Cragig_g5587
     ```
 
-- **Example 2:**  [Ensembl bioMart](www.ensembl.org/info/data/biomart/index.html) (or [Ensembl Metazoa bioMart](www.metazoa.ensembl.org/info/data/biomart/index.html)
+- **Example 2:**  [Ensembl bioMart](www.ensembl.org/info/data/biomart/index.html) (or [Ensembl Metazoa bioMart](www.metazoa.ensembl.org/info/data/biomart/index.html))
     
     Orthologous genes for a pair of species can be obtained from Ensembl bioMart as follows: 1. choose dataset: select genes of species 1, 2. click attributes and tick the "Homologues (Max select 6 orthologues)" circle, 3. expand the gene menu and select only a single type of ID (corresponding to IDs in the single-cell data), 4. click the orthologues for species 2, selecting again only one type of IDsm 5. click "Results" on the top left of the screen, tick unique results only and click Go to get the orthologies in tsv format.
 
