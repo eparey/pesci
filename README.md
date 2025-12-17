@@ -18,7 +18,7 @@ Pesci is an efficient and user-friendly implementation of the Iterative Comparis
 
 	`git clone git@github.com:eparey/pesci.git && cd pesci`
 
-	`conda create -n pesci_env python=3.12 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv)
+	`conda create -n pesci_env python=3.12 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv) 
 
 	`conda install pesci -c ./recipes/build -c conda-forge`
 
@@ -27,7 +27,7 @@ Pesci is an efficient and user-friendly implementation of the Iterative Comparis
 
 	`git clone git@github.com:eparey/pesci.git && cd pesci`
 
-	`conda create -n pesci_env python=3.12 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv)
+	`conda create -n pesci_env python=3.12 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv) [may need python 3.9 to install llvmlite dependency on macos... OR running brew install cmake first]
 
 	`pip install . -I`
 
@@ -37,7 +37,7 @@ Pesci is an efficient and user-friendly implementation of the Iterative Comparis
 Pesci takes as input **single-cell expression count matrices** (raw count matrices, CellRanger directory and/or h5ad files), **cell cluster annotations** and **gene orthologies** files.
 
 ```sh
-pesci --matrix1 mat_sp1.h5ad --matrix2 mat_sp2.tsv --clusters1 cell_id_sp1.tsv --clusters2 cell_id_sp2.tsv --ortho_pairs orthologs.txt 
+pesci --matrix1 mat_sp1.h5ad --matrix2 mat_sp2.tsv --clusters1 cluster_annotations --clusters2 cell_id_sp2.tsv --ortho_pairs orthologs.txt 
 ```
 
 For a description of accepted input formats and available options, please refer to `pesci --help`.
