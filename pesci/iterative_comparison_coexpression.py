@@ -654,6 +654,12 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
 
     # Susbet matrices to retain 1-1 orthologs only
     logger.info('Loading gene orthologies')
+    same_gene_names = set(mat1.genes).intersection(set(mat2.genes))
+    if same_gene_names:
+        logger.error("Identical gene names found across matrices of the two species: %s", 
+                     '-'.join(same_gene_names))
+        raise ValueError("Identical gene names")
+
     one2one, manyortho = load_orthologs(orthology_file, set(mat1.genes), set(mat2.genes),
                                         random_id=random_id)
 
