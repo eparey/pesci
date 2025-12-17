@@ -189,7 +189,7 @@ def iterative_dt_to_sparse(dt_expr, cells_per_iter=2000):
     return expr_final
 
 
-def load_matrix_tsv(inputfile, cores=1, fmt='tsv', open_func=open):
+def load_matrix_dense(inputfile, cores=1, fmt='tsv', open_func=open):
 
     """
     Loads expression matrix provided as a text file format, either tab-delimited (fmt='.tsv') or
@@ -344,7 +344,8 @@ def cat_matrices(expr_matrices):
     #update cells indexes
     cellsorder = [cell for i in expr_matrices for cell in i.cells]
     if len(cellsorder) != len(set(cellsorder)):
-        logger.error('Duplicate cell barcodes across count matrices')
+        logger.error('Duplicate cell barcodes across count matrices, please add prefixes to distinguish '
+                     'the different libraries.')
         raise ValueError("Input Error")
 
     cells = {cell: idx for idx, cell in enumerate(cellsorder)}
@@ -454,7 +455,7 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
 
 
         #load matrix
-        expr, genes, cells = load_matrix_tsv(expr_mat, cores, fmt, open_func=open_func)
+        expr, genes, cells = load_matrix_dense(expr_mat, cores, fmt, open_func=open_func)
 
         #filter out genes with no/very low expression
         logger.info('Filtering out lowly-expressed genes (total umi < %s)', min_counts)
