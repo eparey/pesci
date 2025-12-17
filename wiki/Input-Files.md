@@ -158,100 +158,100 @@ In this section, we describe the different accepted single-cell expression data 
     write.table(mySeuratObj$cluster_labels, file="Cragig_cell_clusters.tsv", sep="\t", row.names=TRUE, col.names=FALSE, quote=FALSE)
     ```
 
-    Optional alternative (gene names), to rename genes with a species prefix if necessary for uniqueness and/or consistency with the orthology file:
+    - Optional alternative: renaming genes with a species prefix if necessary for uniqueness and/or consistency with the orthology file:
 
-    ```R
+        ```R
+        #optional: add a species prefix to gene names
+        gene_names <- rownames(counts)
+        gene_names <- paste("Cragig_", gene_names, sep = "")
+        features <- data.frame("gene_id" = gene_names, "gene_name" = gene_names, type = "Gene Expression")
+        write_delim(as.data.frame(features),delim = "\t", paste0(data_dir, 'features.tsv'),
+                   col_names = FALSE)
+        gzip(paste0(data_dir, 'features.tsv'))
+        ```
+
+    - Optional alternative 2: renaming genes using a conversion table if necessary for uniqueness and/or consistency with the orthology file:
+
+        ```R
+        library(hashmap)
+
+        gene_names <- rownames(counts)
+
+        #optional: substitute gene names using a conversion table
+        read.table stringsAsFactors = FALSE
+        keys = c("a", "b", "c", "d")
+        values = c("A", "B", "C", "D")
+        my_dict <- hashmap(keys, values)
+        my_vect <- c("b", "c", "c")
+
+        translated <- my_dict$find(my_vect)
+        translated
+        [1] "B" "C" "C"
+        ```
+
+- **2. Scanpy h5ad file**
+
+    Alternatively, for datasets processed with scanpy, pesci can directly work with .h5ad files, provided the raw counts are stored in the object. In practice, pesci will first check for the presence of a 'counts' layer, then for data.raw.X, and if none of these are found in the object pesci will check that the data.X contains integer count values, if yes pesci will use it, otherwise an error will be returned.
+
+    Cluster annotations are expected to be stored in the scanpy AnnData object saved as .h5ad, so no additional file is necessary - simply specify the name of the annotation column within the object to --clusters1 (or --clusters2). 
+
+    The following code snippet shows how to generate an .h5ad file from a CellRanger(-like) directory (as generated in the previous section or as produced by CellRanger), as an alternative accepted format.
+
+    ```python
+    import scanpy as sc
+    import pandas as pd
+
+    #load CellRanger(-like) directory in scanpy
+    data = sc.read_10x_mtx('Cragig_sparse_matrix/')
+    data.layers['counts'] = data.X.copy() #in this case we know that data.X are the raw counts, we store it in the counts layer
+
+    #load cluster annotations and add to the AnnData object
+    cluster_assignments = pd.read_csv('data/Cragig_cell_id.tsv', sep='\t', index_col=0, usecols=[0, 1])
+    data.obs = data.obs.merge(cluster_assignments, how='left', left_index=True, right_index=True)
+    #print(data.obs) #check newly-added column 'cluster_name'
+
     #optional: add a species prefix to gene names
-    gene_names <- rownames(counts)
-    gene_names <- paste("Cragig_", gene_names, sep = "")
-    features <- data.frame("gene_id" = gene_names, "gene_name" = gene_names, type = "Gene Expression")
-    write_delim(as.data.frame(features),delim = "\t", paste0(data_dir, 'features.tsv'),
-               col_names = FALSE)
-    gzip(paste0(data_dir, 'features.tsv'))
-    ```
-
-    Optional alternative 2 (gene names), to rename genes using a conversion table if necessary for uniqueness and/or consistency with the orthology file:
-
-    ```R
-    library(hashmap)
-
-    gene_names <- rownames(counts)
+    data.var.index = 'Cragig_' + data.var.index.astype(str)
 
     #optional: substitute gene names using a conversion table
-    read.table stringsAsFactors = FALSE
-    keys = c("a", "b", "c", "d")
-    values = c("A", "B", "C", "D")
-    my_dict <- hashmap(keys, values)
-    my_vect <- c("b", "c", "c")
 
-    translated <- my_dict$find(my_vect)
-    translated
-    [1] "B" "C" "C"
+    data.write_h5ad('data/Cragig_matrix.h5ad')
     ```
 
-**2. Scanpy h5ad file**
-
-Alternatively, for datasets processed with scanpy, pesci can directly work with .h5ad files, provided the raw counts are stored in the object. In practice, pesci will first check for the presence of a 'counts' layer, then for data.raw.X, and if none of these are found in the object pesci will check that the data.X contains integer count values, if yes pesci will use it, otherwise an error will be returned.
-
-Cluster annotations are expected to be stored in the scanpy AnnData object saved as .h5ad, so no additional file is necessary - simply specify the name of the annotation column within the object to --clusters1 (or --clusters2). 
-
-The following code snippet shows how to generate an .h5ad file from a CellRanger(-like) directory (as generated in the previous section or as produced by CellRanger), as an alternative accepted format.
-
-```python
-import scanpy as sc
-import pandas as pd
-
-#load CellRanger(-like) directory in scanpy
-data = sc.read_10x_mtx('Cragig_sparse_matrix/')
-data.layers['counts'] = data.X.copy() #in this case we know that data.X are the raw counts, we store it in the counts layer
-
-#load cluster annotations and add to the AnnData object
-cluster_assignments = pd.read_csv('data/Cragig_cell_id.tsv', sep='\t', index_col=0, usecols=[0, 1])
-data.obs = data.obs.merge(cluster_assignments, how='left', left_index=True, right_index=True)
-#print(data.obs) #check newly-added column 'cluster_name'
-
-#optional: add a species prefix to gene names
-data.var.index = 'Cragig_' + data.var.index.astype(str)
-
-#optional: substitute gene names using a conversion table
-
-data.write_h5ad('data/Cragig_matrix.h5ad')
-```
 
 
+- **3. Dense count matrix and cell to cluster annotation table**
 
-**3. Dense count matrix and cell to cluster annotation table**
+    This format is the least optimal format for pesci, but allows to more easily use raw dense matrices as found in GEO datasets. The matrix file can be tab- (.tsv) or comma (.csv) separated, with genes in rows and cell barcodes in columns (first column contains the gene names and first row the cell barcodes). A real example is shown in the [data folder](https://github.com/eparey/pesci/blob/main/data/Cragig_matrix_EM.tsv.gz). An additional cell to cluster annotation file is also required, see 1. on sparse matrix above for details.
 
-This format is the least optimal format for pesci, but allows to more easily use raw dense matrices as found in GEO datasets. The matrix file can be tab- (.tsv) or comma (.csv) separated, with genes in rows and cell barcodes in columns (first column contains the gene names and first row the cell barcodes). A real example is shown in the [data folder](https://github.com/eparey/pesci/blob/main/data/Cragig_matrix_EM.tsv.gz). An additional cell to cluster annotation file is also required, see 1. on sparse matrix above for details.
+    Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
 
-Add code to add prefix species (if in orthology file) and/or to substitute gene names using a table
+    Such a count matrix **can be provided to pesci as is**. The code below is only useful for cases where it is necessary to rename genes with a species prefix or a conversion table. The code requires pesci to be installed and saves the matrix with corrected gene names as an .h5ad file (more optimal with pesci).
 
-Such a count matrix **can be provided to pesci as is**. The code below is only useful for cases where it is necessary to rename genes with a species prefix or a conversion table. The code requires pesci to be installed and saves the matrix with corrected gene names as an .h5ad file (more optimal with pesci).
+    ```python
+    import scanpy as sc
+    import pandas as pd
+    from pesci import normalize as pnm
 
-```python
-import scanpy as sc
-import pandas as pd
-from pesci import normalize as pnm
+    expr_mat = 'data/Cragig_matrix_EM.tsv' #dense matrix file
+    cores = 4 #number of threads to use for loading
+    fmt = 'tsv' #change to csv if file is comma-separated
 
-expr_mat = 'data/Cragig_matrix_EM.tsv' #dense matrix file
-cores = 4 #number of threads to use for loading
-fmt = 'tsv' #change to csv if file is comma-separated
+    expr, genes, cells = pnm.load_matrix_dense(expr_mat, cores, fmt) #if the file is .gz, add the argument open_func=gzip.open
 
-expr, genes, cells = pnm.load_matrix_dense(expr_mat, cores, fmt) #if the file is .gz, add the argument open_func=gzip.open
+    #Optional: add a species prefix to gene names
+    genes = ['Cragig_'+i for i in genes]
 
-#Optional: add a species prefix to gene names
-genes = ['Cragig_'+i for i in genes]
+    #OR use a conversion table to rename genes
+    #
 
-#OR use a conversion table to rename genes
-#
+    data = sc.AnnData(expr.T, pd.DataFrame(index=cells), pd.DataFrame(index=genes))
 
-data = sc.AnnData(expr.T, pd.DataFrame(index=cells), pd.DataFrame(index=genes))
+    clusters = pd.read_csv('data/Cragig_cell_id.tsv', sep='\t', index_col=0, usecols=[0, 1])
+    data.obs = data.obs.merge(clusters, how='left', left_index=True, right_index=True)
 
-clusters = pd.read_csv('data/Cragig_cell_id.tsv', sep='\t', index_col=0, usecols=[0, 1])
-data.obs = data.obs.merge(clusters, how='left', left_index=True, right_index=True)
-
-data.write_h5ad('data/Cragig_matrix_raw.h5ad')
-```
+    data.write_h5ad('data/Cragig_matrix_raw.h5ad')
+    ```
 
 ## Optional Input Files
 
