@@ -199,7 +199,7 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
     """
     df = pd.DataFrame(data=result[0:,0:], columns=[sp2+'|'+i for i in cell_types2],
                       index=[sp1+'|'+i for i in cell_types1])
-    df.to_csv(f'{outprefix}correlation_scores_matrix.csv', sep='\t')
+    df.to_csv(f'{outprefix}correlation_scores_matrix.tsv', sep='\t')
 
     #try to get cells to be ~square
     if len(cell_types2) / len(cell_types1) > 1.25:
@@ -401,7 +401,7 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
     df.sort_values([f'{sp1}_cell_cluster', f'{sp2}_cell_cluster', 'tmp_score'], ascending=False,
                     inplace=True)
     df.drop(columns=['tmp_score'], inplace=True)
-    df.to_csv(f'{outprefix}gene_coexpression_table.csv', sep='\t', index=False)
+    df.to_csv(f'{outprefix}gene_coexpression_table.tsv', sep='\t', index=False)
 
     df = pd.DataFrame.from_records(coexp_number_enrich_score,
                                    columns=[f'{sp1}_cell_cluster', f'{sp2}_cell_cluster',
@@ -428,7 +428,7 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
 
     df['automated.threshold.enrich'] = otsu_enrich
     df['automated.threshold.weighted.correlation.score'] = otsu_scores
-    df.to_csv(f'{outprefix}coexpression_info.csv', sep='\t', index=False)
+    df.to_csv(f'{outprefix}coexpression_info.tsv', sep='\t', index=False)
 
     return warn, sign, otsu_scores, otsu_enrich
 
@@ -494,7 +494,7 @@ def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
     is_one2one = np.concatenate([np.ones(len(ortho)), np.zeros(len(para))])
     df = pd.DataFrame([genes1_ok, genes2_ok, ec, is_one2one]).T
     df.columns = ['genes sp1', 'genes sp2', 'expression conservation', 'is_one2one']
-    df.to_csv(outprefix+random_id+sp1+'-'+sp2+'_'+'expression_conservation_scores.csv',
+    df.to_csv(outprefix+random_id+sp1+'-'+sp2+'_'+'expression_conservation_scores.tsv',
               sep='\t', index=False)
     #compute weighted correlations between cell types of sp1 and cell types of sp2
     result = icc.column_wise_wcorr_einsum(mat1_ok, mat2_ok, ec)

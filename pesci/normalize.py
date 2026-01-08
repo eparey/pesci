@@ -525,7 +525,7 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
         else:
             logger.warning('Pesci needs counts data, but no "counts" layer or adata.raw can be '
                             'found in the h5ad.')
-            logger.warning('Using adata.X, but pesci will crash if these are not counts.')
+            logger.warning('Using adata.X, but pesci will raise an error if they are not counts.')
 
         logger.info('Filtering out lowly-expressed genes (total umi < %s)', min_counts)
         sc.pp.filter_genes(expr, min_counts=min_counts, inplace=True)
