@@ -5,10 +5,11 @@ heatmap raw data
 heatmap more info
 coexpressed genes
 
+
+
+Intermediary outputs / less important
+
 expression conservation scores
-
-
-Intermediary outputs
 
 aggregated normalised gene expression per cluster
 

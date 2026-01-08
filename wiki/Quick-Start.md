@@ -15,13 +15,13 @@ This page provides installation instructions and a description of all available 
 
 Below are minimal examples to run pesci, each showcasing different accepted formats for input single-cell expression datasets. The corresponding data files are available as examples in the `data/` directory.
 
-- **Example 1**: species 1 data as a sparse count matrix (same format as a CellRanger directory) and species 2 provided as a dense count matrix (least optimal format)
+- **Example 1**: species 1 data as a sparse count matrix (same format as a CellRanger directory) and species 2 provided as a dense count matrix
 
 ```sh
   pesci --matrix1 data/Cragig_sparse_data/  --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
 ```
 
-- **Example 2**: species 1 data as a scanpy h5ad and species 2 provided as a dense count matrix (least optimal format) - note that here 'cluster_name' is the name of the column with cluster annotation in the h5ad
+- **Example 2**: species 1 data as a scanpy h5ad and species 2 provided as a dense count matrix - note that here 'cluster_name' refers to the name of the column with cluster annotation in the h5ad
 
 ```sh
   pesci --matrix1 data/Cragig_matrix.h5ad  --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 'cluster_name' --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
@@ -33,16 +33,16 @@ Below are minimal examples to run pesci, each showcasing different accepted form
 ```
 
 > [!IMPORTANT]
-> To make pesci runs and outputs more easily tractable, it is recommended to also set the `--label_species1`, `--label_species2` and `--outdir` arguments (see the command-line example below). 
+> To make pesci runs and outputs easier to identify, it is recommended to set the `--label_species1`, `--label_species2` and `--outdir` arguments:
 > ```sh
 > pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --label_species1 Oyster-larva --label_species2 Flatworm-larva --outdir pesci_larvae
 > ```
->  If intermediate files with the same "label_species" already exist in the output folder, pesci will display a warning and will not re-compute intermediate files, even if inputs have changed. To force re-computation use `--force` (see also below).
+>  It is important to note that intermediate files with the same "label_species" already exist in the output folder, pesci will display a warning and will not re-compute intermediate files, even if inputs have changed. To force re-computation use `--force` (see also below).
 
 
 ## Detailed Usage
 
-All available options are described below and can be printed using `pesci --help`. 
+All available options can be printed using `pesci --help`. 
 
 
 > [!NOTE]
