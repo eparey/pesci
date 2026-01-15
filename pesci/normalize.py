@@ -572,6 +572,12 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
 
     logger.info('%s cells, %s genes, %s clusters.', len(cells), len(genes), len(clusters_dict))
 
+    invalid_genes = {i for i in genes if '+' in i}
+    if invalid_genes:
+        logger.error('+ symbols in gene names are not accepted in pesci, please amend the '
+                      'following genes: ', ', '.join(invalid_genes))
+        raise TypeError("Input Error")
+
     return to_expr_matrix(expr, genes, cells, clusters_dict), clust2broad
 
 
