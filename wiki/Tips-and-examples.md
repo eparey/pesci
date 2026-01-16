@@ -22,21 +22,31 @@ default
 pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
 ```
 
+![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_default.png)
+
+
 --reorder Clust
 ```
 pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --reorder Clust
 ```
+
+![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_clust.png)
+
 
 --reorder None
 ```
 pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --reorder None
 ```
 
+![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_none.png)
+
 
 using broad annotation 
 ```
 pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --colbroad broad
 ```
+
+![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_broad.png)
 
 add species labels
 ```
@@ -47,8 +57,10 @@ pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv
 
 changing the palette
 ```
-pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --colbroad broad -sp1 Oyster-larva -sp2 Flatworm-larva ----seaborn_cmap Blues
+pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --colbroad broad -sp1 Oyster-larva -sp2 Flatworm-larva --seaborn_cmap Blues
 ```
+
+![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_broad_wnames_cmap.png)
 
 (can also work on the raw result .tsv)
 
