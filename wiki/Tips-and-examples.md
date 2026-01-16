@@ -43,7 +43,7 @@ add species labels
 pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --colbroad broad -sp1 Oyster-larva -sp2 Flatworm-larva
 ```
 
-![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_broad_wnames.pdf)
+![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_broad_wnames.png)
 
 changing the palette
 ```
