@@ -2,6 +2,9 @@
 
 This page presents useful tips and illustrated examples of different potential use cases of Pesci.
 
+Add a table of content
+
+
 ## Several lib.
 several libraries were sequenced and stored in distinct files
 
