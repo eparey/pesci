@@ -17,6 +17,7 @@ paying attention to the number of orthologs, importance of marker specificity
 Different options are available to customize the output heatmap figure. For operations not covered by available options, Pesci also saves the underlying matrix to a file that can be loaded into python and R.
 
 default
+
 bash```
 pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
 ```
