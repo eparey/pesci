@@ -14,7 +14,7 @@ This page describes accepted input file formats and how to produce them.
 
 ## Required Input Files
 
-## Introduction
+### Introduction
 
 Pesci requires 3 main inputs: a **gene orthology file** listing all orthologous gene pairs (one-to-one and many-to-many) between the two species under comparison and the **single-cell gene expression count data** for each of these two species.
 

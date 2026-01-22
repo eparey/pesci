@@ -855,6 +855,7 @@ def normalize(expr_mats, cells_to_clusters, output, cores=1, filter_out_start=No
     all_matrices = []
     if isinstance(expr_mats, str):
         expr_mats = [expr_mats]
+
     for expr_mat in expr_mats:
         fm, open_func = validate_input_format(expr_mat, cells_to_clusters)
         matrix, clust2broad = load_expr_and_clusters(expr_mat, cells_to_clusters, fmt=fm,
