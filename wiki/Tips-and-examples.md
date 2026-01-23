@@ -6,8 +6,9 @@ This page presents useful tips and illustrated examples of different potential u
 1. [Customizing the output figure](#customizing-the-output-figure)
 2. [Providing multiple libraries as input](#providing-multiple-libraries-as-input)
 3. [Exploring the impact of the random seed](#exploring-the-impact-of-the-random-seed)
-4. [Focusing on a subset of the cell clusters](#focusing-on-a-subset-of-the-cell-clusters)
-5. [Comparing organs within a single species](#comparing-organs-within-a-single-species)
+4. [Filtering-out poorly characterized cell clusters](#filtering-out-poorly-characterized-cell-clusters)
+5. [Focusing on a subset of the cell clusters](#focusing-on-a-subset-of-the-cell-clusters)
+6. [Comparing organs within a single species](#comparing-organs-within-a-single-species)
 
 
 ## Customizing the output figure
@@ -142,7 +143,7 @@ These options take one or several string of characters, comma-separated, excludi
 
 The option `--keep_only` allows to restrict comparison to a subset of cell clusters, for instance to identify subgroups among a specific group of cell clusters. Similarly as `--filter_out`, `--keep_only` applies to both species, while `--keep_only1` and `--keep_only2` to individual species.
 
-To test the ability of pesci to match cell subtypes across species, we applied it to the identification of bipolar cell subtypes across retina of two mammalian species (cow and ferret) from [Hahn. et al Nature 2025](). By restricting comparison to bipolar cells only, pesci recovered the same 1-to-1 matches as identified by Hahn. et al using integration across 17 vertebrate species.
+To test the ability of pesci to match cell subtypes across species, we applied it to the identification of bipolar cell subtypes across retina of two mammalian species (cow and ferret) from [Hahn. et al Nature 2025](https://doi.org/10.1038/s41586-023-06638-9). By restricting comparison to bipolar cells only, pesci recovered the same 1-to-1 matches as identified by Hahn. et al using integration across 17 vertebrate species.
 
 Example sub-setting bipolar cells from Hahn et al. vertebrate retina datasets:
 
