@@ -145,7 +145,7 @@ The option `--keep_only` allows to restrict comparison to a subset of cell clust
 
 To test the ability of pesci to match cell subtypes across species, we applied it to the identification of bipolar cell subtypes across retina of two mammalian species (cow and ferret) from [Hahn. et al Nature 2025](https://doi.org/10.1038/s41586-023-06638-9). By restricting comparison to bipolar cells only, pesci recovered the same 1-to-1 matches as identified by Hahn. et al using integration across 17 vertebrate species.
 
-Example sub-setting bipolar cells from Hahn et al. vertebrate retina datasets:
+- Example sub-setting bipolar cells from Hahn et al. vertebrate retina datasets:
 
 ```
 pesci --matrix1 GSE237202_Cow_count_mat.csv --matrix2 GSE237203_Ferret_count_mat.csv.gz --clusters1 Cow_OTBC.csv --clusters2 Ferret_OTBC.csv -g Cow_Ferret.tsv --keep_only o -l1 Cow -l2 Ferret --colclust type   --cores 4 --seaborn_cmap 'RdPu'
