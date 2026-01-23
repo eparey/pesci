@@ -28,13 +28,16 @@ pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv
 
 The option `--reorder` accepts the following arguments to reoder rows and columns: `Diag` (default, see above), `Clust` uses hierarchical clustering (average linkage, correlation), and `Alpha` alphabetical: 
 
+#### Clust
+
 ```
 pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --reorder Clust
 ```
 
 ![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_clust.png)
 
---reorder Alpha
+#### Alpha
+
 ```
 pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --reorder None
 ```
