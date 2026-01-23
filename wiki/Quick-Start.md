@@ -122,7 +122,7 @@ All available options can be printed using `pesci --help`.
 |-------|----------|-------------|
 | `--logfile` | `LOGFILE` | Write log to this file instead of default (`pesci.log`). |
 | `--figure_format` | `FIGURE_FORMAT` | Output figure format: `svg`, `png`, `pdf`. **Default:** `pdf` |
-| `--reorder` | `REORDER` | Ordering method for heatmap clusters: `DiagKeep`, `Clust`, or `None`. Ignored with broad annotations. **Default:** `DiagKeep` |
+| `--reorder` | `REORDER` | Ordering method for heatmap clusters: `Diag`, `Clust`, or `Alpha`. Ignored with broad annotations. **Default:** `Diag` |
 | `--min_fc` | `MIN_FC` | Minimum fold change to count a marker gene (used for co-expressed marker table). **Default:** `1.5` |
 | `--seaborn_cmap` | `SEABORN_CMAP` | Seaborn colormap for heatmaps. **Default:** `BuPu` |
 | `--show_auto_threshold` |  | Highlight matches above thresholds on heatmap. **Default:** `False` |

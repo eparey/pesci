@@ -256,9 +256,9 @@ def parse_commandline():
                                                   'as much as possible; '
                                                   'Clust: use hierarchical clustering of rows and '
                                                   'columns (average linkage, euclidean distance) '
-                                                  'or None: keep input order. This option '
-                                                   'is ignored if providing broad annotations.',
-                                                  choices=['DiagKeep','Clust', 'None'])
+                                                  'or Alpha: alphabetical. This option '
+                                                  'is ignored if providing broad annotations.',
+                                                  choices=['DiagKeep','Clust', 'Alpha'])
 
     oopt.add_argument('--min_fc', type=float, help="minimum fold-change to be considered marker of "
                                                    "a cluster - only used for the co-expressed "
