@@ -6,8 +6,8 @@ This page presents useful tips and illustrated examples of different potential u
 1. [Customizing the output figure](#customizing-the-output-figure)
 2. [Providing multiple libraries as input](#providing-multiple-libraries-as-input)
 3. [Exploring the impact of the random seed](#exploring-the-impact-of-the-random-seed)
-4. [Using a subset of the cell clusters](#using-a-subset-of-the-cell-clusters)
-5. [Comparing organs within a species](#comparing-organs-within-a-species)
+4. [Focusing on a subset of the cell clusters](#focusing-on-a-subset-of-the-cell-clusters)
+5. [Comparing organs within a single species](#comparing-organs-within-a-single-species)
 
 
 ## Customizing the output figure
@@ -114,11 +114,11 @@ Two options are available to explore the impact of the random seed in the observ
 Pesci reports the total number of one-to-one orthologs included in the comparisons (e.g. `[INFO]: Found 4567 one-to-one orthologs`) and total number of orthologs considered after inclusion of many-to-many and many-to-one (e.g. `Total retained genes for cross-species comparison: 6222 genes.`). The number of total included genes has an important impact on the cell matches found: the more genes are included, the more likely it is that cell markers are included, hence increasing expression similarity scores. It is therefore important to provide comprehensive orthologies to pesci.
 
 
-## Using a subset of the cell clusters
+## Filtering-out poorly characterized cell clusters
 
-Two options (`--filter_out` and `--keep_only`) are available to restrict comparison to only a subset of the cell clusters, for instance to exclude artefactual or poorly characterized cell clusters, or to compare only specific cell types.
+The option `--filter_out` allows to restrict comparison to discard a subset of cell clusters before comparisons, for instance to exclude artefactual or poorly characterized cell clusters.
 
-These options take one or several string of characters, comma-separated, excluding any clusters whose name starts with the provided strings. While `--filter_out` and `--keep_only` apply to both species, `--filter_out1` and `--keep_only1` (respectively `--filter_out2` and `--keep_only2` ) apply to species 1 only (resp. species 2).
+These options take one or several string of characters, comma-separated, excluding any clusters whose name starts with the provided strings. While `--filter_out` applies to both species, `--filter_out1` (respectively `--filter_out2`) applies to species 1 only (resp. species 2).
 
 
 - Example 1: filtering out all clusters starting with "Unk" in both species:
@@ -129,8 +129,7 @@ These options take one or several string of characters, comma-separated, excludi
 ![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrixUnk.png)
 
 
-- Example 2: filtering out all clusters starting with "Unk,1,6,8,9" species2:
-
+- Example 2: filtering out all clusters starting with "Unk,1,6,8,9" in species2:
 
 	```
 	pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --filter_out2 'Unk,1,6,8,9' --colbroad broad -l1 Oyster-larva -l2 Flatworm-larva
@@ -138,20 +137,39 @@ These options take one or several string of characters, comma-separated, excludi
 
 ![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrixfilttflat.png)
 
-- Example 3: keeping only bipolar
 
-example (for instance ferret - cow) bp 
+## Focusing on a subset of the cell clusters
 
-example (for instance ferret - cow) bp + marker specificity
+The option `--keep_only` allows to restrict comparison to a subset of cell clusters, for instance to identify subgroups among a specific group of cell clusters. Similarly as `--filter_out`, `--keep_only` applies to both species, while `--keep_only1` and `--keep_only2` to individual species.
+
+To test the ability of pesci to match cell subtypes across species, we applied it to the identification of bipolar cell subtypes across retina of two mammalian species (cow and ferret) from [Hahn. et al Nature 2025](). By restricting comparison to bipolar cells only, pesci recovered the same 1-to-1 matches as identified by Hahn. et al using integration across 17 vertebrate species.
+
+Example sub-setting bipolar cells from Hahn et al. vertebrate retina datasets:
+
+```
+pesci --matrix1 GSE237202_Cow_count_mat.csv --matrix2 GSE237203_Ferret_count_mat.csv.gz --clusters1 Cow_OTBC.csv --clusters2 Ferret_OTBC.csv -g Cow_Ferret.tsv --keep_only o -l1 Cow -l2 Ferret --colclust type   --cores 4 --seaborn_cmap 'RdPu'
+```
+
+![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_cowferret.png)
 
 
+Here, we used pesci default heatmap which arranges rows and columns to show best matches on the diagonal: this recovers a match for all shared orthologous cell types across the two species (note that the ferret does not have cell clusters corresponding to cow oBC1a, oBC5c, oBC5d).
+
+By increasing the `--marker_specificity` parameter to increase the contribution of more specific markers, these 1-to-1 matches on the diagonal become even clearer:
+
+```
+pesci --matrix1 GSE237202_Cow_count_mat.csv --matrix2 GSE237203_Ferret_count_mat.csv.gz --clusters1 Cow_OTBC.csv --clusters2 Ferret_OTBC.csv -g Cow_Ferret.tsv --keep_only o -l1 Cow -l2 Ferret --colclust type   --cores 4 --seaborn_cmap 'RdPu' --marker_specificity 0.6
+```
+![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_cowferret0.6.png)
 
 
-## Comparing organs within a species
+The default `--marker_specificity` parameter is set to 0.5, increasing the contribution of genes expressed higher in a cell type than its median expression across all clusters (and > 60th percentile expression across all clusters for `--marker_specificity 0.6`). Increasing this parameter can be beneficial to discriminate between closely-related cell-subtypes.
 
-Pesci can be run to compare two single-cell expression datasets from different organs but of the same species, by using the `--within_species` file. Here, the orthology file is obviously not necessary and can be omitted, identical gene names will be automatically matched across the input matrices.
+## Comparing organs within a single-species
 
-- Example: comparison of fruit fly trachea and proboscis from the [FLY CELL ATLAS](https://flycellatlas.org/):
+With the the `--within_species` option, pesci can be run to compare two single-cell expression datasets from different organs but of the same species. Here, the orthology file is not necessary and can be omitted - identical gene names will be automatically matched across the input matrices.
+
+- Example comparing fruit fly trachea and proboscis from the [FLY CELL ATLAS](https://flycellatlas.org/):
 
 ```
 pesci --matrix1 FlyCellAtlas_adult_trachea_sparse.h5ad  --matrix2 FlyCellAtlas_adult_proboscis_sparse.h5ad  --clusters1 'annotation' --clusters2 'annotation' -o pesci_fly --within_species --filter_out 'male,ovary' --seaborn_cmap Purples -l1 "Adult-Fly-Trachea" -l2 "Adult-Fly-Proboscis"
