@@ -35,7 +35,7 @@ def get_open(ext):
     Infers open function to use for compressed file based on extension.
 
     Args:
-        ext (str): file extention
+        ext (str): file extension
 
     Returns:
         function: open function
@@ -46,7 +46,7 @@ def get_open(ext):
     if ext in ['gz2', '.gz2']:
         return bz2.open
 
-    logger.error('Unsupported format %s', ext)
+    logger.fatal('Unsupported format %s', ext)
     raise ValueError("Unsupported format")
 
 
@@ -90,7 +90,7 @@ def validate_input_format(expr_mat, clusters):
                     break
 
             if not os.path.isfile(clusters):
-                logger.error('Count matrix provided as csv/tsv but provided cluster file %s '
+                logger.fatal('Count matrix provided as csv/tsv but provided cluster file %s '
                               'does not exist.', clusters)
                 raise ValueError("Input Error")
 
@@ -98,7 +98,7 @@ def validate_input_format(expr_mat, clusters):
             fmt = 'h5ad'
 
         else:
-            logger.error('%s format not supported, please provided a .tsv, .csv, .txt, .h5ad or a '
+            logger.fatal('%s format not supported, please provided a .tsv, .csv, .txt, .h5ad or a '
                          'cellranger directory (.tsv, .csv and .txt can be compressed in .gz '
                          'or .gz2)', ext)
             raise ValueError("Input Error")
@@ -106,12 +106,12 @@ def validate_input_format(expr_mat, clusters):
     elif os.path.isdir(expr_mat):
         fmt = 'cellranger'
         if not os.path.isfile(clusters):
-            logger.error('Count matrix cellranger directory but provided cluster file %s '
+            logger.fatal('Count matrix cellranger directory but provided cluster file %s '
                          'does not an exist.', clusters)
             raise ValueError("Input Error")
 
     else:
-        logger.error('%s is not an existing file or directory.', expr_mat)
+        logger.fatal('%s is not an existing file or directory.', expr_mat)
         raise ValueError("Input Error")
 
     return fmt, open_func
@@ -169,7 +169,7 @@ def iterative_dt_to_sparse(dt_expr, cells_per_iter=2000):
         expr_final = dt_expr[:, 1:end].to_numpy().astype(int)
     except Exception as e:
         if e.__class__.__name__=="TypeError":
-            logger.error('The matrix contains non-integer values! Expecting counts, please check!')
+            logger.fatal('The matrix contains non-integer values! Expecting counts, please check!')
         raise
 
     #numpy array to sparse
@@ -221,7 +221,7 @@ def load_matrix_dense(inputfile, cores=1, fmt='tsv', open_func=open):
                     column_ind = 'C0' #default name given by datatable
                 # colstypes = [dt.str32] + [dt.int32]*(lg-1)
             else:
-                logger.error('%s does not seem %s-delimited.', inputfile, sepname)
+                logger.fatal('%s does not seem %s-delimited.', inputfile, sepname)
                 raise ValueError("Input Error")
             break
 
@@ -258,11 +258,11 @@ def to_expr_matrix(matrix, genes, cells, clusters):
     """
 
     if len(set(genes)) != len(genes):
-        logger.error('Duplicate gene names in count matrix')
+        logger.fatal('Duplicate gene names in count matrix')
         raise ValueError("Input Error")
 
     if len(set(cells)) != len(cells):
-        logger.error('Duplicate cell barcodes in count matrix')
+        logger.fatal('Duplicate cell barcodes in count matrix')
         raise ValueError("Input Error")
 
     genes = {gene: idx for idx, gene in enumerate(genes)}
@@ -326,7 +326,7 @@ def get_reorder_indexes(prevegenes, newgenes):
 def cat_matrices(expr_matrices):
 
     """
-    Concatenate expression matrices (for cases with several sequencing/biological replicates).
+    Concatenate expression matrices (for cases with several biological replicates).
 
     Args:
         expr_matrices (list of ExprMatrix namedtuple): matrices to concatenate
@@ -344,7 +344,7 @@ def cat_matrices(expr_matrices):
     #update cells indexes
     cellsorder = [cell for i in expr_matrices for cell in i.cells]
     if len(cellsorder) != len(set(cellsorder)):
-        logger.error('Duplicate cell barcodes across count matrices, please add prefixes to distinguish '
+        logger.fatal('Duplicate cell barcodes across count matrices, please add prefixes to distinguish '
                      'the different libraries.')
         raise ValueError("Input Error")
 
@@ -435,7 +435,7 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
     Returns:
         tuple:
             ExprMat namedtuple stores expression matrix, genes, cells and clusters
-            dict with correspondance clusters (key) to broad annoatation (val), empty if
+            dict with correspondance clusters (key) to broad annotation (val), empty if
             broad=None
     """
 
@@ -486,7 +486,7 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
         # check that values in expr matrix are integers
         subset = expr.X[:10].tocoo().data #look at the 10 first barcodes
         if not all(not (i%1) for i in subset):
-            logger.error('The matrix contains non-integer values! Expecting counts, please check!')
+            logger.fatal('The matrix contains non-integer values! Expecting counts, please check!')
             raise ValueError("Input Error")
 
         # genes = [lab+'@'+g for g in expr.var.index]
@@ -541,11 +541,11 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
         # check that values in expr matrix are integers
         subset = expr.X[:10].tocoo().data #look at the 10 first barcodes
         if not all(not (i%1) for i in subset):
-            logger.error('The matrix contains non-integer values! Expecting counts, please check!')
+            logger.fatal('The matrix contains non-integer values! Expecting counts, please check!')
             raise TypeError("Input Error")
 
         if clusters not in expr.obs:
-            logger.error('%s column not found in .obs of h5ad', clusters)
+            logger.fatal('%s column not found in .obs of h5ad', clusters)
             raise ValueError("Input Error")
 
         #load clusters
@@ -555,7 +555,7 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
 
         if broad:
             if broad not in expr.obs:
-                logger.error('%s column not found in .obs of h5ad', clusters)
+                logger.fatal('%s column not found in .obs of h5ad', clusters)
                 raise ValueError("Input Error")
 
             clust2broad = {}
@@ -567,14 +567,14 @@ def load_expr_and_clusters(expr_mat, clusters, min_counts=10, fmt='tsv', colclus
         logger.info('Successfully loaded count matrix with scanpy.')
 
     else:
-        logger.error('%s is not supported.', fmt)
+        logger.fatal('%s is not supported.', fmt)
         raise ValueError("Input Error")
 
     logger.info('%s cells, %s genes, %s clusters.', len(cells), len(genes), len(clusters_dict))
 
     invalid_genes = {i for i in genes if '+' in i}
     if invalid_genes:
-        logger.error('+ symbols in gene names are not accepted in pesci, please amend the '
+        logger.fatal('+ symbols in gene names are not accepted in pesci, please amend the '
                       'following genes: ', ', '.join(invalid_genes))
         raise TypeError("Input Error")
 
@@ -599,7 +599,7 @@ def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=
         dict: dict of set with key = cluster name, value = set of cell barcodes
     """
     if not os.path.isfile(cells_to_clusters):
-        logger.error('The file %s does not exist.', cells_to_clusters)
+        logger.fatal('The file %s does not exist.', cells_to_clusters)
         raise ValueError("Input Error")
 
     clust = {}
@@ -626,7 +626,7 @@ def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=
                 nb_col_header = len(line)
                 if colname not in line:
                     if colname != 'cluster_name':
-                        logger.error('Column %s not found in cluster annotation file %s: columms '
+                        logger.fatal('Column %s not found in cluster annotation file %s: columms '
                                      'are: %s', colname, cells_to_clusters, ','.join(line))
                         raise ValueError("Input Error")
 
@@ -646,7 +646,7 @@ def load_cell_clust(cells_to_clusters, colname='cluster_name', filter_out_start=
                         clust_col = clust_col + 1
 
                 if nb_col not in [nb_col_header, nb_col_header + 1]:
-                    logger.error('Malformed cluster annotation file %s, '
+                    logger.fatal('Malformed cluster annotation file %s, '
                                  'different number of columns in header and line %s',
                                  cells_to_clusters, i+1)
                     raise ValueError("Input Error")
@@ -677,7 +677,7 @@ def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
         dict: dict of set with key = cluster name, value = broad annotation
     """
     if not os.path.isfile(cells_to_clusters):
-        logger.error('%s does not exist.', cells_to_clusters)
+        logger.fatal('%s does not exist.', cells_to_clusters)
         raise ValueError("Input Error")
 
     clust2broad = {}
@@ -704,7 +704,7 @@ def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
                 nb_col_header = len(line)
                 if colname not in line:
                     if colname != 'cluster_name':
-                        logger.error('Column %s not found in cluster annotation file %s: columms '
+                        logger.fatal('Column %s not found in cluster annotation file %s: columms '
                                      'are: %s', colname, cells_to_clusters, ','.join(line))
                         raise ValueError("Input Error")
 
@@ -718,7 +718,7 @@ def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
 
                 if colname_broad not in line:
                     if colname != 'broad_annotation':
-                        logger.error('Column %s not found in cluster annotation file %s: columms '
+                        logger.fatal('Column %s not found in cluster annotation file %s: columms '
                                      'are: %s', colname_broad, cells_to_clusters, ','.join(line))
                         raise ValueError("Input Error")
 
@@ -735,7 +735,7 @@ def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
                 line = [i.strip('"') for i in line.strip().split(sep)]
                 nb_col = len(line)
                 if i == 1:
-                    #autodetect if index label is not in header
+                    #auto-detect if index label is not in header
                     if nb_col == (nb_col_header + 1):
                         if not force_clust:
                             clust_col = clust_col + 1
@@ -743,7 +743,7 @@ def load_cell_clust_and_broad(cells_to_clusters, colname='cluster_name',
                             broad_col = broad_col + 1
 
                 if nb_col not in [nb_col_header, nb_col_header + 1]:
-                    logger.error('Malformed cluster annotation file %s, '
+                    logger.fatal('Malformed cluster annotation file %s, '
                                  'different number of columns in header and line %s',
                                  cells_to_clusters, i+1)
                     raise ValueError("Input Error")
@@ -809,7 +809,7 @@ def normalize_geom_mean_fc(expr_mat, marker_specificity=0.5, bar_format=None):
             prbar.unit = "[done]"
             prbar.refresh()
 
-    # scaling so that 0.05 pseudocount in fold change calc does not completely transform values
+    # scaling so that 0.05 pseudo-count in fold change calc does not completely transform values
     # ideal_count = min(1000, np.median(mean_counts_per_cell))
     data = np.array(data).T * 1000
 
@@ -826,14 +826,14 @@ def normalize(expr_mats, cells_to_clusters, output, cores=1, filter_out_start=No
               min_umi=10, bar_format=BAR_FORMAT):
 
     """
-    Funtion to load the data (expression matrix and clusters) and compute per cluster normalized
+    Function to load the data (expression matrix and clusters) and compute per cluster normalized
     gene expression (fold-change).
 
     Args:
         expr_mat (list or str): Expression matrix (or matrices), either a tab-delimited file,
-                                cellranger directory or h5ad
+                                CellRanger directory or h5ad
         cells_to_clusters (str): input cluster file name or name of cluster column in h5ad
-        output (str): output file for nornalized gene-cluster expression matrix
+        output (str): output file for normalized gene-cluster expression matrix
         cores (int, optional): Number of cores to use for loading
         filter_out_start (str, optional): ignore clusters whose name start with provided string
         keep_only (str, optional): keep only cells from clusters starting with provided string

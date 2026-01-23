@@ -16,7 +16,7 @@ Different options are available to customize the output heatmap figure. For oper
 
 ### Default
 
-The default is to attempt to maximise 1-1 cell cluster matches on the diagonal, this works well for closely related species, but is less suitable to our example use case:
+The default is to attempt to maximize 1-1 cell cluster matches on the diagonal, this works well for closely related species, but is less suitable to our example use case:
 
 ```
 pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
@@ -26,7 +26,7 @@ pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv
 
 ### Reordering the rows and columns with --reorder
 
-The option `--reorder` accepts the following arguments to reoder rows and columns: `Diag` (default, see above), `Clust` uses hierarchical clustering (average linkage, correlation), and `Alpha` alphabetical: 
+The option `--reorder` accepts the following arguments to reorder rows and columns: `Diag` (default, see above), `Clust` uses hierarchical clustering (average linkage, correlation), and `Alpha` for alphabetical: 
 
 #### Clust
 
@@ -47,7 +47,7 @@ pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv
 
 ### Ordering by broad annotation
 
-Alternatively, if broad annotation are supplied in addition to the cell cluster labels (as an addiitional column in the cell-to-cluster file or the .h5ad scanpy object), these will be used for columns and rows reordering in the ouput heatmap:
+Alternatively, if broad annotation are supplied in addition to the cell cluster labels (as an additional column in the cell-to-cluster file or the .h5ad scanpy object), these will be used for columns and rows reordering in the output heatmap:
 
 ```
 pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --colbroad broad
@@ -58,10 +58,10 @@ pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv
 
 ### Adding species labels
 
-Providing species labels to -sp1 and -sp2 is not only useful to trace the output files opf a specific pesci run, it also labels the heatmap axes:
+Providing species labels to -l1 and -l2 is not only useful to trace the output files of a specific pesci run, it also labels the heatmap axes:
 
 ```
-pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --colbroad broad -sp1 Oyster-larva -sp2 Flatworm-larva
+pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --colbroad broad -l1 Oyster-larva -l2 Flatworm-larva
 ```
 
 ![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_broad_wnames.png)
@@ -72,7 +72,7 @@ pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv
 The continuous color palette used for the heatmap can be changed useing the `--seaborn_cmap` argument, which accepts any named [Color Brewer](https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) palette.
 
 ```
-pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --colbroad broad -sp1 Oyster-larva -sp2 Flatworm-larva --seaborn_cmap Blues
+pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --colbroad broad -l1 Oyster-larva -l2 Flatworm-larva --seaborn_cmap Blues
 ```
 
 ![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_broad_wnames_cmap.png)
@@ -124,7 +124,7 @@ These options take one or several string of characters, comma-separated, excludi
 - Example 1: filtering out all clusters starting with "Unk" in both species:
 
 	```
-	pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --filter_out 'Unk' --colbroad broad -sp1 Oyster-larva -sp2 Flatworm-larva
+	pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --filter_out 'Unk' --colbroad broad -l1 Oyster-larva -l2 Flatworm-larva
 	```
 ![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrixUnk.png)
 
@@ -133,7 +133,7 @@ These options take one or several string of characters, comma-separated, excludi
 
 
 	```
-	pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --filter_out2 'Unk,1,6,8,9' --colbroad broad -sp1 Oyster-larva -sp2 Flatworm-larva
+	pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --filter_out2 'Unk,1,6,8,9' --colbroad broad -l1 Oyster-larva -l2 Flatworm-larva
 	```
 
 ![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrixfilttflat.png)
@@ -149,8 +149,13 @@ example (for instance ferret - cow) bp + marker specificity
 
 ## Comparing organs within a species
 
-same species but different organs? --> illustrated example of the droso 
+Pesci can be run to compare two single-cell expression datasets from different organs but of the same species, by using the `--within_species` file. Here, the orthology file is obviously not necessary and can be omitted, identical gene names will be automatically matched across the input matrices.
 
+- Example: comparison of fruit fly trachea and proboscis from the [FLY CELL ATLAS](https://flycellatlas.org/):
 
+```
+pesci --matrix1 FlyCellAtlas_adult_trachea_sparse.h5ad  --matrix2 FlyCellAtlas_adult_proboscis_sparse.h5ad  --clusters1 'annotation' --clusters2 'annotation' -o pesci_fly --within_species --filter_out 'male,ovary' --seaborn_cmap Purples -l1 "Adult-Fly-Trachea" -l2 "Adult-Fly-Proboscis"
+```
 
+![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/matrix_fly.png)
 

@@ -80,7 +80,7 @@ def parse_commandline():
                                               help="cell-to-clusters table for species 2 "
                                                    "or name of cluster column in h5ad")
 
-    required.add_argument('-g', '--ortho_pairs', type=str, required=True,
+    required.add_argument('-g', '--ortho_pairs', type=str, required=False,
                                                            help="tab-delimited gene orthology"
                                                            " file (one pair per line).")
 
@@ -90,14 +90,18 @@ def parse_commandline():
                                         help='name of output directory (will be created if does '
                                              'not exist)')
 
-    raopt.add_argument('-sp1', '--label_species1', type=str, required=False, default="sp1",
-                                                  help='name of species1 (label for plots & '
-                                                       'outputs)')
+    raopt.add_argument('-l1', '--label1', type=str, required=False, default="sp1",
+                                                  help='name of species2/dataset1 (label for '
+                                                       'plots & outputs)')
 
 
-    raopt.add_argument('-sp2', '--label_species2', type=str, required=False, default="sp2",
-                                                  help='name of species2 (label for plots & '
-                                                       'outputs)')
+    raopt.add_argument('-l2', '--label2', type=str, required=False, default="sp2",
+                                                  help='name of species2/dataset2 (label for '
+                                                  'plots & outputs)')
+
+    raopt.add_argument('--within_species', action='store_true',
+                                           help="use this flag when comparing datasets "
+                                                "within the same species")
 
     #Optional arguments resources
     resources = parser.add_argument_group('resources')
@@ -249,16 +253,16 @@ def parse_commandline():
                                                help='format for output figures',
                                                choices=['svg', 'png', 'pdf'])
 
-    oopt.add_argument('-r', '--reorder', type=str, required=False, default="DiagKeep",
+    oopt.add_argument('-r', '--reorder', type=str, required=False, default="Diag",
                                                   help='method for ordering cell clusters on the '
-                                                  'heatmap: DiagKeep (default): try to maximise '
+                                                  'heatmap: Diag (default): try to maximise '
                                                   ' matches on the diagonal, keeping input order '
                                                   'as much as possible; '
                                                   'Clust: use hierarchical clustering of rows and '
                                                   'columns (average linkage, euclidean distance) '
                                                   'or Alpha: alphabetical. This option '
                                                   'is ignored if providing broad annotations.',
-                                                  choices=['DiagKeep','Clust', 'Alpha'])
+                                                  choices=['Diag','Clust', 'Alpha'])
 
     oopt.add_argument('--min_fc', type=float, help="minimum fold-change to be considered marker of "
                                                    "a cluster - only used for the co-expressed "
@@ -331,8 +335,12 @@ def main():
 
     logger = configure_logs(outdir, args['logfile'])
 
-    sp1 = args["label_species1"]
-    sp2 = args["label_species2"]
+    if not (args['ortho_pairs'] or args['within_species']):
+        logger.fatal('Either provide an orthology file with --ortho_pairs or '
+                     'use --within_species for comparison across organs of the same species')
+
+    sp1 = args["label1"]
+    sp2 = args["label2"]
 
     mat1 = args['matrix1']
     logger.info('Gene-cell expression matrix 1: %s', ' '.join(mat1))
@@ -427,7 +435,8 @@ def main():
         icc.icc(norm_mat1, norm_mat2, args['ortho_pairs'], outprefix, max_combin=300,
                 ncores=args['cores'], ono2one_only=args['ono2one_only'],
                 random_id=args['random_id'], seed=args['seed'],
-                do_not_downsample=args['do_not_downsample'])
+                do_not_downsample=args['do_not_downsample'],
+                within_species=args['within_species'])
 
     logger.info('Computing gene expression correlation between clusters of %s and %s', sp1, sp2)
     broadfile1, broadfile2 = None, None

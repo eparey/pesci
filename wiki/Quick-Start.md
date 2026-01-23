@@ -33,11 +33,11 @@ Below are minimal examples to run pesci, each showcasing different accepted form
 ```
 
 > [!IMPORTANT]
-> To make pesci runs and outputs easier to identify, it is recommended to set the `--label_species1`, `--label_species2` and `--outdir` arguments:
+> To make pesci runs and outputs easier to identify, it is recommended to set the `--label1`, `--label2` and `--outdir` arguments:
 > ```sh
-> pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --label_species1 Oyster-larva --label_species2 Flatworm-larva --outdir pesci_larvae
+> pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt --label1 Oyster-larva --label2 Flatworm-larva --outdir pesci_larvae
 > ```
->  It is important to note that intermediate files with the same "label_species" already exist in the output folder, pesci will display a warning and will not re-compute intermediate files, even if inputs have changed. To force re-computation use `--force` (see also below).
+>  It is important to note that intermediate files with the same "labels" already exist in the output folder, pesci will display a warning and will not re-compute intermediate files, even if inputs have changed. To force re-computation use `--force` (see also below).
 
 
 ## Detailed Usage
@@ -46,7 +46,7 @@ All available options can be printed using `pesci --help`.
 
 
 > [!NOTE]
-> Note that some flags (`--force`, `--ono2one_only`, `--do_not_plot_warn`, `--show_auto_threshold`, `--no_pbar`) do not require any argument to be set, for instance just adding `--force` will effectively force re-computation of all intermediate files.
+> Note that some flags (`--force`, `--within_species`, `--ono2one_only`, `--do_not_plot_warn`, `--show_auto_threshold`, `--no_pbar`) do not require any argument to be set, for instance just adding `--force` will effectively force re-computation of all intermediate files.
 
 
 
@@ -72,8 +72,9 @@ All available options can be printed using `pesci --help`.
 | Flags | Argument | Description |
 |-------|----------|-------------|
 | `--outdir` | `OUTDIR` | Output directory (created if does not exist). **Default:** `output_pesci/` |
-| `--label_species1` | `LABEL_SPECIES1` | Species 1 name used in plots/outputs. **Default:** `sp1` |
-| `--label_species2` | `LABEL_SPECIES2` | Species 2 name used in plots/outputs. **Default:** `sp2` |
+| `--label1` | `LABEL1` | Name of species1/dataset1, used in plots & outputs). **Default:** `sp1` |
+| `--label2` | `LABEL2` | Name of species2/dataset2, used in plots & outputs). **Default:** `sp2` |
+| `--within_species`  |  | Compare datasets from the same species. **Default:** `False` |
 
 ---
 
@@ -120,7 +121,7 @@ All available options can be printed using `pesci --help`.
 ## **Outputs**
 | Flags | Argument | Description |
 |-------|----------|-------------|
-| `--logfile` | `LOGFILE` | Write log to this file instead of default (`pesci.log`). |
+| `--logfile` | `LOGFILE` | Write log to this file instead of default (`output_pesci/pesci.log`). |
 | `--figure_format` | `FIGURE_FORMAT` | Output figure format: `svg`, `png`, `pdf`. **Default:** `pdf` |
 | `--reorder` | `REORDER` | Ordering method for heatmap clusters: `Diag`, `Clust`, or `Alpha`. Ignored with broad annotations. **Default:** `Diag` |
 | `--min_fc` | `MIN_FC` | Minimum fold change to count a marker gene (used for co-expressed marker table). **Default:** `1.5` |

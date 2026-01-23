@@ -268,7 +268,7 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
         plt.close('all')
 
     elif reorder != 'Alpha':
-        logger.error('%s is not a valid argument for the reorder parameter, '
+        logger.fatal('%s is not a valid argument for the reorder parameter, '
                        'use Diag, Clust or Alpha', reorder)
         raise ValueError("Argument Error")
 

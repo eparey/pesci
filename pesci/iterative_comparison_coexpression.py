@@ -263,7 +263,7 @@ def column_wise_wcorr_einsum(mat1, mat2, w):
     (n2, l) = mat2.shape  # n genes l clust
 
     if n1 != n2:
-        logger.error('Input matrices do not have the same number of rows.')
+        logger.fatal('Input matrices do not have the same number of rows.')
 
     wmat1 = np.tile(w, (k, 1)) #repeat weight vector k times for matrix operations
     wmat2 = np.tile(w, (l, 1)) #repeat weight vector l times for matrix operations
@@ -288,7 +288,7 @@ def column_wise_wcorr_einsum(mat1, mat2, w):
     #product of variances
     prod = np.einsum("k,l->kl", wcov1, wcov2, optimize='optimal')
 
-    #Pearson weighted correlation coefficent
+    #Pearson weighted correlation coefficient
     res = wcov12 / np.sqrt(prod)
 
     return res.clip(min=0)
@@ -297,7 +297,7 @@ def column_wise_wcorr_einsum(mat1, mat2, w):
 def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
 
     """
-    Load orthologs gene pairs from tab-delimited input file (one pair per line). 
+    Load orthologs gene pairs from tab-delimited input file (one pair per line).
 
     Args:
         input_file (str): path to input orthology file
@@ -309,7 +309,7 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
 
     Returns:
         (list, list):
-            list of one2one orthologs and list many-to-many / many-to-one orthologs, 
+            list of one2one orthologs and list many-to-many / many-to-one orthologs,
             each list is a list of tuple (genes in sp1, genes in species 2).
 
     Note:
@@ -320,7 +320,7 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
     """
 
     if not os.path.isfile(input_file):
-        logger.error('%s does not exist.', input_file)
+        logger.fatal('%s does not exist.', input_file)
         raise ValueError("Input Error")
 
     #load all orthologous pairs
@@ -343,19 +343,19 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
                 linesplit = [i.strip('"') for i in line.split(',')]
 
                 if len(linesplit) != 2:
-                    logger.error('Malformed gene orthology file %s. Line %s: %s. '
-                                 'Expected one comma- or tab-separated gene pair per line.', 
+                    logger.fatal('Malformed gene orthology file %s. Line %s: %s. '
+                                 'Expected one comma- or tab-separated gene pair per line.',
                                   input_file, i+1, line.strip('\n'))
                     raise ValueError("Input Error")
 
             genes1, genes2 = linesplit
-            
-            #for potential ensembl biomart format 
+
+            #for potential ensembl biomart format
             genes2 = genes2.strip()
             if not genes2:
                 continue
 
-            #for potential orthofinder format 
+            #for potential orthofinder format
             if ',' in genes1:
                 genes1 = [g.strip().strip('"') for g in genes1.split(',')]
             else:
@@ -453,7 +453,7 @@ def worker_add_gene_pairs(manyortho, a, b, mat1, mat2, max_combin, northo=1000):
     Selects the best gene pairs (most conserved expression) for many-to-many or 1-to-many orthologs.
 
     Args:
-        manyortho (list of tuples): lits of sp1 - sp2 gene pairs that are many to many orthologs.
+        manyortho (list of tuples): list of sp1 - sp2 gene pairs that are many to many orthologs.
         a, b (numpy.array): gene - cluster expression matrix for the randomly selected subset
                             of 1-to-1 orthologs, for sp1 and sp2 respectively.
         mat1, mat2 (tuple): tuple with full gene - cluster expression matrix + list of genes (rows)
@@ -463,8 +463,8 @@ def worker_add_gene_pairs(manyortho, a, b, mat1, mat2, max_combin, northo=1000):
 
     Returns:
         list of str:
-            list of size two, (1) tab-separated tested gene pairs (2) tab-seprated 
-            corresponding scores 
+            list of size two, (1) tab-separated tested gene pairs (2) tab-separated
+            corresponding scores
     """
 
     try:
@@ -615,7 +615,7 @@ def parallel_select_homologs(a, b, mat1, mat2, manyortho, batch_size, ncores=1, 
 
 def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300, random_id='',
         ncores=1, batch_size=10, ono2one_only=False, seed=None, do_not_downsample=False,
-        bar_format=BAR_FORMAT):
+        within_species=False, bar_format=BAR_FORMAT):
 
     """
     Use the ICC approach to: (i) compute expression conservation scores for 1-to-1 orthologs, (ii)
@@ -640,6 +640,7 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
         do_not_downsample (bool, optional): if set to True, all 1-1 orthologs are used for
                                             selection of other orthologs instead of 1000 randomly
                                             chosen
+        within_species (bool, optional): set to True to compare datasets within the same species
         bar_format (str, optional): tqdm bar format, use None for tqdm default
     """
 
@@ -652,28 +653,44 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
     mat1 = load_cluster_expression_matrix(matrix_file_a)
     mat2 = load_cluster_expression_matrix(matrix_file_b)
 
-    # Susbet matrices to retain 1-1 orthologs only
-    logger.info('Loading gene orthologies')
-    same_gene_names = set(mat1.genes).intersection(set(mat2.genes))
-    if same_gene_names:
-        logger.error("Identical gene names found across matrices of the two species: %s", 
-                     '-'.join(same_gene_names))
-        raise ValueError("Identical gene names")
+    # Subset matrices to retain 1-1 orthologs only
+    if not within_species:
 
-    one2one, manyortho = load_orthologs(orthology_file, set(mat1.genes), set(mat2.genes),
-                                        random_id=random_id)
+        logger.info('Loading gene orthologies')
+
+        same_gene_names = set(mat1.genes).intersection(set(mat2.genes))
+        if same_gene_names:
+            logger.fatal("Identical gene names found across matrices of the two species: %s",
+                         '-'.join(same_gene_names))
+            raise ValueError("Identical gene names")
+
+        one2one, manyortho = load_orthologs(orthology_file, set(mat1.genes), set(mat2.genes),
+                                            random_id=random_id)
+    else:
+        logger.info('Comparison within the same species, using all genes: ')
+
+        manyortho = []
+        one2one = [(i, i) for i in mat1.genes if i in mat2.genes]
 
     one2one_a = [mat1.genes[i[0]] for i in one2one]
     one2one_b = [mat2.genes[i[1]] for i in one2one]
     a, b = mat1.matrix[one2one_a,:], mat2.matrix[one2one_b,:]
-    logger.info('Found %s one-to-one orthologs', len(one2one_a))
 
-    if len(one2one_a) < 1000:
-        logger.error('Too few one-to-one orthologs, please check your orthology file.')
-        raise ValueError("Too few orthologs")
+    if not within_species:
+        logger.info('Found %s one-to-one orthologs', len(one2one_a))
+        if len(one2one_a) < 1000:
+            logger.fatal('Too few one-to-one orthologs, please check your orthology file.')
+            raise ValueError("Too few orthologs")
+
+        logger.info('Computing co-expression conservation for one-to-one orthologs')
+
+    else:
+        logger.info('%s genes expressed in both matrices', len(one2one_a))
+        logger.info('Computing co-expression conservation')
+
+
 
     # Compute 1-1 orthologs co-expression conservation
-    logger.info('Computing co-expression conservation for one-to-one orthologs')
     expr_conservation_orthologs = compute_expression_conservation(a, b)
 
     write_ec_one2one(one2one, expr_conservation_orthologs,
