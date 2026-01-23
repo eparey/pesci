@@ -16,7 +16,7 @@ Pesci supports use cases where single-cell expression datasets were generated fr
 
 There is one important requirement for these files to be successfully loaded by pesci: cell barcodes should be distinct across input data matrices (consider adding a sample prefix to cell barcodes if necessary). Since these correspond to distinct single-cell RNA-seq libraries, they contain distinct cells. For cases where the same library was sequenced multiple times, these should be merged into a single file prior to running pesci. 
 
-Note also that for inputs requiring a cell-to-cluster correspondence file, this should be a single file containing all of the cell barcodes.
+For inputs requiring a cell-to-cluster correspondence file, this file should remain as a single file containing all of the cell barcodes.
 
 - Provided these conditions are met, several input matrix files, in any of the accepted formats, can be supplied to `--matrix1` (or `--matrix2`), separated by spaces:
 
@@ -47,7 +47,11 @@ Pesci reports the total number of one-to-one orthologs included in the compariso
 
 Two options (`--filter_out` and `--keep_only`) are available to restrict comparison to only a subset of the cell clusters, for instance to exclude artefactual or poorly characterized cell clusters, or to compare only specific cell types.
 
-example filter out unknown clusters in sp1 
+These options take one or several string of characters, comma-separated, excluding any clusters whose name starts with the provided strings. While `--filter_out` and `--keep_only` apply to both species, `--filter_out1` and `--keep_only1` (respectively `--filter_out2` and `--keep_only2` ) apply to species 1 only (resp. species 2).
+
+
+- Example 1: filtering out "unknown" clusters in species 1:
+
 
 example filter out unknown clusters in both
 
