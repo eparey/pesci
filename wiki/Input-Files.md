@@ -4,12 +4,12 @@ This page describes accepted input file formats and how to produce them.
 
 ## Table of Content
 
-- [Required Input Files](#required-input-files)
+1. [Required Input Files](#required-input-files)
 	- [Introduction](#introduction)
 	- [Orthology file](#orthology-file)
 	- [Single-cell expression counts](#single-cell-expression-counts)
-- [Optional Input Files](#optional-input-files)
-- [References](#references)
+2. [Optional Input Files](#optional-input-files)
+3. [References](#references)
 
 
 ## Required Input Files
