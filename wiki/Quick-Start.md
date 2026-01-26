@@ -1,12 +1,12 @@
 # Quick Start: Installation & Command-line Options
 
-This page provides installation instructions and a description of all available options when running pesci. For more details on input and output files, including R code to prepare input files from Seurat objects, please see [Help With Input Files](https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md) and [Understanding Output files](https://github.com/eparey/pesci/blob/main/wiki/Outputss.md). For examples illustrating specific options, tips and advanced use-cases, please see [Pesci Tips and Examples](https://github.com/eparey/pesci/blob/main/wiki/Examples.md).
+This page provides installation instructions and a description of all available command-line options. For more details on input and output files, including R code to prepare input files from Seurat objects, please see [Help With Input Files](https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md) and [Understanding Output files](https://github.com/eparey/pesci/blob/main/wiki/Outputss.md). For examples illustrating specific options, tips and advanced use-cases, please see [Tips and Example Gallery](https://github.com/eparey/pesci/blob/main/wiki/Tips-and-Examples.md).
 
 ## Table of Content
 
-- [Installation](#installation)
-- [Minimal Command-line Examples](#minimal-command-line-examples)
-- [Detailed Usage](#detailed-usage)
+1. [Installation](#installation)
+2. [Minimal Command-line Examples](#minimal-command-line-examples)
+3. [Detailed Usage](#detailed-usage)
 
 
 ## Installation
@@ -15,18 +15,18 @@ This page provides installation instructions and a description of all available 
 
 Below are minimal examples to run pesci, each showcasing different accepted formats for input single-cell expression datasets. The corresponding data files are available as examples in the `data/` directory.
 
-- **Example 1**: species 1 data as a sparse count matrix (same format as a CellRanger directory) and species 2 provided as a dense count matrix
+- **Example 1**: species 1 data as a sparse count matrix (same format as a CellRanger directory) and species 2 provided as a dense count matrix:
 
 ```sh
   pesci --matrix1 data/Cragig_sparse_data/  --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
 ```
 
-- **Example 2**: species 1 data as a scanpy h5ad and species 2 provided as a dense count matrix - note that here 'cluster_name' refers to the name of the column with cluster annotation in the h5ad
+- **Example 2**: species 1 data as a scanpy h5ad and species 2 provided as a dense count matrix - note that here 'cluster_name' refers to the name of the column with cluster annotations in the h5ad:
 
 ```sh
   pesci --matrix1 data/Cragig_matrix.h5ad  --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 'cluster_name' --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
 ```
-- **Example 3**: data for both species provided as dense count matrices, but with species 1 data from 3 different libraries with counts respectively saved in 3 different files
+- **Example 3**: data for both species provided as dense count matrices, but with species 1 data from 3 different libraries with counts respectively saved in 3 different files:
 
 ```sh
   pesci --matrix1 data/Cg_matrix_EM_part1.tsv data/Cg_matrix_EM_part2.tsv data/Cg_matrix_EM_part3.tsv --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
@@ -65,7 +65,7 @@ All available options can be printed using `pesci --help`.
 | `--matrix2` | `MATRIX2` | Gene expression per cell for species 2. Same format options as `--matrix1`.|
 | `--clusters1` | `CLUSTERS1` | Cell-to-clusters table for species 1, or cluster column name in `.h5ad`. |
 | `--clusters2` | `CLUSTERS2` | Cell-to-clusters table for species 2, or cluster column name in `.h5ad`. |
-| `--ortho_pairs` | `ORTHO_PAIRS` | Tab-delimited gene orthology file (one pair per line). |
+| `--ortho_pairs` | `ORTHO_PAIRS` | Gene orthology file (one pair per line). |
 ---
 
 ## **Recommended Arguments**
@@ -88,13 +88,13 @@ All available options can be printed using `pesci --help`.
 ## **Running**
 | Flags | Argument | Description |
 |-------|----------|-------------|
-| `--force` |  | Recompute all intermediates even if they exist. **Default:** `False` |
+| `--force` |  | Recompute all intermediate files even if they exist. **Default:** `False` |
 | `--seed` | `SEED` | Random seed. **Default:** `123` |
-| `--marker_specificity` | `MARKER_SPECIFICITY` | Marker specificity (0.5–0.95). Controls how fold change is computed (median vs percentile). **Default:** `0.5` |
+| `--marker_specificity` | `MARKER_SPECIFICITY` | Marker specificity (0.5–0.95). Controls how fold change is computed (0.5=median, 0.6=60th percentile). **Default:** `0.5` |
 | `--ono2one_only` |  | Use only 1-to-1 orthologs. **Default:** `False` |
-| `--ec_threshold_many` | `EC_THRESHOLD_MANY` | Retain all distinct high-score pairs (> threshold) for many-to-many and many-to-one orthologs. **Default:** `None` |
-| `--do_not_downsample` |  | Use all 1-to-1 orthologs (instead of 1000 randomly chosen) for selection of best pairs for the many-to-many and many-to-one orthologs (slower)". **Default:** `False` |
-| `--random_id` | `RANDOM_ID` | Randomizes orthologies and stores results under `outdir/random_id`. **Default:** blank |
+| `--ec_threshold_many` | `EC_THRESHOLD_MANY` | Retain all distinct high-scoring pairs (> threshold) for many-to-many and many-to-one orthologs. **Default:** `None` |
+| `--do_not_downsample` |  | Use all 1-to-1 orthologs (instead of 1000 randomly chosen) for selection of best pairs for the many-to-many and many-to-one orthologs (slower). **Default:** `False` |
+| `--random_id` | `RANDOM_ID` | Randomizes orthologies and stores results under `outdir/random_id`. **Default:**  |
 | `--no_pbar` |  | Disable progress bar. **Default:** `False` |
 
 ---
@@ -124,7 +124,7 @@ All available options can be printed using `pesci --help`.
 | `--logfile` | `LOGFILE` | Write log to this file instead of default (`output_pesci/pesci.log`). |
 | `--figure_format` | `FIGURE_FORMAT` | Output figure format: `svg`, `png`, `pdf`. **Default:** `pdf` |
 | `--reorder` | `REORDER` | Ordering method for heatmap clusters: `Diag`, `Clust`, or `Alpha`. Ignored with broad annotations. **Default:** `Diag` |
-| `--min_fc` | `MIN_FC` | Minimum fold change to count a marker gene (used for co-expressed marker table). **Default:** `1.5` |
+| `--min_fc` | `MIN_FC` | Minimum fold change to define a marker gene (used for co-expressed marker table). **Default:** `1.5` |
 | `--seaborn_cmap` | `SEABORN_CMAP` | Seaborn colormap for heatmaps. **Default:** `BuPu` |
 | `--show_auto_threshold` |  | Highlight matches above thresholds on heatmap. **Default:** `False` |
 | `--do_not_plot_warn` |  | Do not display heatmap warning for matches supported by <10 genes. **Default:** `True` |
