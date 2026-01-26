@@ -344,8 +344,8 @@ def cat_matrices(expr_matrices):
     #update cells indexes
     cellsorder = [cell for i in expr_matrices for cell in i.cells]
     if len(cellsorder) != len(set(cellsorder)):
-        logger.fatal('Duplicate cell barcodes across count matrices, please add prefixes to distinguish '
-                     'the different libraries.')
+        logger.fatal('Duplicate cell barcodes across count matrices, please add prefixes to '
+                     'distinguish the different libraries.')
         raise ValueError("Input Error")
 
     cells = {cell: idx for idx, cell in enumerate(cellsorder)}

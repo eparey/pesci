@@ -405,13 +405,13 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
             tmp_genes_b = genes.intersection(genes_sp_b)
             many_ortho.append((tuple(tmp_genes_a), tuple(tmp_genes_b)))
 
-    
+
     if len(one2one) < 1000:
         logger.warning('Found %s one-to-one orthologs', len(one2one))
         if len(found_in_sp1) < 1000:
             logger.warning('%s genes from gene expression matrix of species 1 were found '
-                           'in the orthology file. ' 
-                           'Check that the same gene ids are used in both files.', 
+                           'in the orthology file. '
+                           'Check that the same gene ids are used in both files.',
                            len(found_in_sp1))
             mge = random.sample(list(genes_sp_a.difference(found_in_sp1)), 10)
             logger.warning('Example genes found in the gene expression matrix but not in the'
@@ -419,8 +419,8 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
 
         if len(found_in_sp2) < 1000:
             logger.warning('%s genes from gene expression matrix of species 2 were found '
-                           'in the orthology file. ' 
-                           'Check that the same gene ids are used in both files.', 
+                           'in the orthology file. '
+                           'Check that the same gene ids are used in both files.',
                            len(found_in_sp2))
             mge =  random.sample(list(genes_sp_b.difference(found_in_sp2)), 10)
             logger.warning('Example genes found in the gene expression matrix but not in the'
