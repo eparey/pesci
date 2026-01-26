@@ -1,6 +1,6 @@
 # Quick Start: Installation & Command-line Options
 
-This page provides installation instructions and a description of all available command-line options. For more details on input and output files, including R code to prepare input files from Seurat objects, please see [Help With Input Files](https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md) and [Understanding Output files](https://github.com/eparey/pesci/blob/main/wiki/Outputss.md). For examples illustrating specific options, tips and advanced use-cases, please see [Tips and Example Gallery](https://github.com/eparey/pesci/blob/main/wiki/Tips-and-Examples.md).
+This page provides installation instructions and a description of all available command-line options. For more details on input and output files, including R code to prepare input files from Seurat objects, please see [Help With Input Files](https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md) and [Understanding Output files](https://github.com/eparey/pesci/blob/main/wiki/Outputs.md). For examples illustrating specific options, tips and advanced use-cases, please see [Tips and Example Gallery](https://github.com/eparey/pesci/blob/main/wiki/Tips-and-Examples.md).
 
 ## Table of Content
 
