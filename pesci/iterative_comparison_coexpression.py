@@ -334,6 +334,8 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
         open_func = nm.get_open(ext)
 
     sep = '\t'
+    found_in_sp1 = set()
+    found_in_sp2 = set()
     with open_func(input_file, 'rt', encoding = "utf-8") as infile:
         for i, line in enumerate(infile):
             linesplit = [i.strip('"') for i in line.split(sep)]
@@ -374,6 +376,12 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
                     elif g2 in genes_sp_a and g1 in genes_sp_b: #for potential broccoli format
                         edges.append((g2, g1))
 
+                    if g1 or g2 in genes_sp_a:
+                        found_in_sp1.update({g1, g2}.intersection(genes_sp_a))
+
+                    if g1 or g2 in genes_sp_b:
+                        found_in_sp2.update({g1, g2}.intersection(genes_sp_b))
+
     #transform list of orthologous pairs to graph
     homologs_graph = nx.Graph()
     homologs_graph.add_edges_from(edges)
@@ -396,6 +404,29 @@ def load_orthologs(input_file, genes_sp_a, genes_sp_b, random_id=''):
             tmp_genes_a = genes.intersection(genes_sp_a)
             tmp_genes_b = genes.intersection(genes_sp_b)
             many_ortho.append((tuple(tmp_genes_a), tuple(tmp_genes_b)))
+
+    
+    if len(one2one) < 1000:
+        logger.warning('Found %s one-to-one orthologs', len(one2one))
+        if len(found_in_sp1) < 1000:
+            logger.warning('%s genes from gene expression matrix of species 1 were found '
+                           'in the orthology file. ' 
+                           'Check that the same gene ids are used in both files.', 
+                           len(found_in_sp1))
+            mge = random.sample(list(genes_sp_a.difference(found_in_sp1)), 10)
+            logger.warning('Example genes found in the gene expression matrix but not in the'
+                           ' orthology file: %s', ', '.join(mge))
+
+        if len(found_in_sp2) < 1000:
+            logger.warning('%s genes from gene expression matrix of species 2 were found '
+                           'in the orthology file. ' 
+                           'Check that the same gene ids are used in both files.', 
+                           len(found_in_sp2))
+            mge =  random.sample(list(genes_sp_b.difference(found_in_sp2)), 10)
+            logger.warning('Example genes found in the gene expression matrix but not in the'
+                           ' orthology file: %s', ', '.join(mge))
+    else:
+        logger.info('Found %s one-to-one orthologs', len(one2one))
 
     #randomize orthologies if requested
     if random_id:
@@ -566,7 +597,7 @@ def parallel_select_homologs(a, b, mat1, mat2, manyortho, batch_size, ncores=1, 
         manyortho (list): list of tuples with many-to-many / many-to-one / one-to-many orthologs
         batch_size (int, optional): size of batch for each parallel job
         ncores (int, optional): number of cores to use
-        max_combin (int, optional): maximum accepted number or pairwise combinations,
+        max_combin (int, optional): maximum accepted number of pairwise combinations -
                                     massively multigeneic families will be skipped.
         bar_format (str, optional): tqdm bar format, use None for tqdm default
     """
@@ -666,6 +697,7 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
 
         one2one, manyortho = load_orthologs(orthology_file, set(mat1.genes), set(mat2.genes),
                                             random_id=random_id)
+
     else:
         logger.info('Comparison within the same species, using all genes: ')
 
@@ -677,9 +709,9 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
     a, b = mat1.matrix[one2one_a,:], mat2.matrix[one2one_b,:]
 
     if not within_species:
-        logger.info('Found %s one-to-one orthologs', len(one2one_a))
         if len(one2one_a) < 1000:
-            logger.fatal('Too few one-to-one orthologs, please check your orthology file.')
+            logger.fatal('Too few one-to-one orthologs, please check that gene ids in the '
+                          'orthology file and gene expression matrices are identical.')
             raise ValueError("Too few orthologs")
 
         logger.info('Computing co-expression conservation for one-to-one orthologs')
@@ -719,6 +751,6 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
                  nmany+len(one2one_a))
 
     if nmany+len(one2one_a) < 5000:
-        logger.warning('WARNING: The number of retained orthologs for cross-species single-cell '
+        logger.warning('WARNING: The number of retained orthologs for '
                        'comparison is low (%s)! Expression correlation scores will likely be '
                        'low, you may need to check your orthology file.', nmany+len(one2one_a))
