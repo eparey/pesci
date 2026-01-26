@@ -17,7 +17,7 @@ Different options are available to customize the output heatmap figure. For oper
 
 ### Default
 
-The default is to attempt to maximize 1-1 cell cluster matches on the diagonal, this works well for closely related species, but is less suitable to our example use case:
+The default is to attempt to maximize 1-1 cell cluster matches on the diagonal, using scipy.optimize.linear_sum_assignment to find the N best pairs across the two datasets (N = min(number_cell_type_sp1, number_cell_type_sp2)). This works well for closely related species where one expects 1-1 matches, but is less suitable to our example use case:
 
 ```
 pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv.gz --clusters1 data/Cragig_cell_id.tsv --clusters2 data/Procro_cell_id.tsv --ortho_pairs data/orthologous_pairs_Procro-Cragig.txt
