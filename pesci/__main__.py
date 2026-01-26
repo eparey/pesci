@@ -81,7 +81,7 @@ def parse_commandline():
                                                    "or name of cluster column in h5ad")
 
     required.add_argument('-g', '--ortho_pairs', type=str, required=False,
-                                                           help="tab-delimited gene orthology"
+                                                           help="gene orthology"
                                                            " file (one pair per line).")
 
     #Recommended optional arguments
@@ -123,7 +123,7 @@ def parse_commandline():
                                     "calculation as follows: 0.5 computes fold change in cluster "
                                     "'a' vs median expression across clusters, 0.75 computes fold "
                                     "change in cluster 'a' vs 75 expression percentile across "
-                                    "clusters (3rd quartile)", default=0.5)
+                                    "clusters", default=0.5)
 
     ropt.add_argument('--ono2one_only', action='store_true', help="use 1-to-1 orthologs only")
 
