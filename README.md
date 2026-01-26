@@ -2,12 +2,14 @@
 
 ![Static Badge](https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10%7C3.11%7C3.12-blue?logo=python)
 
-Pesci is an efficient and user-friendly implementation of the Iterative Comparison of Coexpression (ICC) algorithm applied to the **comparison of single-cell gene expression datasets across two study species**, first proposed by ([Najle, Grau-Bové et al.](https://doi.org/10.1016%2Fj.cell.2023.08.027)).
+Pesci is an efficient and user-friendly implementation of the Iterative Comparison of Coexpression (ICC) algorithm to compare **single-cell gene expression datasets across or within species**. 
+
+The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1186/gb-2007-8-4-r50) and first applied to single-cell gene expression by ([Najle, Grau-Bové et al.](https://doi.org/10.1016%2Fj.cell.2023.08.027)).
 
 
 ## Citing
 
-- pesci application note
+- Pesci -- Coming soon
 
 - Najle, Grau-Bové et al. Stepwise emergence of the neuronal gene expression program in early animal evolution. (2023). Cell.
 
@@ -34,7 +36,7 @@ Pesci is an efficient and user-friendly implementation of the Iterative Comparis
 
 ## Usage
 
-Pesci takes as input **single-cell expression count matrices** (raw count matrices, CellRanger directory and/or h5ad files), **cell cluster annotations** and **gene orthologies** files.
+Pesci takes as input **single-cell gene expression count matrices** (raw count matrices, CellRanger directory and/or h5ad files), **cell cluster annotations** and **gene orthologies**.
 
 ```sh
 pesci --matrix1 mat_sp1.h5ad --matrix2 mat_sp2.tsv --clusters1 cluster_annotations --clusters2 cell_id_sp2.tsv --ortho_pairs orthologs.txt 
@@ -50,6 +52,10 @@ pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv
 
 ![pesci fig](https://github.com/eparey/pesci/blob/main/wiki/img/Oyster-larva-Flatworm-larva_correlation_scores_matrix.png)
 
+
+## Documentation
+
+LINK TO WIKI HERE TODO
 
 ## Contacts
 
