@@ -95,7 +95,7 @@ All available options can be printed using `pesci --help`.
 | `--ec_threshold_many` | `EC_THRESHOLD_MANY` | Retain all distinct high-scoring pairs (> threshold) for many-to-many and many-to-one orthologs. **Default:** `None` |
 | `--do_not_downsample` |  | Use all 1-to-1 orthologs (instead of 1000 randomly chosen) for selection of best pairs for the many-to-many and many-to-one orthologs (slower). **Default:** `False` |
 | `--random_id` | `RANDOM_ID` | Randomizes orthologies and stores results under `outdir/random_id`. **Default:**  |
-| `--max_combin` | `MAX_COMBIN` | Maximum combination for many-to-many families. **Default:** 300 |
+| `--max_combin` | `MAX_COMBIN` | Maximum combinations for many-to-many families. **Default:** 300 |
 | `--no_pbar` |  | Disable progress bar. **Default:** `False` |
 
 ---
