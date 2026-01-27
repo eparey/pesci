@@ -26,6 +26,7 @@ requirements:
     - datatable
     - networkx
     - pandas>=2.2.2
+    - scikit-image
     - scikit-learn>=1.5.2
     - scanpy>=1.10.1
     - scipy

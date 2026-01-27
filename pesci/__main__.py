@@ -142,9 +142,9 @@ def parse_commandline():
                                                     "stores results in outdir/random_id", 
                                                     default='')
 
-    ropt.add_argument('--max_combin', type=int, help="Maximum combination for many-to-many ",
-                                                     "ortholog groups, highly mutligenic"
-                                                     "family will be skipped"
+    ropt.add_argument('--max_combin', type=int, help="Maximum combination for many-to-many "
+                                                     "ortholog groups, highly mutligenic "
+                                                     "family will be skipped",
                                                      default=300)
 
     ropt.add_argument('--no_pbar', action='store_true',
