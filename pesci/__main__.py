@@ -142,6 +142,11 @@ def parse_commandline():
                                                     "stores results in outdir/random_id", 
                                                     default='')
 
+    ropt.add_argument('--max_combin', type=int, help="Maximum combination for many-to-many ",
+                                                     "ortholog groups, highly mutligenic"
+                                                     "family will be skipped"
+                                                     default=300)
+
     ropt.add_argument('--no_pbar', action='store_true',
                                    help="do not show progress bar")
 
@@ -432,7 +437,8 @@ def main():
                        ' and will be used. Homologs selection will not be re-run either.'
                        ' Use --force to recompute.', ec_scores)
     else:
-        icc.icc(norm_mat1, norm_mat2, args['ortho_pairs'], outprefix, max_combin=300,
+        icc.icc(norm_mat1, norm_mat2, args['ortho_pairs'], outprefix,
+                max_combin=args['max_combin'],
                 ncores=args['cores'], ono2one_only=args['ono2one_only'],
                 random_id=args['random_id'], seed=args['seed'],
                 do_not_downsample=args['do_not_downsample'],

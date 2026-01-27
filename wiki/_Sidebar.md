@@ -1,5 +1,5 @@
 * [Home](https://github.com/eparey/pesci/wiki)
 * [Quick-Start](https://github.com/eparey/pesci/wiki/Quick-Start)
-* [Help with Input files](https://github.com/eparey/pesci/wiki/Input-files)
-* [Understanding Output files](https://github.com/eparey/pesci/wiki/Outputs)
-* [Tips and Example Gallery](https://github.com/eparey/pesci/wiki/Examples)
+* [Help with Input files](https://github.com/eparey/pesci/wiki/Input-Files)
+* [Understanding Output files](https://github.com/eparey/pesci/wiki/Output-Files)
+* [Tips and Example Gallery](https://github.com/eparey/pesci/wiki/Tips-and-Examples.md)

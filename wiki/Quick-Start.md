@@ -1,6 +1,6 @@
 # Quick Start: Installation & Command-line Options
 
-This page provides installation instructions and a description of all available command-line options. For more details on input and output files, including R code to prepare input files from Seurat objects, please see [Help With Input Files](https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md) and [Understanding Output files](https://github.com/eparey/pesci/blob/main/wiki/Outputs.md). For examples illustrating specific options, tips and advanced use-cases, please see [Tips and Example Gallery](https://github.com/eparey/pesci/blob/main/wiki/Tips-and-Examples.md).
+This page provides installation instructions and a description of all available command-line options. For more details on input and output files, including R code to prepare input files from Seurat objects, please see [Help With Input Files](https://github.com/eparey/pesci/blob/main/wiki/Input-Files.md) and [Understanding Output files](https://github.com/eparey/pesci/blob/main/wiki/Output-Files.md). For examples illustrating specific options, tips and advanced use-cases, please see [Tips and Example Gallery](https://github.com/eparey/pesci/blob/main/wiki/Tips-and-Examples.md).
 
 ## Table of Content
 
@@ -95,6 +95,7 @@ All available options can be printed using `pesci --help`.
 | `--ec_threshold_many` | `EC_THRESHOLD_MANY` | Retain all distinct high-scoring pairs (> threshold) for many-to-many and many-to-one orthologs. **Default:** `None` |
 | `--do_not_downsample` |  | Use all 1-to-1 orthologs (instead of 1000 randomly chosen) for selection of best pairs for the many-to-many and many-to-one orthologs (slower). **Default:** `False` |
 | `--random_id` | `RANDOM_ID` | Randomizes orthologies and stores results under `outdir/random_id`. **Default:**  |
+| `--max_combin` | `MAX_COMBIN` | Maximum combination for many-to-many families. **Default:** 300 |
 | `--no_pbar` |  | Disable progress bar. **Default:** `False` |
 
 ---
