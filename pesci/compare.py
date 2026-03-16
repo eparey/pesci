@@ -496,6 +496,7 @@ def compare(matrix_a, matrix_b, outprefix, sp1='sp1', sp2='sp2', random_id='',
     df.columns = ['genes sp1', 'genes sp2', 'expression conservation', 'is_one2one']
     df.to_csv(outprefix+random_id+sp1+'-'+sp2+'_'+'expression_conservation_scores.tsv',
               sep='\t', index=False)
+
     #compute weighted correlations between cell types of sp1 and cell types of sp2
     result = icc.column_wise_wcorr_einsum(mat1_ok, mat2_ok, ec)
 

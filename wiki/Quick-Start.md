@@ -107,6 +107,9 @@ All available options can be printed using `pesci --help`.
 | `--colclust` | `COLCLUST` | Column containing cluster labels (ignored for `.h5ad`). Defaults to `cluster_name`, else second column. |
 | `--colclust1` | `COLCLUST1` | Same as `--colclust` but for species 1. **Default:** `None` |
 | `--colclust2` | `COLCLUST2` | Same as `--colclust` but for species 2. **Default:** `None` |
+| `--metacells` | `METACELLS` | Column containing metacell labels. If provided, used for EC score and ortholog selection. **Default:** `None`  |
+| `--metacells1` | `METACELLS1` | Same as `--metacells` but for species 1. **Default:** `None` |
+| `--metacells2` | `METACELLS2` | Same as `--metacells` but for species 2. **Default:** `None` |
 | `--colbroad` | `COLBROAD` | Column for broad annotations; used only for heatmap. **Default:** `None` |
 | `--colbroad1` | `COLBROAD1` | Broad annotations column for species 1. **Default:** `None` |
 | `--colbroad2` | `COLBROAD2` | Broad annotations column for species 2. **Default:** `None` |

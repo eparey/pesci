@@ -8,7 +8,8 @@ This page presents useful tips and illustrated examples of different potential u
 3. [Exploring the impact of the random seed](#exploring-the-impact-of-the-random-seed)
 4. [Filtering-out poorly characterized cell clusters](#filtering-out-poorly-characterized-cell-clusters)
 5. [Focusing on a subset of the cell clusters](#focusing-on-a-subset-of-the-cell-clusters)
-6. [Comparing organs within a single species](#comparing-organs-within-a-single-species)
+6. [Using metacells](#using-metacells)
+7. [Comparing organs within a single species](#comparing-organs-within-a-single-species)
 
 
 ## Customizing the output figure
@@ -166,7 +167,15 @@ pesci --matrix1 GSE237202_Cow_count_mat.csv --matrix2 GSE237203_Ferret_count_mat
 
 The default `--marker_specificity` parameter is set to 0.5, increasing the contribution of genes expressed higher in a cell type than its median expression across all clusters (and > 60th percentile expression across all clusters for `--marker_specificity 0.6`). Increasing this parameter can be beneficial to discriminate between closely-related cell-subtypes.
 
-## Comparing organs within a single-species
+## Using metacells
+
+The experimental option `--metacells` allows to use metacells grouping instead of clusters to compute EC conservation scores and perform best-ortholog selection. This option should be followed by the name of the metacell column in the cell-to-cluster file or the .h5ad scanpy object. For the datasets we tested Pesci on, using metacells had limited impact.
+
+```
+pesci --matrix1 data/placozoa/Tadh_final_matrix.tsv.gz --matrix2 data/placozoa/TrH2_final_matrix.tsv.gz --clusters1 data/placozoa/Tadh.sc_annot.tsv --clusters2 data/placozoa/TrH2.sc_annot.tsv -g data/placozoa/orthologous_pairs_ok.txt -c 10 -l1 Tadh -l2 TrH2 --metacells metacell -o out_placozoa_metacells
+```
+
+## Comparing organs within a single species
 
 With the the `--within_species` option, pesci can be run to compare two single-cell expression datasets from different organs but of the same species. Here, the orthology file is not necessary and can be omitted - identical gene names will be automatically matched across the input matrices.
 

@@ -9,13 +9,13 @@ Examples::
 
     $ pesci -m1 data/Cragig_matrix_EM.tsv.gz -m2 data/Procro_matrix_EM.tsv.gz\
       -c1 data/Cragig_cell_id.tsv -c2 data/Procro_cell_id.tsv\
-      -g data/orthologous_pairs_Procro-Cragig.txt -c 10 -sp1 Cragig -sp2 Procro
+      -g data/orthologous_pairs_Procro-Cragig.txt -c 10 -l1 Cragig -l2 Procro
 
     $ pesci --matrix1 ../data/placozoa/Tadh_final_matrix.tsv.gz\
             --matrix2 ../data/placozoa/TrH2_final_matrix.tsv.gz\
             --clusters1 ../data/placozoa/Tadh.sc_annot.tsv\
             --clusters2 ../data/placozoa/TrH2.sc_annot.tsv\
-            -g ../data/placozoa/orthologous_pairs_ok.txt -c 10 -sp1 Tadh -sp2 TrH2
+            -g ../data/placozoa/orthologous_pairs_ok.txt -c 10 -l1 Tadh -l2 TrH2
 
 """
 
@@ -125,7 +125,7 @@ def parse_commandline():
                                     "change in cluster 'a' vs 75 expression percentile across "
                                     "clusters", default=0.5)
 
-    ropt.add_argument('--ono2one_only', action='store_true', help="use 1-to-1 orthologs only")
+    ropt.add_argument('--one2one_only', action='store_true', help="use 1-to-1 orthologs only")
 
     ropt.add_argument('--ec_threshold_many', type=float, help="if set, instead of using only "
                                              "the best pair for many-to-many and "
@@ -184,6 +184,26 @@ def parse_commandline():
                                                     "if not set, will use column `cluster_name`, "
                                                     "if it does not exist, will attempt to use the "
                                                     "2nd column.",
+                                     default=None)
+
+    iopt.add_argument('--metacells', type=str, help="name of the column corresponding to metacells "
+                                                   "in the cell to cluster file (or h5ad)"
+                                                   " - if set, metacells will be used instead of "
+                                                   "clusters to compute expression conservation "
+                                                   "scores for orthologs\n"
+                                                   "use --metacells1 or --metacells2 to "
+                                                   "specify different column names for species1 or"
+                                                   " species2.",
+                                    default=None)
+
+    iopt.add_argument('--metacells1', type=str, help="name of the column corresponding to metacells "
+                                                    "in the cell to cluster file (or h5ad) for "
+                                                    "species1.",
+                                     default=None)
+
+    iopt.add_argument('--metacells2', type=str, help="name of the column corresponding to metacells "
+                                                    "in the cell to cluster file (or h5ad) for "
+                                                    "species2.",
                                      default=None)
 
     iopt.add_argument('--colbroad', type=str, help="name of the column corresponding to broad "
@@ -338,6 +358,7 @@ def main():
     os.makedirs(args['outdir']+ 'files', exist_ok=True)
     outdir = args['outdir']
 
+    #set up logging
     logger = configure_logs(outdir, args['logfile'])
 
     if not (args['ortho_pairs'] or args['within_species']):
@@ -347,12 +368,27 @@ def main():
     sp1 = args["label1"]
     sp2 = args["label2"]
 
+    #set-up metacells related options, if provided
+    meta1 = None
+    meta2 = None
+    if args['metacells'] or (args['metacells1'] and args['metacells2']):
+        if args['metacells']:
+            meta1 = args['metacells']
+            meta2 = args['metacells']
+
+        else:
+            meta1 = args['metacells1']
+            meta2 = args['metacells2']
+
+    # start with matrix 1, aggregate across cells and normalize expression (fold-change)
     mat1 = args['matrix1']
     logger.info('Gene-cell expression matrix 1: %s', ' '.join(mat1))
     norm_mat1 = args['outdir'] + 'files/' + sp1 + '_' + Path(mat1[0]).stem +\
                '_expr_clusters_norm_all.tsv'
     force_ec = False
-    if os.path.exists(norm_mat1) and os.path.getsize(norm_mat1) > 0 and not args['force']:
+
+    if os.path.exists(norm_mat1) and os.path.getsize(norm_mat1) > 0 and not args['force']\
+        and not meta1:
         logger.warning('Normalized gene-cluster expression matrix %s already exists '
                        'and will be used. Use --force to recompute.', norm_mat1)
     else:
@@ -379,6 +415,22 @@ def main():
                      filter_out_start=filter_out_start, keep_only=keep_only,
                      colclust=colclust1, broad=broad1, min_umi=args['min_umi'],
                      marker_specificity=args['marker_specificity'])
+
+        if meta1:
+            _, ext = os.path.splitext(args['matrix1'][0])
+            c = args['clusters1']
+            if ext == '.h5ad':
+                c = meta1
+
+            logger.info('Computing normalized expression for metacells')
+
+            nm.normalize(args['matrix1'], c, 
+                         norm_mat1.replace('expr_clusters', 'expr_metacells'),
+                         cores=args['cores'],filter_out_start=filter_out_start,
+                         keep_only=keep_only, colclust=meta1,
+                         min_umi=args['min_umi'], 
+                         marker_specificity=args['marker_specificity'])
+
         force_ec = True
 
     mat2 = args['matrix2']
@@ -386,7 +438,8 @@ def main():
     norm_mat2 = args['outdir'] + 'files/' + sp2 + '_' + Path(mat2[0]).stem +\
                '_expr_clusters_norm_all.tsv'
 
-    if os.path.exists(norm_mat2) and os.path.getsize(norm_mat2) > 0 and not args['force']:
+    if os.path.exists(norm_mat2) and os.path.getsize(norm_mat2) > 0 and not args['force']\
+       and not meta2:
         logger.warning('Normalized gene-cluster expression matrix %s already exists'
                        ' and will be used. Use --force to recompute.', norm_mat2)
     else:
@@ -413,6 +466,23 @@ def main():
                      filter_out_start=filter_out_start, keep_only=keep_only,
                      colclust=colclust2, broad=broad2, min_umi=args['min_umi'],
                      marker_specificity=args['marker_specificity'])
+
+        if meta2:
+            _, ext = os.path.splitext(args['matrix2'][0])
+            c = args['clusters2']
+            if ext == '.h5ad':
+                c = meta1
+
+
+            logger.info('Computing normalized expression for metacells')
+
+            nm.normalize(args['matrix2'], c, 
+                         norm_mat2.replace('expr_clusters', 'expr_metacells'),
+                         cores=args['cores'], filter_out_start=filter_out_start,
+                         keep_only=keep_only, colclust=meta2,
+                         min_umi=args['min_umi'],
+                         marker_specificity=args['marker_specificity'])         
+
         force_ec = True
 
     if not args['random_id']:
@@ -432,17 +502,27 @@ def main():
     if os.path.exists(ec_scores) and os.path.getsize(ec_scores) > 0 and not args['force']\
        and not force_ec and\
        ((os.path.exists(ec_scores_para) and os.path.getsize(ec_scores_para) > 0)\
-        or args['ono2one_only']):
+        or args['one2one_only']):
         logger.warning('Orthologs expression conservation scores already computed %s'
                        ' and will be used. Homologs selection will not be re-run either.'
                        ' Use --force to recompute.', ec_scores)
     else:
-        icc.icc(norm_mat1, norm_mat2, args['ortho_pairs'], outprefix,
-                max_combin=args['max_combin'],
-                ncores=args['cores'], ono2one_only=args['ono2one_only'],
-                random_id=args['random_id'], seed=args['seed'],
-                do_not_downsample=args['do_not_downsample'],
-                within_species=args['within_species'])
+        if meta1 and meta2:
+            icc.icc(norm_mat1.replace('expr_clusters', 'expr_metacells'),
+                    norm_mat2.replace('expr_clusters', 'expr_metacells'),
+                    args['ortho_pairs'], outprefix,
+                    max_combin=args['max_combin'],
+                    ncores=args['cores'], one2one_only=args['one2one_only'],
+                    random_id=args['random_id'], seed=args['seed'],
+                    do_not_downsample=args['do_not_downsample'],
+                    within_species=args['within_species'])
+        else:
+            icc.icc(norm_mat1, norm_mat2, args['ortho_pairs'], outprefix,
+                    max_combin=args['max_combin'],
+                    ncores=args['cores'], one2one_only=args['one2one_only'],
+                    random_id=args['random_id'], seed=args['seed'],
+                    do_not_downsample=args['do_not_downsample'],
+                    within_species=args['within_species'])
 
     logger.info('Computing gene expression correlation between clusters of %s and %s', sp1, sp2)
     broadfile1, broadfile2 = None, None

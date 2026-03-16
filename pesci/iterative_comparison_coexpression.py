@@ -545,7 +545,7 @@ def write_ec_one2one(one2one, expr_conservation_orthologs, out_ortho):
     Writes scores to a tab-seprated file.
 
     Args:
-        ono2one (list): gene names (column names of expr_conservation_orthologs)
+        one2one (list): gene names (column names of expr_conservation_orthologs)
         expr_conservation_orthologs (numpy.array): vector with EC scores for each gene, genes in
                                                    the same order as in one2one
         out_ortho (str): name of output file
@@ -645,7 +645,7 @@ def parallel_select_homologs(a, b, mat1, mat2, manyortho, batch_size, ncores=1, 
     return async_res
 
 def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300, random_id='',
-        ncores=1, batch_size=10, ono2one_only=False, seed=None, do_not_downsample=False,
+        ncores=1, batch_size=10, one2one_only=False, seed=None, do_not_downsample=False,
         within_species=False, bar_format=BAR_FORMAT):
 
     """
@@ -665,7 +665,7 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
                                    so consider setting random1 or random2, ...etc)
         ncores (int, optional): number of cores to use
         batch_size (int, optional): size of batch for each parallel job
-        ono2one_only (bool, optional): do not select best pairs for many-to-many / one-to-many,
+        one2one_only (bool, optional): do not select best pairs for many-to-many / one-to-many,
                                        use only one-to-one orthologs
         seed (int, optional): random seed, use for reproducible results
         do_not_downsample (bool, optional): if set to True, all 1-1 orthologs are used for
@@ -728,7 +728,7 @@ def icc(matrix_file_a, matrix_file_b, orthology_file, outprefix, max_combin=300,
     write_ec_one2one(one2one, expr_conservation_orthologs,
                      outprefix + '_1-to-1-orthologs_correlation_scores.tsv')
 
-    if not ono2one_only:
+    if not one2one_only:
 
         #Select best pairs for many-many / one-many
         logger.info('Selecting best pair for many-to-many / one-to-many / many-to-one orthologs')
