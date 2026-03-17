@@ -44,7 +44,6 @@ pesci = "pesci.__main__:main"
 
 [project.urls]
 Source = "https://github.com/eparey/pesci"
-Documentation = "https://pesci.readthedocs.io"
 
 [tool.setuptools.dynamic]
 version = { attr = "pesci.version.__version__" }
