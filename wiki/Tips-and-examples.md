@@ -169,7 +169,7 @@ The default `--marker_specificity` parameter is set to 0.5, increasing the contr
 
 ## Using metacells
 
-The experimental option `--metacells` allows to use metacells grouping instead of clusters to compute EC conservation scores and perform best-ortholog selection. This option should be followed by the name of the metacell column in the cell-to-cluster file or the .h5ad scanpy object. For the datasets we tested Pesci on, using metacells had limited impact.
+The experimental option `--metacells` allows to use metacells grouping instead of clusters to compute EC conservation scores and perform best-ortholog selection. This option should be followed by the name of the metacell column in the cell-to-cluster file or the .h5ad scanpy object. For the datasets we tested Pesci on, using metacells had limited impact. Different values can be provided to dataset1 and dataset2 by using options `--metacells1` and `--metacells2`.
 
 ```
 pesci --matrix1 data/placozoa/Tadh_final_matrix.tsv.gz --matrix2 data/placozoa/TrH2_final_matrix.tsv.gz --clusters1 data/placozoa/Tadh.sc_annot.tsv --clusters2 data/placozoa/TrH2.sc_annot.tsv -g data/placozoa/orthologous_pairs_ok.txt -c 10 -l1 Tadh -l2 TrH2 --metacells metacell -o out_placozoa_metacells

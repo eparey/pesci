@@ -18,7 +18,7 @@ This page describes accepted input file formats and how to produce them.
 
 Pesci requires 3 main inputs: a **gene orthology file** listing all orthologous gene pairs (one-to-one and many-to-many) between the two species under comparison and the **single-cell gene expression count data** for each of these two species.
 
-Single-cell gene expression counts can be provided in any of the following formats: a **sparse expression matrix** (a CellRanger-like directory), a **scanpy h5ad** file **OR** a **dense expression matrix**. Several input files for a single species can be provided, for instance in cases where several libraries were sequenced and stored in distinct files (please see an example run in [Tips and Example Gallery](https://github.com/eparey/pesci/blob/main/wiki/Tips-and-examples.md#providing-multiple-libraries-as-input). Depending on input format, an additional file giving the **cell barcode to cell cluster correspondence** might be necessary.
+Single-cell gene expression counts can be provided in any of the following formats: a **sparse expression matrix** (a CellRanger-like directory), a **scanpy h5ad** file **OR** a **dense expression matrix**. Several input files for a single species can be provided, for instance in cases where several libraries were sequenced and stored in distinct files (please see an example run in [Tips and Example Gallery](https://github.com/eparey/pesci/blob/main/wiki/Tips-and-examples.md#providing-multiple-libraries-as-input)). Depending on input format, an additional file giving the **cell barcode to cell cluster correspondence** might be necessary.
 
 On this page, we describe all accepted input formats and present example code to convert **Seurat Objects** into these formats. 
 
@@ -247,19 +247,26 @@ In this section, we describe the different accepted single-cell expression data 
 
 ## Optional Input Files
 
-Optionally, broad annotations can be provided in addition to cluster annotations and are used to order the output single-cell comparison heatmap. These can be given as an additional column in the cell-to-cluster file or in the AnnData object saved as .h5ad (see --colbroad in [Quick-Start](https://github.com/eparey/pesci/blob/main/wiki/Quick-Start.md#detailed-usage) and [Tips and Example Gallery](https://github.com/eparey/pesci/blob/main/wiki/Tips-and-examples.md#ordering-by-broad-annotation)).
+- **Broad annotations**
 
-- **Example:** '.tsv' cluster annotation file with specific ("cluster_name", for --colclust) and broad ("broad", for --colbroad) labels:
+	Optionally, broad annotations can be provided in addition to cluster annotations and are used to order the output single-cell comparison heatmap. These can be given as an additional column in the cell-to-cluster file or in the AnnData object saved as .h5ad (see --colbroad in [Quick-Start](https://github.com/eparey/pesci/blob/main/wiki/Quick-Start.md#detailed-usage) and [Tips and Example Gallery](https://github.com/eparey/pesci/blob/main/wiki/Tips-and-examples.md#ordering-by-broad-annotation)).
 
-	```
-	"cell"	"cluster_name"	"broad"
-	"AAACCTGGTCTGCAAT-1"	"Myo-Pax6+"	"Muscle"
-	"AAACCTGGTGCTGTAT-1"	"Myo-VVR"	"Muscle"
-	"AAACCTGGTGGGTCAA-1"	"Unk"	"Unknown"
-	"AAACCTGTCCAAAGTC-1"	"Myo-DVR-3"	"Muscle"
-	"AAACCTGTCCACGTTC-1"	"Hem-2"	"Phagocyte"
-	"AAACCTGTCCTTTCGG-1"	"She-1"	"Secretory"
-	```
+	- **Example:** '.tsv' cluster annotation file with specific ("cluster_name", for --colclust) and broad ("broad", for --colbroad) labels:
+
+		```
+		"cell"	"cluster_name"	"broad"
+		"AAACCTGGTCTGCAAT-1"	"Myo-Pax6+"	"Muscle"
+		"AAACCTGGTGCTGTAT-1"	"Myo-VVR"	"Muscle"
+		"AAACCTGGTGGGTCAA-1"	"Unk"	"Unknown"
+		"AAACCTGTCCAAAGTC-1"	"Myo-DVR-3"	"Muscle"
+		"AAACCTGTCCACGTTC-1"	"Hem-2"	"Phagocyte"
+		"AAACCTGTCCTTTCGG-1"	"She-1"	"Secretory"
+		```
+
+	- **Metacells**
+
+	The option --metacells allows to use metacells grouping instead of clusters to compute EC conservation scores and perform best-ortholog selection. The option can be used by passing the name of the metacells columns in the .h5ad or cluster annotation file ([Tips and Example Gallery](https://github.com/eparey/pesci/blob/main/wiki/Tips-and-examples.md#using-metacells))
+
 
 ## References
 
