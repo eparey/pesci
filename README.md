@@ -18,20 +18,20 @@ The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1
 
 - With conda (local for now, will upload to bioconda at a later stage)
 
-	`git clone git@github.com:eparey/pesci.git && cd pesci`
+	`git clone git@github.com:eparey/pesci.git`
 
 	`conda create -n pesci_env python=3.12 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv) 
 
-	`conda install pesci -c ./recipes/build -c conda-forge`
+	`conda install pesci -c ./pesci/recipes/build -c conda-forge`
 
 
 - With pip (local for now, will upload to pypi at a later stage)
 
-	`git clone git@github.com:eparey/pesci.git && cd pesci`
+	`git clone git@github.com:eparey/pesci.git`
 
 	`conda create -n pesci_env python=3.12 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv) [may need python 3.9 to install llvmlite dependency on macos...]
 
-	`pip install . -I`
+	`pip install pesci/dist/pesci-0.1.0.tar.gz`
 
 
 ## Usage
