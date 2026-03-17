@@ -39,8 +39,8 @@ test:
 
 about:
   home: http://github.com/eparey/pesci
-  license: 'NONE'
-  license_family: 'NONE'
+  license: BSD-3-Clause
+  license_file: LICENSE.txt
   summary: 'Pretty Easy Single-cell Comparisons with ICC'
 
 extra:

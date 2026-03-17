@@ -7,7 +7,7 @@ name = "pesci"
 dynamic = ["version"]
 requires-python = ">=3.7, <3.10"
 
-license = 'BSD-3'
+license = "BSD-3-clause"
 license-files = ["LICENSE.txt"]
 description = 'Pretty Easy Single-cell Comparisons using ICC'
 authors = [{ name = "Elise Parey", email = "e.parey@ucl.ac.uk" }]
