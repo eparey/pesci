@@ -24,7 +24,7 @@ The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1
 
   `conda create -n pesci_env -c conda-forge -c eparey pesci`
 
-  **Mac Apple Silicon Setup** to ensure compatibility, create the environment using the osx-64 platform:
+  **Mac Apple Silicon Setup** - to ensure compatibility, create the environment using the osx-64 platform:
 
   `conda create -n pesci_env -c conda-forge -c eparey pesci --platform osx-64`
 
