@@ -1,6 +1,6 @@
 # pesci - Pretty Easy Single-cell Comparisons using ICC
 
-![Static Badge](https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9%7C3.10%7C3.11%7C3.12-blue?logo=python)
+![Static Badge](https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue?logo=python)
 
 Pesci is an efficient and user-friendly implementation of the Iterative Comparison of Coexpression (ICC) algorithm to compare **single-cell gene expression datasets across or within species**. 
 
@@ -20,7 +20,7 @@ The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1
 
 	`git clone git@github.com:eparey/pesci.git`
 
-	`conda create -n pesci_env python=3.12 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv) 
+	`conda create -n pesci_env python=3.9 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv) 
 
 	`conda install pesci -c ./pesci/recipes/build -c conda-forge`
 
@@ -29,7 +29,7 @@ The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1
 
 	`git clone git@github.com:eparey/pesci.git`
 
-	`conda create -n pesci_env python=3.12 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv) [may need python 3.9 to install llvmlite dependency on macos...]
+	`conda create -n pesci_env python=3.9 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv) [may need python 3.9 to install llvmlite dependency on macos...]
 
 	`pip install pesci/dist/pesci-0.1.0.tar.gz`
 
