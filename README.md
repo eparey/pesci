@@ -28,13 +28,13 @@ The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1
 
   `conda create -n pesci_env -c conda-forge -c eparey pesci --platform osx-64`
 
-- With pip (local for now, will upload to pypi at a later stage)
+- With pip (testpypi for now, will upload to pypi at a later stage)
 
-	`git clone git@github.com:eparey/pesci.git`
+	`pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple pesci`
 
-	`conda create -n pesci_env python=3.9 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv) [may need python 3.9 to install llvmlite dependency on macos...]
+  Alternatively, to install in a specific environment (recommended):
 
-	`pip install pesci/dist/pesci-0.1.0.tar.gz`
+	`conda create -n pesci_env python=3.9 && conda activate pesci_env && pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple pesci`
 
 
 ## Usage
