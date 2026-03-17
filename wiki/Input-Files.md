@@ -265,7 +265,7 @@ In this section, we describe the different accepted single-cell expression data 
 
 - **Metacells**
 
-The option --metacells allows to use metacells grouping instead of clusters to compute EC conservation scores and perform best-ortholog selection. The option can be used by passing the name of the metacells columns in the .h5ad or cluster annotation file ([Tips and Example Gallery](https://github.com/eparey/pesci/blob/main/wiki/Tips-and-examples.md#using-metacells)).
+	The option --metacells allows to use metacells grouping instead of clusters to compute EC conservation scores and perform best-ortholog selection. The option can be used by passing the name of the metacells columns in the .h5ad or cluster annotation file ([Tips and Example Gallery](https://github.com/eparey/pesci/blob/main/wiki/Tips-and-examples.md#using-metacells)).
 
 
 ## References
