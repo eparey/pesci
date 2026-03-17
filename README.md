@@ -17,12 +17,15 @@ The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1
 ## Installation
 
 - With conda (using my conda channel for now, will upload to bioconda at a later stage)
+  
   `conda install -c conda-forge -c eparey pesci`
   
   Alternatively, to install in a specific environment (recommended):
+
   `conda create -n pesci_env -c conda-forge -c eparey pesci`
 
   **Mac Apple Silicon Setup:** to ensure compatibility, create the environment using the osx-64 platform:
+
   `conda create -n pesci_env -c conda-forge -c eparey pesci --platform osx-64`
 
 - With pip (local for now, will upload to pypi at a later stage)
