@@ -20,9 +20,17 @@ The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1
 
 	`git clone git@github.com:eparey/pesci.git`
 
-	`conda create -n pesci_env python=3.9 && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv) 
+	`conda create -n pesci_env && conda activate pesci_env` #suggest installing in an isolated env 'pesci_env' (conda or venv)
 
 	`conda install pesci -c ./pesci/recipes/build -c conda-forge`
+
+
+	If working on a MacOS with an ARM architecture, you may need to specify to use the osx-64 subdir:
+
+	`CONDA_SUBDIR=osx-64 conda create -n pesci_env && conda activate pesci_env && conda env config vars set CONDA_SUBDIR=osx-64 && conda deactivate && conda activate pesci_env`
+
+	And then:
+		`conda install pesci -c ./pesci/recipes/build -c conda-forge`
 
 
 - With pip (local for now, will upload to pypi at a later stage)
