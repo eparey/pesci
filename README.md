@@ -7,13 +7,6 @@ Pesci is an efficient and user-friendly implementation of the Iterative Comparis
 The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1186/gb-2007-8-4-r50) and first applied to single-cell gene expression by ([Najle, Grau-Bové et al.](https://doi.org/10.1016%2Fj.cell.2023.08.027)).
 
 
-## Citing
-
-- Pesci -- Coming soon
-
-- Najle, Grau-Bové et al. Stepwise emergence of the neuronal gene expression program in early animal evolution. (2023). Cell.
-
-
 ## Installation
 
 - With conda (using my conda channel for now, will upload to bioconda at a later stage)
@@ -61,7 +54,8 @@ pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv
 LINK TO WIKI HERE TODO
 
 ## Contacts
-
 - [Elise Parey](e.parey@ucl.ac.uk)
 - [Laura Piovani](l.piovani@ucl.ac.uk)
+
+Feel free to open an issue or send an email if you encounter any difficulties, so that we keep improving Pesci to be even easier to use ;)
 
