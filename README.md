@@ -57,5 +57,5 @@ LINK TO WIKI HERE TODO
 - [Elise Parey](e.parey@ucl.ac.uk)
 - [Laura Piovani](l.piovani@ucl.ac.uk)
 
-Feel free to open an issue or send an email if you encounter any difficulties, so that we keep improving Pesci to be even easier to use ;)
+Feel free to open an issue or send an email if you encounter any difficulties, so that we keep improving Pesci to be pretty easier ;)
 
