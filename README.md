@@ -1,4 +1,4 @@
-# pesci - Pretty Easy Single-cell Comparisons using ICC
+# Pesci - Pretty Easy Single-cell Comparisons using ICC
 
 ![Static Badge](https://img.shields.io/badge/Python-3.7%7C3.8%7C3.9-blue?logo=python)
 
