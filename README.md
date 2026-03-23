@@ -21,7 +21,7 @@ The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1
 
   `conda create -n pesci_env -c conda-forge -c eparey pesci --platform osx-64`
 
-- With pip (testpypi for now, will upload to pypi at a later stage)
+- With pip **recommended on Windows** (testpypi for now, will upload to pypi at a later stage)
 
 	`pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple pesci`
 
@@ -57,5 +57,5 @@ LINK TO WIKI HERE TODO
 - [Elise Parey](e.parey@ucl.ac.uk)
 - [Laura Piovani](l.piovani@ucl.ac.uk)
 
-Feel free to open an issue or send an email if you encounter any difficulties, so that we keep improving Pesci to be pretty easier ;)
+Please feel free to open an issue or send an email if you encounter any difficulties, so that we keep improving Pesci and make it pretty easier ;)
 
