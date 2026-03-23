@@ -4,7 +4,7 @@
 
 Pesci is an efficient and user-friendly implementation of the Iterative Comparison of Coexpression (ICC) algorithm to compare **single-cell gene expression datasets across or within species**. 
 
-The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1186/gb-2007-8-4-r50) and first applied to single-cell gene expression by ([Najle, Grau-Bové et al.](https://doi.org/10.1016%2Fj.cell.2023.08.027)).
+The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1186/gb-2007-8-4-r50) and first applied to single-cell gene expression by [Najle, Grau-Bové et al.](https://doi.org/10.1016%2Fj.cell.2023.08.027).
 
 
 ## Installation
