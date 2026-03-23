@@ -51,7 +51,7 @@ pesci --matrix1 data/Cragig_matrix_EM.tsv.gz --matrix2 data/Procro_matrix_EM.tsv
 
 ## Documentation
 
-LINK TO WIKI HERE TODO
+Please see [the wiki](https://github.com/eparey/pesci/wiki) for a guide on how to use pesci including instructions and example code to format input files.  
 
 ## Contacts
 - [Elise Parey](e.parey@ucl.ac.uk)
