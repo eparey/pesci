@@ -9,7 +9,7 @@ The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1
 
 ## Installation
 
-- With conda (using my conda channel for now, will upload to bioconda at a later stage)
+- With conda (my conda channel for now, will push to bioconda at publication):
   
   `conda install -c conda-forge -c eparey pesci`
   
@@ -21,7 +21,7 @@ The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1
 
   `conda create -n pesci_env -c conda-forge -c eparey pesci --platform osx-64`
 
-- With pip **[recommended on Windows]** (testpypi for now, will upload to pypi at a later stage)
+- With pip **[recommended on Windows]** (testpypi for now, will push to pypi at publication):
 
 	`pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple pesci`
 
@@ -29,6 +29,14 @@ The ICC algorithm was first proposed by [Tirosh and Barkai](https://doi.org/10.1
 
 	`conda create -n pesci_env python=3.9 && conda activate pesci_env && pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple pesci`
 
+
+ - From source:
+   
+   `git clone git@github.com:eparey/pesci.git && cd pesci`
+   
+	`conda create -n pesci_env python=3.9 && conda activate pesci_env`
+
+	`pip install . -I`
 
 ## Usage
 
