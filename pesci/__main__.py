@@ -35,6 +35,7 @@ import tqdm
 
 from . import version
 from . import normalize as nm, iterative_comparison_coexpression as icc, compare as cp
+from . import upgma as up
 
 #do not show progress bar if stderr is redirected to file
 if not sys.stderr.isatty():
@@ -44,7 +45,16 @@ def parse_commandline():
     """
     pesci command-line argument parser
     """
-    parser = argparse.ArgumentParser(description="Pesci compares gene expression of single-cell "
+    parser = argparse.ArgumentParser(description="Pesci",
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                     prog='pesci')
+
+    parser.add_argument('-v', '--version', action='version',
+                                           version='%(prog)s ' + version.__version__)
+
+
+    #Required arguments
+    parser_main = argparse.ArgumentParser(description="Pesci compares gene expression of cell "
                                      "clusters between two species using the ICC algorithm, using "
                                      "one-to-one orthologues complemented with many-to-many / "
                                      "many-to-one / one-to-many orthologous genes.\n\n"
@@ -56,11 +66,7 @@ def parse_commandline():
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                      prog='pesci')
 
-    parser.add_argument('-v', '--version', action='version',
-                                           version='%(prog)s ' + version.__version__)
-
-    #Required arguments
-    required = parser.add_argument_group('required arguments')
+    required = parser_main.add_argument_group('required arguments')
     required.add_argument('-m1', '--matrix1', type=str, nargs='+', required=True,
                                               help="gene expression per cell for species 1 "
                                               "(raw count matrix), accepts: dense matrix (can "
@@ -85,7 +91,7 @@ def parse_commandline():
                                                            " file (one pair per line).")
 
     #Recommended optional arguments
-    raopt = parser.add_argument_group('recommended arguments')
+    raopt = parser_main.add_argument_group('recommended arguments')
     raopt.add_argument('-o', '--outdir', type=str, required=False, default="output_pesci/",
                                         help='name of output directory (will be created if does '
                                              'not exist)')
@@ -104,13 +110,13 @@ def parse_commandline():
                                                 "within the same species")
 
     #Optional arguments resources
-    resources = parser.add_argument_group('resources')
+    resources = parser_main.add_argument_group('resources')
     resources.add_argument('-c', '--cores', help='number of cores to use for parallel operations',
                                             type=int, required=False, default=1)
 
 
     #Optional arguments running
-    ropt = parser.add_argument_group('running')
+    ropt = parser_main.add_argument_group('running')
 
     ropt.add_argument('--force', action='store_true',
                                    help="recompute all intermediary files (per cluster normalized "
@@ -139,7 +145,7 @@ def parse_commandline():
 
     ropt.add_argument('--random_id', type=str, help="triggers a randomization of orthologies "
                                                     "to run pesci on randomized orthologs; "
-                                                    "stores results in outdir/random_id", 
+                                                    "stores results in outdir/random_id",
                                                     default='')
 
     ropt.add_argument('--max_combin', type=int, help="Maximum combination for many-to-many "
@@ -151,7 +157,7 @@ def parse_commandline():
                                    help="do not show progress bar")
 
     #Optional arguments input
-    iopt = parser.add_argument_group('inputs')
+    iopt = parser_main.add_argument_group('inputs')
 
     iopt.add_argument('--min_umi', type=int, help="minimum total umi for a gene to be retained for "
                                                   "comparison", default=10)
@@ -196,13 +202,13 @@ def parse_commandline():
                                                    " species2.",
                                     default=None)
 
-    iopt.add_argument('--metacells1', type=str, help="name of the column corresponding to metacells "
-                                                    "in the cell to cluster file (or h5ad) for "
+    iopt.add_argument('--metacells1', type=str, help="name of the column corresponding to metacells"
+                                                    " in the cell to cluster file (or h5ad) for "
                                                     "species1.",
                                      default=None)
 
-    iopt.add_argument('--metacells2', type=str, help="name of the column corresponding to metacells "
-                                                    "in the cell to cluster file (or h5ad) for "
+    iopt.add_argument('--metacells2', type=str, help="name of the column corresponding to metacells"
+                                                    " in the cell to cluster file (or h5ad) for "
                                                     "species2.",
                                      default=None)
 
@@ -267,7 +273,7 @@ def parse_commandline():
                                              'only.')
 
     #Optional arguments output
-    oopt = parser.add_argument_group('outputs')
+    oopt = parser_main.add_argument_group('outputs')
 
     oopt.add_argument('-l', '--logfile', type=str, required=False, default="",
                                                help='logfile, if specified this will overwrite'
@@ -306,7 +312,38 @@ def parse_commandline():
                                                                         "the heatmap for matches "
                                                                         "driven by < 10 genes.")
 
-    args = vars(parser.parse_args())
+    upgma_parser = argparse.ArgumentParser(description="UPGMA script utility. Runs hierarchical "
+                                                       "clustering to summarise "
+                                                       "multiple comparisons.", add_help=True)
+
+
+    required_other = upgma_parser.add_argument_group('upgma arguments')
+
+
+    required_other.add_argument('-j', '--jobname', type=str, required=True, default="upgma",
+                                help='job name (prefix to identify outputs)')
+
+    required_other.add_argument('-o', '--outdir', type=str, required=True, default="output_pesci/",
+                                help='name of the pesci output directory')
+
+    required_other.add_argument('-f', '--figure_format', type=str, required=False, default="pdf",
+                                               help='format for output figures',
+                                               choices=['svg', 'png', 'pdf'])
+
+    required_other.add_argument('-l', '--logfile', type=str, required=False, default="",
+                                               help='logfile, if specified this will overwrite'
+                                               ' the default (i.e. pesci.log in the specified'
+                                               ' output folder)')
+
+
+    if len(sys.argv) > 1 and sys.argv[1] == "upgma":
+        sys.argv.pop(1)
+        args = vars(upgma_parser.parse_args())
+        args["command"] = "upgma"
+
+    else:
+        args = vars(parser_main.parse_args())
+        args["command"] = "main"
 
     return args
 
@@ -350,9 +387,6 @@ def main():
 
     args = parse_commandline()
 
-    if args['no_pbar']:
-        tqdm.tqdm.__init__ = partialmethod(tqdm.tqdm.__init__, disable=True)
-
     # Create output dir
     args['outdir'] = args['outdir'].rstrip('/') + '/'
     os.makedirs(args['outdir']+ 'files', exist_ok=True)
@@ -361,182 +395,194 @@ def main():
     #set up logging
     logger = configure_logs(outdir, args['logfile'])
 
-    if not (args['ortho_pairs'] or args['within_species']):
-        logger.fatal('Either provide an orthology file with --ortho_pairs or '
-                     'use --within_species for comparison across organs of the same species')
+    if args['command'] == 'upgma':
 
-    sp1 = args["label1"]
-    sp2 = args["label2"]
+        logger.info('Summarising pairwise comparisons in %s', args['outdir'])
 
-    #set-up metacells related options, if provided
-    meta1 = None
-    meta2 = None
-    if args['metacells'] or (args['metacells1'] and args['metacells2']):
-        if args['metacells']:
-            meta1 = args['metacells']
-            meta2 = args['metacells']
+        up.hierarchical_clustering(args['outdir'], args['jobname'], args['figure_format'])
 
-        else:
-            meta1 = args['metacells1']
-            meta2 = args['metacells2']
+        logger.info('Done! Results in %s', args['outdir'])
 
-    # start with matrix 1, aggregate across cells and normalize expression (fold-change)
-    mat1 = args['matrix1']
-    logger.info('Gene-cell expression matrix 1: %s', ' '.join(mat1))
-    norm_mat1 = args['outdir'] + 'files/' + sp1 + '_' + Path(mat1[0]).stem +\
-               '_expr_clusters_norm_all.tsv'
-    force_ec = False
-
-    if os.path.exists(norm_mat1) and os.path.getsize(norm_mat1) > 0 and not args['force']\
-        and not meta1:
-        logger.warning('Normalized gene-cluster expression matrix %s already exists '
-                       'and will be used. Use --force to recompute.', norm_mat1)
     else:
-        colclust1 = args['colclust']
-        if args['colclust1']:
-            colclust1 = args['colclust1']
-        broad1 = args['colbroad']
-        if args['colbroad1']:
-            broad1 =  args['colbroad1']
 
-        keep_only = None
-        if args['keep_only']:
-            keep_only = tuple(args['keep_only'].split(','))
-        if args['keep_only1']:
-            keep_only = tuple(args['keep_only1'].split(','))
+        if args['no_pbar']:
+            tqdm.tqdm.__init__ = partialmethod(tqdm.tqdm.__init__, disable=True)
 
-        filter_out_start = None
-        if args['filter_out']:
-            filter_out_start = tuple(args['filter_out'].split(','))
-        if args['filter_out1']:
-            filter_out_start = tuple(args['filter_out1'].split(','))
+        if not (args['ortho_pairs'] or args['within_species']):
+            logger.fatal('Either provide an orthology file with --ortho_pairs or '
+                         'use --within_species for comparison across organs of the same species')
 
-        nm.normalize(args['matrix1'], args['clusters1'], norm_mat1, cores=args['cores'],
-                     filter_out_start=filter_out_start, keep_only=keep_only,
-                     colclust=colclust1, broad=broad1, min_umi=args['min_umi'],
-                     marker_specificity=args['marker_specificity'])
+        sp1 = args["label1"]
+        sp2 = args["label2"]
 
-        if meta1:
-            _, ext = os.path.splitext(args['matrix1'][0])
-            c = args['clusters1']
-            if ext == '.h5ad':
-                c = meta1
+        #set-up metacells related options, if provided
+        meta1 = None
+        meta2 = None
+        if args['metacells'] or (args['metacells1'] and args['metacells2']):
+            if args['metacells']:
+                meta1 = args['metacells']
+                meta2 = args['metacells']
 
-            logger.info('Computing normalized expression for metacells')
+            else:
+                meta1 = args['metacells1']
+                meta2 = args['metacells2']
 
-            nm.normalize(args['matrix1'], c, 
-                         norm_mat1.replace('expr_clusters', 'expr_metacells'),
-                         cores=args['cores'],filter_out_start=filter_out_start,
-                         keep_only=keep_only, colclust=meta1,
-                         min_umi=args['min_umi'], 
+        # start with matrix 1, aggregate across cells and normalize expression (fold-change)
+        mat1 = args['matrix1']
+        logger.info('Gene-cell expression matrix 1: %s', ' '.join(mat1))
+        norm_mat1 = args['outdir'] + 'files/' + sp1 + '_' + Path(mat1[0]).stem +\
+                   '_expr_clusters_norm_all.tsv'
+        force_ec = False
+
+        if os.path.exists(norm_mat1) and os.path.getsize(norm_mat1) > 0 and not args['force']\
+            and not meta1:
+            logger.warning('Normalized gene-cluster expression matrix %s already exists '
+                           'and will be used. Use --force to recompute.', norm_mat1)
+        else:
+            colclust1 = args['colclust']
+            if args['colclust1']:
+                colclust1 = args['colclust1']
+            broad1 = args['colbroad']
+            if args['colbroad1']:
+                broad1 =  args['colbroad1']
+
+            keep_only = None
+            if args['keep_only']:
+                keep_only = tuple(args['keep_only'].split(','))
+            if args['keep_only1']:
+                keep_only = tuple(args['keep_only1'].split(','))
+
+            filter_out_start = None
+            if args['filter_out']:
+                filter_out_start = tuple(args['filter_out'].split(','))
+            if args['filter_out1']:
+                filter_out_start = tuple(args['filter_out1'].split(','))
+
+            nm.normalize(args['matrix1'], args['clusters1'], norm_mat1, cores=args['cores'],
+                         filter_out_start=filter_out_start, keep_only=keep_only,
+                         colclust=colclust1, broad=broad1, min_umi=args['min_umi'],
                          marker_specificity=args['marker_specificity'])
 
-        force_ec = True
+            if meta1:
+                _, ext = os.path.splitext(args['matrix1'][0])
+                c = args['clusters1']
+                if ext == '.h5ad':
+                    c = meta1
 
-    mat2 = args['matrix2']
-    logger.info('Gene-cell expression matrix 2: %s', ' '.join(mat2))
-    norm_mat2 = args['outdir'] + 'files/' + sp2 + '_' + Path(mat2[0]).stem +\
-               '_expr_clusters_norm_all.tsv'
+                logger.info('Computing normalized expression for metacells')
 
-    if os.path.exists(norm_mat2) and os.path.getsize(norm_mat2) > 0 and not args['force']\
-       and not meta2:
-        logger.warning('Normalized gene-cluster expression matrix %s already exists'
-                       ' and will be used. Use --force to recompute.', norm_mat2)
-    else:
-        colclust2 = args['colclust']
-        if args['colclust2']:
-            colclust2 = args['colclust2']
-        broad2 = args['colbroad']
-        if args['colbroad2']:
-            broad2 =  args['colbroad2']
+                nm.normalize(args['matrix1'], c,
+                             norm_mat1.replace('expr_clusters', 'expr_metacells'),
+                             cores=args['cores'],filter_out_start=filter_out_start,
+                             keep_only=keep_only, colclust=meta1,
+                             min_umi=args['min_umi'],
+                             marker_specificity=args['marker_specificity'])
 
-        keep_only = None
-        if args['keep_only']:
-            keep_only = tuple(args['keep_only'].split(','))
-        if args['keep_only2']:
-            keep_only = tuple(args['keep_only2'].split(','))
+            force_ec = True
 
-        filter_out_start = None
-        if args['filter_out']:
-            filter_out_start = tuple(args['filter_out'].split(','))
-        if args['filter_out2']:
-            filter_out_start = tuple(args['filter_out2'].split(','))
+        mat2 = args['matrix2']
+        logger.info('Gene-cell expression matrix 2: %s', ' '.join(mat2))
+        norm_mat2 = args['outdir'] + 'files/' + sp2 + '_' + Path(mat2[0]).stem +\
+                   '_expr_clusters_norm_all.tsv'
 
-        nm.normalize(args['matrix2'], args['clusters2'], norm_mat2, cores=args['cores'],
-                     filter_out_start=filter_out_start, keep_only=keep_only,
-                     colclust=colclust2, broad=broad2, min_umi=args['min_umi'],
-                     marker_specificity=args['marker_specificity'])
-
-        if meta2:
-            _, ext = os.path.splitext(args['matrix2'][0])
-            c = args['clusters2']
-            if ext == '.h5ad':
-                c = meta1
-
-
-            logger.info('Computing normalized expression for metacells')
-
-            nm.normalize(args['matrix2'], c, 
-                         norm_mat2.replace('expr_clusters', 'expr_metacells'),
-                         cores=args['cores'], filter_out_start=filter_out_start,
-                         keep_only=keep_only, colclust=meta2,
-                         min_umi=args['min_umi'],
-                         marker_specificity=args['marker_specificity'])         
-
-        force_ec = True
-
-    if not args['random_id']:
-        outprefix = args['outdir']+'files/'+sp1+'-'+sp2
-        ec_scores = outprefix+'_1-to-1-orthologs_correlation_scores.tsv'
-        ec_scores_para = outprefix+'_orthologs_many_correlation_scores.txt'
-
-    else:
-        args['random_id'] = args['random_id'].rstrip('/') + '/'
-        os.makedirs(args['outdir']+args['random_id'], exist_ok=True)
-        outprefix = args['outdir']+args['random_id']+sp1+'-'+sp2
-        ec_scores = outprefix+'_1-to-1-orthologs_correlation_scores.tsv'
-        ec_scores_para = outprefix+'_orthologs_many_correlation_scores.txt'
-        args['seed'] = None
-
-
-    if os.path.exists(ec_scores) and os.path.getsize(ec_scores) > 0 and not args['force']\
-       and not force_ec and\
-       ((os.path.exists(ec_scores_para) and os.path.getsize(ec_scores_para) > 0)\
-        or args['one2one_only']):
-        logger.warning('Orthologs expression conservation scores already computed %s'
-                       ' and will be used. Homologs selection will not be re-run either.'
-                       ' Use --force to recompute.', ec_scores)
-    else:
-        if meta1 and meta2:
-            icc.icc(norm_mat1.replace('expr_clusters', 'expr_metacells'),
-                    norm_mat2.replace('expr_clusters', 'expr_metacells'),
-                    args['ortho_pairs'], outprefix,
-                    max_combin=args['max_combin'],
-                    ncores=args['cores'], one2one_only=args['one2one_only'],
-                    random_id=args['random_id'], seed=args['seed'],
-                    do_not_downsample=args['do_not_downsample'],
-                    within_species=args['within_species'])
+        if os.path.exists(norm_mat2) and os.path.getsize(norm_mat2) > 0 and not args['force']\
+           and not meta2:
+            logger.warning('Normalized gene-cluster expression matrix %s already exists'
+                           ' and will be used. Use --force to recompute.', norm_mat2)
         else:
-            icc.icc(norm_mat1, norm_mat2, args['ortho_pairs'], outprefix,
-                    max_combin=args['max_combin'],
-                    ncores=args['cores'], one2one_only=args['one2one_only'],
-                    random_id=args['random_id'], seed=args['seed'],
-                    do_not_downsample=args['do_not_downsample'],
-                    within_species=args['within_species'])
+            colclust2 = args['colclust']
+            if args['colclust2']:
+                colclust2 = args['colclust2']
+            broad2 = args['colbroad']
+            if args['colbroad2']:
+                broad2 =  args['colbroad2']
 
-    logger.info('Computing gene expression correlation between clusters of %s and %s', sp1, sp2)
-    broadfile1, broadfile2 = None, None
-    if args['colbroad'] or (args['colbroad1'] and args['colbroad2']):
-        broadfile1 = norm_mat1.split('_matrix_')[0] + '_clusters_to_broad.pkl'
-        broadfile2 = norm_mat2.split('_matrix_')[0] + '_clusters_to_broad.pkl'
+            keep_only = None
+            if args['keep_only']:
+                keep_only = tuple(args['keep_only'].split(','))
+            if args['keep_only2']:
+                keep_only = tuple(args['keep_only2'].split(','))
 
-    cp.compare(norm_mat1, norm_mat2, args['outdir'], sp1, sp2, random_id=args['random_id'],
-               outformat=args['figure_format'], min_fc=args['min_fc'], broad_file1=broadfile1,
-               broad_file2=broadfile2, many_threshold=args['ec_threshold_many'],
-               seabcmap=args['seaborn_cmap'], use_thresh=args['show_auto_threshold'],
-               plot_warn=args['do_not_plot_warn'], reorder=args['reorder'])
+            filter_out_start = None
+            if args['filter_out']:
+                filter_out_start = tuple(args['filter_out'].split(','))
+            if args['filter_out2']:
+                filter_out_start = tuple(args['filter_out2'].split(','))
 
-    logger.info('Done! Results in %s', args['outdir'])
+            nm.normalize(args['matrix2'], args['clusters2'], norm_mat2, cores=args['cores'],
+                         filter_out_start=filter_out_start, keep_only=keep_only,
+                         colclust=colclust2, broad=broad2, min_umi=args['min_umi'],
+                         marker_specificity=args['marker_specificity'])
+
+            if meta2:
+                _, ext = os.path.splitext(args['matrix2'][0])
+                c = args['clusters2']
+                if ext == '.h5ad':
+                    c = meta1
+
+
+                logger.info('Computing normalized expression for metacells')
+
+                nm.normalize(args['matrix2'], c,
+                             norm_mat2.replace('expr_clusters', 'expr_metacells'),
+                             cores=args['cores'], filter_out_start=filter_out_start,
+                             keep_only=keep_only, colclust=meta2,
+                             min_umi=args['min_umi'],
+                             marker_specificity=args['marker_specificity'])
+            force_ec = True
+
+        if not args['random_id']:
+            outprefix = args['outdir']+'files/'+sp1+'-'+sp2
+            ec_scores = outprefix+'_1-to-1-orthologs_correlation_scores.tsv'
+            ec_scores_para = outprefix+'_orthologs_many_correlation_scores.txt'
+
+        else:
+            args['random_id'] = args['random_id'].rstrip('/') + '/'
+            os.makedirs(args['outdir']+args['random_id'], exist_ok=True)
+            outprefix = args['outdir']+args['random_id']+sp1+'-'+sp2
+            ec_scores = outprefix+'_1-to-1-orthologs_correlation_scores.tsv'
+            ec_scores_para = outprefix+'_orthologs_many_correlation_scores.txt'
+            args['seed'] = None
+
+
+        if os.path.exists(ec_scores) and os.path.getsize(ec_scores) > 0 and not args['force']\
+           and not force_ec and\
+           ((os.path.exists(ec_scores_para) and os.path.getsize(ec_scores_para) > 0)\
+            or args['one2one_only']):
+            logger.warning('Orthologs expression conservation scores already computed %s'
+                           ' and will be used. Homologs selection will not be re-run either.'
+                           ' Use --force to recompute.', ec_scores)
+        else:
+            if meta1 and meta2:
+                icc.icc(norm_mat1.replace('expr_clusters', 'expr_metacells'),
+                        norm_mat2.replace('expr_clusters', 'expr_metacells'),
+                        args['ortho_pairs'], outprefix,
+                        max_combin=args['max_combin'],
+                        ncores=args['cores'], one2one_only=args['one2one_only'],
+                        random_id=args['random_id'], seed=args['seed'],
+                        do_not_downsample=args['do_not_downsample'],
+                        within_species=args['within_species'])
+            else:
+                icc.icc(norm_mat1, norm_mat2, args['ortho_pairs'], outprefix,
+                        max_combin=args['max_combin'],
+                        ncores=args['cores'], one2one_only=args['one2one_only'],
+                        random_id=args['random_id'], seed=args['seed'],
+                        do_not_downsample=args['do_not_downsample'],
+                        within_species=args['within_species'])
+
+        logger.info('Computing gene expression correlation between clusters of %s and %s', sp1, sp2)
+        broadfile1, broadfile2 = None, None
+        if args['colbroad'] or (args['colbroad1'] and args['colbroad2']):
+            broadfile1 = norm_mat1.split('_matrix_')[0] + '_clusters_to_broad.pkl'
+            broadfile2 = norm_mat2.split('_matrix_')[0] + '_clusters_to_broad.pkl'
+
+        cp.compare(norm_mat1, norm_mat2, args['outdir'], sp1, sp2, random_id=args['random_id'],
+                   outformat=args['figure_format'], min_fc=args['min_fc'], broad_file1=broadfile1,
+                   broad_file2=broadfile2, many_threshold=args['ec_threshold_many'],
+                   seabcmap=args['seaborn_cmap'], use_thresh=args['show_auto_threshold'],
+                   plot_warn=args['do_not_plot_warn'], reorder=args['reorder'])
+
+        logger.info('Done! Results in %s', args['outdir'])
 
 
 if __name__ == '__main__':

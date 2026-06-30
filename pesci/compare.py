@@ -399,8 +399,8 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
     original_cols = df.columns
     df.columns = [f"{col}_{i}" for i, col in enumerate(df.columns)]
 
-    df.sort_values([f'{sp1}_cell_cluster_0', f'{sp2}_cell_cluster_1', 'tmp_score_7'], ascending=False,
-                    inplace=True)
+    df.sort_values([f'{sp1}_cell_cluster_0', f'{sp2}_cell_cluster_1', 'tmp_score_7'],
+                    ascending=False, inplace=True)
 
     df.columns = original_cols
     df.drop(columns=['tmp_score'], inplace=True)
