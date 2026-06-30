@@ -66,7 +66,6 @@ def load_ec_ortho_many(input_file, threshold=None):
     """
     res_genes = []
     res_ec = []
-    # seen = set()
     with open(input_file, 'r', encoding = "utf-8") as infile:
         for i, line in enumerate(infile):
             if i%2 == 0:
@@ -84,12 +83,9 @@ def load_ec_ortho_many(input_file, threshold=None):
                             break
 
                         pair = genes[ind]
-                        # g1, g2 = pair.split('+')
-                        # if g1 not in seen and g2 not in seen: #TODO try even without this one
                         res_genes.append(pair)
                         res_ec.append(float(scores[ind]))
-                            # seen.add(g1)
-                            # seen.add(g2)
+
     return res_genes, res_ec
 
 
@@ -292,6 +288,8 @@ def plot_and_save_out(result, cell_types1, cell_types2, outprefix, sp1='', sp2='
 
     if warn is not None and not warn.empty:
         for pair in zip(warn[f"{sp1}_cell_cluster"], warn[f'{sp2}_cell_cluster']):
+            if pair == (f"{sp1}_cell_cluster", f"{sp1}_cell_cluster"):
+                continue
             idx_x = cell_types2.index(pair[1].split('|')[-1])
             idx_y = cell_types1.index(pair[0].split('|')[-1])
             ax.text(idx_x + 0.5, idx_y + 0.6, '!', color='black',
@@ -398,8 +396,13 @@ def make_coexpressed_genes_table(result, mat1, mat2, ec, idx_ortho, outprefix, s
                                                      f'{sp1}_Expression (Fold-change)',
                                                      f'{sp2}_Expression (Fold-change)', 'EC_score',
                                                      'tmp_score', 'One-to-one-ortholog (yes/no)'])
-    df.sort_values([f'{sp1}_cell_cluster', f'{sp2}_cell_cluster', 'tmp_score'], ascending=False,
+    original_cols = df.columns
+    df.columns = [f"{col}_{i}" for i, col in enumerate(df.columns)]
+
+    df.sort_values([f'{sp1}_cell_cluster_0', f'{sp2}_cell_cluster_1', 'tmp_score_7'], ascending=False,
                     inplace=True)
+
+    df.columns = original_cols
     df.drop(columns=['tmp_score'], inplace=True)
     df.to_csv(f'{outprefix}gene_coexpression_table.tsv', sep='\t', index=False)
 
